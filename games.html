@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Exchange — Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Loved+by+the+King&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/games.css">
+</head>
+<body>
+
+  <!-- Stopwatch — monospace, clinical, slightly out of place -->
+  <div class="stopwatch" id="stopwatch">00:00:00</div>
+
+  <!-- Entry Screen -->
+  <div class="entry-screen" id="entry-screen">
+    <div class="entry-card">
+      <p class="entry-heading">When you give, you receive.</p>
+      <p class="entry-subtext">It's nothing much — just a few minutes of your attention<br>while you enjoy these games.</p>
+      <button class="entry-btn" id="entry-btn">I'm ready</button>
+    </div>
+  </div>
+
+  <!-- Game Shell — fades in after entry -->
+  <div class="game-wrapper" id="game-wrapper">
+    <div id="game-container"></div>
+  </div>
+
+  <!-- Calibration Screen — appears after DVD game celebration "next", before portfolio.html -->
+  <div id="calibration-screen">
+    <div class="cal-band-top">
+      <span class="cal-label" id="cal-label"></span>
+    </div>
+    <div class="cal-bars">
+      <div class="cal-bar"></div>
+      <div class="cal-bar"></div>
+      <div class="cal-bar"></div>
+      <div class="cal-bar"></div>
+      <div class="cal-bar"></div>
+      <div class="cal-bar"></div>
+      <div class="cal-bar"></div>
+    </div>
+    <div class="cal-band-bottom">
+      <div class="cal-progress-track">
+        <div class="cal-progress-fill" id="cal-progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/games.js"></script>
+</body>
+</html>
+

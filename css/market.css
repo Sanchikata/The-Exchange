@@ -1,0 +1,516 @@
+/* market.css — market page specific styles */
+
+/* ── Layout shell ── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 48px;
+  height: 100vh;
+  border-right: 0.5px solid #222222;
+  background: #0a0a0a;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 0 16px;
+  gap: 6px;
+}
+.sidebar-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #383835;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 0.2s;
+  user-select: none;
+}
+.sidebar-icon:hover,
+.sidebar-icon.active { color: #c4a45a; }
+.sidebar-push { margin-top: auto; }
+
+.topbar {
+  position: fixed;
+  top: 0; left: 48px; right: 0;
+  height: 44px;
+  border-bottom: 0.5px solid #222222;
+  background: #0a0a0a;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.topbar-menu {
+  font-size: 15px;
+  color: #383835;
+  cursor: pointer;
+}
+.topbar-brand {
+  font-size: 12px;
+  color: #c8c8c0;
+  letter-spacing: 0.05em;
+}
+.points-display {
+  font-size: 12px;
+  color: #c4a45a;
+  letter-spacing: 0.04em;
+}
+
+.market-main {
+  margin-left: 48px;
+  margin-top: 44px;
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Three-column grid ── */
+.three-col {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: stretch;
+}
+
+/* ── Panels ── */
+.panel {
+  background: #0f0f0f;
+  border: 0.5px solid #222222;
+  border-radius: 2px;
+  padding: 14px 16px;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.panel-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #666660;
+  letter-spacing: 0.1em;
+}
+.panel-icon {
+  font-size: 11px;
+  color: #383835;
+  cursor: pointer;
+}
+
+/* ── Heatmap ── */
+.heatmap-panel {
+  margin-bottom: 12px;
+}
+.heatmap-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.toggle-group, .timeframe-group {
+  display: flex;
+  gap: 4px;
+}
+.toggle-btn, .tf-btn {
+  background: transparent;
+  border: 0.5px solid #2a2a28;
+  border-radius: 2px;
+  color: #555550;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  padding: 3px 9px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.toggle-btn.active,
+.tf-btn.active {
+  border-color: #c4a45a;
+  color: #c4a45a;
+}
+.toggle-btn:hover,
+.tf-btn:hover {
+  border-color: #c4a45a;
+  color: #c4a45a;
+}
+.heatmap-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 300px;
+}
+.hm-row {
+  display: flex;
+  gap: 4px;
+  min-height: 0;
+  transition: flex 1.6s ease;
+}
+.hm-block {
+  border-radius: 2px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  cursor: pointer;
+  transition: flex 1.6s ease;
+  min-width: 0;
+  overflow: hidden;
+}
+.hm-name {
+  font-size: 11px;
+  color: rgba(255,255,255,0.95);
+  font-weight: 400;
+}
+.hm-value {
+  font-size: 10px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 2px;
+}
+.hm-pct {
+  font-size: 10px;
+  margin-top: 2px;
+}
+.hm-companies {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hm-co-item {
+  font-size: 9px;
+  line-height: 1.4;
+}
+.hm-co-name   { color: rgba(255,255,255,0.65); }
+.hm-co-ticker { color: rgba(255,255,255,0.3); margin-left: 3px; }
+
+/* ── Heatmap tooltip ── */
+.hm-tooltip {
+  position: fixed;
+  background: #111111;
+  border: 0.5px solid #333333;
+  border-radius: 2px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: #c8c8c0;
+  line-height: 1.7;
+  pointer-events: none;
+  z-index: 500;
+  display: none;
+}
+
+/* ── News ── */
+.news-panel {
+  max-height: 500px;
+  overflow-y: auto;
+}
+.news-panel::-webkit-scrollbar { width: 3px; }
+.news-panel::-webkit-scrollbar-track { background: transparent; }
+.news-panel::-webkit-scrollbar-thumb { background: #222222; border-radius: 2px; }
+
+.news-card {
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 0.5px solid #1a1a1a;
+}
+.news-card:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.news-time {
+  font-size: 9px;
+  color: #444440;
+}
+.news-headline {
+  font-size: 12px;
+  font-weight: 400;
+  color: #e8e8e0;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.news-img-main {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  display: block;
+}
+.news-img-placeholder {
+  width: 100%;
+  height: 120px;
+  background: #1a1a1a;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.news-img-placeholder span {
+  font-size: 10px;
+  color: #333330;
+  letter-spacing: 0.06em;
+}
+.news-desc {
+  font-size: 11px;
+  color: #888880;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.read-more-btn {
+  background: transparent;
+  border: 0.5px solid #2a2a28;
+  border-radius: 2px;
+  color: #555550;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.read-more-btn:hover {
+  border-color: #c4a45a;
+  color: #c4a45a;
+}
+
+/* ── Emotion / value pills ── */
+.emotion-pill {
+  display: inline-block;
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.04em;
+  text-transform: capitalize;
+}
+.emotion-pill.nostalgia { background: rgba(196,164, 90,0.12); color: #c4a45a; }
+.emotion-pill.anger     { background: rgba(196, 90, 90,0.12); color: #c45a5a; }
+.emotion-pill.happiness { background: rgba( 90,156,106,0.12); color: #5a9c6a; }
+.emotion-pill.envy      { background: rgba(122, 90,196,0.12); color: #7a5ac4; }
+.emotion-pill.trust     { background: rgba( 55,138,221,0.12); color: #378add; }
+.emotion-pill.loyalty   { background: rgba( 90,156,106,0.12); color: #5a9c6a; }
+.emotion-pill.belonging { background: rgba(196,164, 90,0.12); color: #c4a45a; }
+.emotion-pill.anxiety   { background: rgba(139, 38, 53,0.12); color: #8b2635; }
+
+/* ── Gamezone ── */
+.gamezone-panel {
+  background: #111111;
+  border-color: #c4a45a;
+  display: flex;
+  flex-direction: column;
+}
+.gamezone-title {
+  color: #c4a45a !important;
+}
+.gamezone-points {
+  font-size: 22px;
+  color: #c4a45a;
+  margin: 16px 0 10px;
+  line-height: 1;
+}
+.gamezone-desc {
+  font-size: 13px;
+  color: #ffffff;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  flex: 1;
+}
+.gamezone-btn {
+  display: block;
+  background: transparent;
+  border: 0.5px solid #c4a45a;
+  border-radius: 2px;
+  color: #c4a45a;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  padding: 14px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.gamezone-btn:hover {
+  background: #c4a45a;
+  color: #0a0a0a;
+}
+
+/* ── Heatmap + News row ── */
+.heatmap-news-row {
+  display: grid;
+  grid-template-columns: 65% 35%;
+  gap: 12px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+/* ── Indexes bar ── */
+.indexes-panel {
+  margin-bottom: 12px;
+  padding: 0;
+  overflow: hidden;
+}
+.indexes-panel .panel-header {
+  padding: 10px 16px 8px;
+  margin-bottom: 0;
+  border-bottom: 0.5px solid #1a1a1a;
+}
+.indexes-row {
+  display: flex;
+}
+.index-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-right: 0.5px solid #1a1a1a;
+}
+.index-card:last-child { border-right: none; }
+.index-name   { font-size: 9px; text-transform: uppercase; color: #444440; letter-spacing: 0.08em; white-space: nowrap; }
+.index-ticker { font-size: 11px; font-weight: 400; }
+.index-value  { font-size: 15px; color: #e8e8e0; margin-left: auto; }
+.index-change { font-size: 11px; min-width: 50px; text-align: right; }
+.index-change.pos { color: #5a9c6a; }
+.index-change.neg { color: #c45a5a; }
+
+@keyframes idx-flash-pos {
+  0%   { color: #e8e8e0; }
+  25%  { color: #5a9c6a; }
+  100% { color: #e8e8e0; }
+}
+@keyframes idx-flash-neg {
+  0%   { color: #e8e8e0; }
+  25%  { color: #c45a5a; }
+  100% { color: #e8e8e0; }
+}
+.flash-pos { animation: idx-flash-pos 0.7s ease; }
+.flash-neg { animation: idx-flash-neg 0.7s ease; }
+
+/* ── Company table ── */
+.company-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.company-table th {
+  text-align: left;
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #444440;
+  letter-spacing: 0.08em;
+  padding: 6px 12px 8px;
+  border-bottom: 0.5px solid #1a1a1a;
+  font-weight: 300;
+}
+.company-table td {
+  padding: 10px 12px;
+  border-bottom: 0.5px solid #141414;
+  color: #c8c8c0;
+  font-size: 12px;
+  vertical-align: middle;
+}
+.company-table tbody tr {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.company-table tbody tr:hover { background: #141414; }
+.co-name   { color: #e8e8e0; white-space: nowrap; min-width: 140px; }
+.co-ticker { color: #555550; font-size: 11px; }
+.co-price  { color: #e8e8e0; }
+.co-chg.pos { color: #5a9c6a; }
+.co-chg.neg { color: #c45a5a; }
+
+/* ── Slide-in detail panel ── */
+.detail-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.detail-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.detail-panel {
+  position: fixed;
+  top: 0; right: 0;
+  width: 320px; height: 100%;
+  background: #111111;
+  border-left: 0.5px solid #222222;
+  z-index: 201;
+  padding: 24px 20px;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+.detail-panel.open { transform: translateX(0); }
+.detail-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: transparent;
+  border: none;
+  color: #444440;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: color 0.2s;
+}
+.detail-close:hover { color: #e8e8e0; }
+.detail-co-name { font-size: 16px; color: #e8e8e0; margin-bottom: 4px; padding-right: 28px; line-height: 1.3; }
+.detail-ticker  { font-size: 11px; color: #555550; margin-bottom: 14px; }
+.detail-tags    { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.detail-desc    { font-size: 12px; color: #888880; line-height: 1.7; margin-bottom: 18px; }
+.detail-price   { font-size: 26px; color: #e8e8e0; margin-bottom: 4px; }
+.detail-chg     { font-size: 12px; margin-bottom: 24px; }
+.detail-chg.pos { color: #5a9c6a; }
+.detail-chg.neg { color: #c45a5a; }
+.detail-btns    { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.btn-buy {
+  background: #0d1f14;
+  color: #7ab892;
+  border: 0.5px solid #4a7c59;
+  border-radius: 2px;
+  padding: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-buy:hover  { background: #102818; }
+.btn-sell {
+  background: #1f0d0d;
+  color: #c47a7a;
+  border: 0.5px solid #7c3a3a;
+  border-radius: 2px;
+  padding: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-sell:hover { background: #2a1010; }
+.trade-cost {
+  font-size: 10px;
+  color: #555550;
+  text-align: center;
+}

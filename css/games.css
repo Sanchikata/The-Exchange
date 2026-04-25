@@ -1,0 +1,1186 @@
+/* games.css — The Exchange: Games page
+   Visual language: warm, vintage, rounded — deliberately opposite to market.html
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── CSS Custom Properties ── */
+:root {
+  --g-bg:           #f5f0e8;
+  --g-bg-warm:      #ede7d9;
+  --g-bg-card:      #faf7f2;
+  --g-text:         #2c2416;
+  --g-text-muted:   #7a6e5f;
+  --g-text-soft:    #a89880;
+
+  --g-rose:         #e8a598;
+  --g-rose-light:   #f5d5cf;
+  --g-yellow:       #e8d5a3;
+  --g-yellow-light: #f5eccc;
+  --g-mint:         #a8c5b5;
+  --g-mint-light:   #d4e8df;
+
+  --g-border:       rgba(44, 36, 22, 0.12);
+  --g-shadow-sm:    0 2px 8px rgba(44, 36, 22, 0.08);
+  --g-shadow-md:    0 6px 24px rgba(44, 36, 22, 0.12);
+  --g-shadow-lg:    0 16px 48px rgba(44, 36, 22, 0.16);
+
+  --g-radius-sm:    8px;
+  --g-radius-md:    16px;
+  --g-radius-lg:    24px;
+  --g-radius-xl:    36px;
+
+  --g-font-heading: 'Playfair Display', Georgia, serif;
+  --g-font-body:    'DM Sans', system-ui, sans-serif;
+  --g-font-mono:    'IBM Plex Mono', monospace;
+
+  --g-fade:         300ms ease;
+  --g-fade-slow:    600ms ease;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--g-bg);
+  color: var(--g-text);
+  font-family: var(--g-font-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Stopwatch ── the clinical anomaly ── */
+.stopwatch {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  z-index: 100;
+  font-family: var(--g-font-mono);
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--g-text);
+  background: var(--g-bg-card);
+  padding: 12px;
+  border-radius: var(--g-radius-sm);
+  pointer-events: none;
+  opacity: 50%;
+  transition: opacity var(--g-fade-slow);
+}
+
+.stopwatch.visible {
+  opacity: 70%;
+}
+
+/* ── Entry Screen ── */
+.entry-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--g-bg);
+  z-index: 50;
+  opacity: 1;
+  transition: opacity var(--g-fade-slow);
+}
+
+.entry-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.entry-card {
+  background: var(--g-bg-card);
+  border-radius: var(--g-radius-xl);
+  box-shadow: var(--g-shadow-lg);
+  padding: 64px 72px;
+  max-width: 560px;
+  width: 90%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid var(--g-border);
+}
+
+.entry-heading {
+  font-family: var(--g-font-heading);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--g-text);
+}
+
+.entry-subtext {
+  font-family: var(--g-font-body);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--g-text-muted);
+}
+
+.entry-btn {
+  margin-top: 12px;
+  padding: 14px 40px;
+  background: var(--g-rose);
+  color: var(--g-text);
+  font-family: var(--g-font-body);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--g-radius-lg);
+  cursor: pointer;
+  box-shadow: var(--g-shadow-sm);
+  transition: background var(--g-fade), box-shadow var(--g-fade), transform var(--g-fade);
+}
+
+.entry-btn:hover {
+  background: #dfa090;
+  box-shadow: var(--g-shadow-md);
+  transform: translateY(-1px);
+}
+
+.entry-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--g-shadow-sm);
+}
+
+/* ── Game Wrapper ── fades in after entry ── */
+.game-wrapper {
+  min-height: 100vh;
+  padding: 48px 32px 80px;
+  opacity: 0;
+  transition: opacity var(--g-fade-slow);
+}
+
+.game-wrapper.visible {
+  opacity: 1;
+}
+
+/* ── Game Container ── injected games land here ── */
+#game-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── Shared game card styles (ready for next session) ── */
+.game-card {
+  background: var(--g-bg-card);
+  border-radius: var(--g-radius-lg);
+  box-shadow: var(--g-shadow-md);
+  border: 1px solid var(--g-border);
+  padding: 40px;
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--g-fade-slow), transform var(--g-fade-slow);
+}
+
+.game-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.game-card-title {
+  font-family: var(--g-font-heading);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--g-text);
+  margin-bottom: 8px;
+}
+
+.game-card-desc {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--g-text-muted);
+  line-height: 1.7;
+}
+
+/* accent variants */
+.game-card.rose  { border-top: 3px solid var(--g-rose); }
+.game-card.yellow { border-top: 3px solid var(--g-yellow); }
+.game-card.mint  { border-top: 3px solid var(--g-mint); }
+
+/* ── Game 1: DVD Corner Click ── */
+
+.game1-card {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  margin-bottom: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+/* Instruction text — fixed top center, plain cream */
+.game1-instruction {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(playfair display, Georgia, serif);
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  color: #f5f0e8;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+/* The black arena — fills the entire fixed card */
+.game1-arena {
+  position: absolute;
+  inset: 0;
+  background: #000;
+}
+
+/* Bouncing DVD logos */
+.dvd-logo {
+  position: absolute;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: opacity 0.5s ease;
+}
+
+/* "end" button — fixed bottom center, minimal cream border */
+.game1-end-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(playfair display, Georgia, serif);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #f5f0e8;
+  background: transparent;
+  border: 0.5px solid rgba(245, 240, 232, 0.4);
+  border-radius: var(--g-radius-sm);
+  padding: 6px 18px;
+  cursor: pointer;
+  z-index: 2;
+  transition: border-color var(--g-fade), color var(--g-fade);
+}
+
+.game1-end-btn:hover {
+  color: #fff;
+  border-color: rgba(245, 240, 232, 0.8);
+}
+
+.game1-end-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Between-game warm placeholder */
+.game-next-placeholder {
+  text-align: center;
+  padding: 80px 40px;
+  font-family: var(--g-font-heading);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--g-text-muted);
+  opacity: 0;
+  transition: opacity var(--g-fade-slow);
+}
+
+.game-next-placeholder.visible {
+  opacity: 1;
+}
+
+/* Points counter — fixed bottom-right, visible during DVD game */
+.game1-points {
+  position: fixed;
+  bottom: 20px;
+  right: 24px;
+  font-family: var(--g-font-mono);
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #f5f0e8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Points counter — fixed bottom-right, visible during DVD game */
+.game1-points {
+  position: fixed;
+  bottom: 20px;
+  right: 24px;
+  font-family: var(--g-font-mono);
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #f5f0e8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+
+/* Attempts counter — fixed bottom-left, visible during DVD game */
+.game1-attempts {
+  position: fixed;
+  bottom: 20px;
+  left: 24px;
+  font-family: var(--g-font-mono);
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #c45a5a;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Game 1: wrong-click shake ── */
+
+@keyframes wrongShake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.dvd-logo.wrong-shake {
+  animation: wrongShake 0.35s ease-out;
+}
+
+/* ── Game 1: celebration ── */
+
+@keyframes goldBurst {
+  0%   { filter: sepia(1) saturate(3) hue-rotate(0deg) drop-shadow(0 0 4px #c4a45a); }
+  40%  { filter: sepia(1) saturate(5) hue-rotate(0deg) brightness(1.35) drop-shadow(0 0 20px #c4a45a) drop-shadow(0 0 40px #c4a45a); }
+  100% { filter: sepia(1) saturate(3) hue-rotate(0deg) brightness(1.1) drop-shadow(0 0 10px #c4a45a); }
+}
+
+.dvd-logo.gold-burst {
+  animation: goldBurst 0.8s ease-out forwards;
+}
+
+/* Radial glow at the arena corner — 200×200 div centered on the corner point */
+.game1-corner-glow {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,164,90,0.9) 0%, rgba(196,164,90,0.35) 35%, rgba(196,164,90,0) 70%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.game1-corner-glow.visible {
+  opacity: 1;
+}
+
+/* Warm semi-transparent overlay that covers the whole card */
+.game1-result-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(245, 240, 232, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.game1-result-overlay.visible {
+  opacity: 1;
+}
+
+/* Popup card inside the overlay */
+.game1-popup {
+  text-align: center;
+  padding: 44px 52px;
+  background: var(--g-bg-card);
+  border-radius: var(--g-radius-lg);
+  box-shadow: var(--g-shadow-lg);
+  border: 1px solid var(--g-border);
+}
+
+.game1-popup-title {
+  font-family: var(--g-font-heading);
+  font-size: 48px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--g-text);
+  margin-bottom: 10px;
+}
+
+.game1-popup-sub {
+  font-family: var(--g-font-body);
+  font-weight: 300;
+  font-size: 14px;
+  color: var(--g-text-muted);
+  margin-bottom: 32px;
+}
+
+.game1-popup-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.game1-btn-secondary {
+  font-family: var(--g-font-mono);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--g-text-muted);
+  background: transparent;
+  border: 1px solid var(--g-border);
+  border-radius: var(--g-radius-sm);
+  padding: 8px 24px;
+  cursor: pointer;
+  transition: color var(--g-fade), border-color var(--g-fade), background var(--g-fade);
+}
+
+.game1-btn-secondary:hover {
+  color: var(--g-text);
+  background: var(--g-bg-warm);
+  border-color: rgba(44, 36, 22, 0.3);
+}
+
+.game1-btn-primary {
+  font-family: var(--g-font-body);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--g-text);
+  background: var(--g-rose);
+  border: none;
+  border-radius: var(--g-radius-sm);
+  padding: 8px 28px;
+  cursor: pointer;
+  box-shadow: var(--g-shadow-sm);
+  transition: background var(--g-fade), box-shadow var(--g-fade);
+}
+
+.game1-btn-primary:hover {
+  background: #dfa090;
+  box-shadow: var(--g-shadow-md);
+}
+
+/* ── Shakalaka Boom Boom: Windows 98 Selection Screen ── */
+
+.shakalaka-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.65s ease;
+  /* Windows 98 "Bliss" — cloudy sky gradient */
+  background:
+    radial-gradient(ellipse 320px 115px at 12% 27%, rgba(255,255,255,0.84) 0%, transparent 65%),
+    radial-gradient(ellipse 230px 85px  at 72% 18%, rgba(255,255,255,0.80) 0%, transparent 65%),
+    radial-gradient(ellipse 270px 100px at 48% 62%, rgba(255,255,255,0.68) 0%, transparent 65%),
+    radial-gradient(ellipse 195px 72px  at 88% 52%, rgba(255,255,255,0.62) 0%, transparent 65%),
+    radial-gradient(ellipse 240px 88px  at 30% 78%, rgba(255,255,255,0.72) 0%, transparent 65%),
+    radial-gradient(ellipse 290px 105px at 60% 88%, rgba(255,255,255,0.52) 0%, transparent 65%),
+    linear-gradient(180deg, #3d7ab5 0%, #5a9bcf 25%, #7ab0d8 50%, #9bc8e8 70%, #bed8f0 90%, #d0e8f8 100%);
+}
+
+.shakalaka-screen.visible {
+  opacity: 1;
+}
+
+/* Pencil — kept for showShakalakaDraw animation (positions captured dynamically) */
+.sk-pencil-wrap {
+  position: absolute;
+  top: 0.84vh;
+  right: -7.73vw;
+  width: 28.28vw;
+  height: 52.52vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.sk-pencil-rot {
+  transform: rotate(35.64deg);
+  flex-shrink: 0;
+}
+
+.sk-pencil-clip {
+  width: 9.65vw;
+  height: 53.97vh;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sk-pencil {
+  display: block;
+  width: 22.63vw;
+  height: 53.97vh;
+  margin-left: -7.02vw;
+  object-fit: fill;
+}
+
+/* ── Win98 Window Chrome ── */
+
+.sk-win98-window {
+  position: relative;
+  background: #c0c0c0;
+  width: min(88vw, 860px);
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  gap: 4px;
+  /* Win98 raised outer border */
+  box-shadow:
+    inset -2px -2px 0 0 #000000,
+    inset  2px  2px 0 0 #ffffff,
+    inset -4px -4px 0 0 #7f7f7f,
+    inset  4px  4px 0 0 #dfdfdf;
+}
+
+/* ── Title Bar ── */
+
+.sk-win98-titlebar {
+  background: #000080;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 4px 8px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.sk-win98-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.sk-win98-folder {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sk-win98-title-text {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 400;
+  color: #ffffff;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.sk-win98-titlebar-btns {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.sk-win98-winbtn {
+  width: 22px;
+  height: 22px;
+  background: #c0c0c0;
+  border: none;
+  padding: 0;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  color: #000000;
+  line-height: 1;
+  box-shadow:
+    inset -2px -2px 0 0 #000000,
+    inset  2px  2px 0 0 #ffffff,
+    inset -4px -4px 0 0 #7f7f7f,
+    inset  4px  4px 0 0 #dfdfdf;
+}
+
+/* ── Whiteboard — sk-container doubles as the whiteboard body ── */
+
+.sk-container {
+  position: relative;
+  background: #ffffff;
+  min-height: min(52vh, 390px);
+  flex: 1;
+  overflow: hidden;
+  /* Win98 sunken inset border */
+  box-shadow:
+    inset -2px -2px 0 0 #ffffff,
+    inset  2px  2px 0 0 #808080,
+    inset -4px -4px 0 0 #c1c1c1,
+    inset  4px  4px 0 0 #000000;
+}
+
+/* Box decorators — kept transparent; showShakalakaDraw sets border-color on sk-box--b */
+.sk-box {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  background: transparent;
+  pointer-events: none;
+}
+
+.sk-box--a { display: none; }
+
+/* ── Selection inner — buttons area ── */
+
+.sk-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 40px;
+}
+
+.sk-prompt {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 15px;
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+.sk-buttons {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Win98 chunky pixel buttons ── */
+
+.sk-btn {
+  position: relative;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 24px;
+  font-weight: 400;
+  color: #000000;
+  background: #c0c0c0;
+  background-image: none;
+  border: none;
+  border-radius: 0;
+  padding: 18px 36px;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.2;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  /* Win98 raised button border */
+  box-shadow:
+    inset -3px -3px 0 0 #000000,
+    inset  3px  3px 0 0 #ffffff,
+    inset -6px -6px 0 0 #7f7f7f,
+    inset  6px  6px 0 0 #dfdfdf;
+  transition: none;
+}
+
+.sk-btn:hover {
+  background: #c8c8c8;
+  transform: none;
+  opacity: 1;
+}
+
+.sk-btn:active {
+  /* Inverted for pressed state */
+  box-shadow:
+    inset  3px  3px 0 0 #000000,
+    inset -3px -3px 0 0 #ffffff,
+    inset  6px  6px 0 0 #7f7f7f,
+    inset -6px -6px 0 0 #dfdfdf;
+}
+
+.sk-btn--beyblade,
+.sk-btn--paperboat,
+.sk-btn--pikachu {
+  background-image: none;
+}
+
+/* ── Status Bar ── */
+
+.sk-win98-statusbar {
+  background: #c0c0c0;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  flex-shrink: 0;
+  box-shadow:
+    inset -2px -2px 0 0 #ffffff,
+    inset  2px  2px 0 0 #808080;
+}
+
+.sk-win98-status-text {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  color: #000000;
+}
+
+/* ── Shakalaka pencil cursor — follows mouse on drawing canvas ── */
+.sk-pencil-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  width: 120px;
+  height: 186px;
+  transform: rotate(45deg);
+  transform-origin: 50% 50%;
+  transition: opacity 0.08s ease;
+}
+
+.sk-pencil-cursor img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+/* ── Shakalaka: MS Paint Drawing Window ── */
+
+.sk-paint-window {
+  position: relative;
+  background: #c0c0c0;
+  width: min(96vw, 1020px);
+  height: min(92vh, 740px);
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  gap: 0;
+  box-shadow:
+    inset -2px -2px 0 0 #000000,
+    inset  2px  2px 0 0 #ffffff,
+    inset -4px -4px 0 0 #7f7f7f,
+    inset  4px  4px 0 0 #dfdfdf;
+}
+
+.sk-paint-titlebar {
+  background: #000080;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 4px 3px 6px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.sk-paint-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sk-paint-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.sk-paint-title {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 400;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.sk-paint-menubar {
+  background: #c0c0c0;
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+  height: 22px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #808080;
+}
+
+.sk-paint-menu {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: #000000;
+  padding: 2px 8px;
+  cursor: default;
+  white-space: nowrap;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.sk-paint-menu:hover {
+  background: #000080;
+  color: #ffffff;
+}
+
+.sk-paint-body {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-height: 0;
+  gap: 4px;
+  padding: 4px;
+}
+
+/* Left toolbar — 2-column grid of tool buttons */
+.sk-paint-toolbar {
+  width: 56px;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  align-content: start;
+  padding: 2px;
+  box-shadow:
+    inset -1px -1px 0 0 #808080,
+    inset  1px  1px 0 0 #dfdfdf;
+}
+
+.sk-paint-tool {
+  width: 26px;
+  height: 26px;
+  background: #c0c0c0;
+  border: none;
+  padding: 3px;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset -1px -1px 0 0 #808080,
+    inset  1px  1px 0 0 #ffffff;
+}
+
+.sk-paint-tool--active {
+  box-shadow:
+    inset  1px  1px 0 0 #808080,
+    inset -1px -1px 0 0 #ffffff;
+}
+
+/* Canvas area (right of toolbar) */
+.sk-paint-canvas-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+  overflow: hidden;
+}
+
+/* Word label above the canvas */
+.sk-paint-word-bar {
+  background: #c0c0c0;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: #000080;
+  letter-spacing: 0.05em;
+  box-shadow:
+    inset -1px -1px 0 0 #808080,
+    inset  1px  1px 0 0 #dfdfdf;
+}
+
+/* Canvas wrapper — the white drawing surface */
+.sk-paint-canvas-wrapper {
+  flex: 1;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden;
+  min-height: 0;
+  box-shadow:
+    inset -2px -2px 0 0 #ffffff,
+    inset  2px  2px 0 0 #808080,
+    inset -4px -4px 0 0 #c1c1c1,
+    inset  4px  4px 0 0 #000000;
+}
+
+/* Drawing canvas fills the wrapper */
+.sk-draw-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  touch-action: none;
+  z-index: 2;
+}
+
+/* sk-box kept for purple border effect (.sk-box--b gets borderColor set by enableDrawing) */
+.sk-paint-canvas-wrapper .sk-box {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  background: transparent;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Color palette strip */
+.sk-paint-palette {
+  background: #c0c0c0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  height: 42px;
+  flex-shrink: 0;
+  box-shadow:
+    inset -1px -1px 0 0 #808080,
+    inset  1px  1px 0 0 #dfdfdf;
+}
+
+/* Active color indicator (fg on top of bg) */
+.sk-paint-active-colors {
+  position: relative;
+  width: 34px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.sk-paint-bg-color {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  box-shadow:
+    inset -1px -1px 0 0 #ffffff,
+    inset  1px  1px 0 0 #808080;
+}
+
+.sk-paint-fg-color {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background: #000000;
+  z-index: 1;
+  box-shadow:
+    inset -1px -1px 0 0 #808080,
+    inset  1px  1px 0 0 #ffffff;
+}
+
+/* Color grid — 2 rows × 14 cols */
+.sk-paint-colors {
+  display: grid;
+  grid-template-columns: repeat(14, 18px);
+  grid-template-rows: repeat(2, 16px);
+  gap: 1px;
+}
+
+.sk-paint-color {
+  width: 18px;
+  height: 16px;
+  border: none;
+  padding: 0;
+  cursor: default;
+  box-shadow:
+    inset -1px -1px 0 0 #808080,
+    inset  1px  1px 0 0 #ffffff;
+}
+
+.sk-paint-color:hover {
+  outline: 1px solid #000000;
+  outline-offset: -1px;
+}
+
+.sk-paint-color.active {
+  box-shadow:
+    inset  2px  2px 0 0 #000000,
+    inset -2px -2px 0 0 #ffffff;
+}
+
+/* Eraser active state in toolbar */
+.sk-paint-eraser.active {
+  box-shadow:
+    inset  1px  1px 0 0 #808080,
+    inset -1px -1px 0 0 #ffffff;
+}
+
+/* Status bar */
+.sk-paint-statusbar {
+  background: #c0c0c0;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  flex-shrink: 0;
+  box-shadow:
+    inset -2px -2px 0 0 #ffffff,
+    inset  2px  2px 0 0 #808080;
+}
+
+.sk-paint-status-text {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: #000000;
+}
+
+/* Done button in status bar */
+.sk-end-btn {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  color: #000000;
+  background: #c0c0c0;
+  border: none;
+  padding: 2px 16px;
+  height: 20px;
+  cursor: pointer;
+  box-shadow:
+    inset -2px -2px 0 0 #000000,
+    inset  2px  2px 0 0 #ffffff,
+    inset -4px -4px 0 0 #7f7f7f,
+    inset  4px  4px 0 0 #dfdfdf;
+}
+
+.sk-end-btn:active {
+  box-shadow:
+    inset  2px  2px 0 0 #000000,
+    inset -2px -2px 0 0 #ffffff,
+    inset  4px  4px 0 0 #7f7f7f,
+    inset -4px -4px 0 0 #dfdfdf;
+}
+
+/* ── Calibration Screen ── Doordarshan colour bars ── */
+
+#calibration-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#calibration-screen.visible {
+  display: flex;
+}
+
+/* CRT scanline overlay */
+#calibration-screen::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 3px
+  );
+  pointer-events: none;
+  z-index: 301;
+}
+
+.cal-band-top,
+.cal-band-bottom {
+  width: 100%;
+  height: 80px;
+  background: #000000;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-label {
+  font-family: playfair display, Georgia, serif;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.cal-label.pulsing {
+  animation: calPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes calPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.cal-progress-track {
+  width: 300px;
+  height: 3px;
+  background: #333333;
+}
+
+.cal-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #ffffff;
+}
+
+.cal-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.cal-bar {
+  flex: 1;
+}
+/* 1. Hide any canvas that p5.brush accidentally 
+      attaches to the root body */
+body > canvas:not(.sk-draw-canvas) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* 2. Ensure your actual game canvases stay visible */
+#game-wrapper canvas, 
+.sk-container canvas,
+.sk-draw-canvas {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+.cal-bar:nth-child(1) { background: #ffffff; }
+.cal-bar:nth-child(2) { background: #ff00ff; }
+.cal-bar:nth-child(3) { background: #00cc00; }
+.cal-bar:nth-child(4) { background: #e8820c; }
+.cal-bar:nth-child(5) { background: #0000ff; }
+.cal-bar:nth-child(6) { background: #ff00ff; }
+.cal-bar:nth-child(7) { background: #006600; }

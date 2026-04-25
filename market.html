@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Exchange — Market</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #0a0a0a;
+      color: #e8e8e0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== PAGE WRAP ===== */
+    .page-wrap {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: #0a0a0a;
+      border-bottom: 0.5px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 59px);
+      height: clamp(56px, 10vw, 130px);
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 1vw, 14px);
+      padding: 0;
+    }
+    .header-dot {
+      width: clamp(4px, 0.5vw, 7px);
+      height: clamp(4px, 0.5vw, 7px);
+      background: #dafe7f;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(218,254,127,0.6);
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(14px, 2.2vw, 30px);
+      color: #fff;
+      letter-spacing: clamp(2px, 0.4vw, 6px);
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+    .header-points {
+      background: rgba(61,61,60,0.2);
+      border-radius: clamp(6px, 0.8vw, 12px);
+      width: clamp(80px, 12vw, 160px);
+      height: clamp(40px, 5.5vw, 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .header-pts-inner {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      text-align: center;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .header-pts-num {
+      font-size: clamp(20px, 3.8vw, 54px);
+      line-height: 1;
+      display: inline;
+    }
+    .header-pts-label {
+      font-size: clamp(10px, 1.3vw, 18px);
+      color: #8c8b8b;
+      display: inline;
+    }
+
+    /* ===== HERO CARD ===== */
+    .hero-section {
+      padding: 48px 72px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #0a0a0a;
+      will-change: transform;
+    }
+    .hero-card {
+      background: #111;
+      border: 13px solid rgba(255,190,2,0.21);
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      padding: 46px 56px 48px;
+      width: 1137px;
+      min-height: 533px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .hero-headline {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 500;
+      font-size: 38px;
+      line-height: 1.35;
+      color: #fff;
+      max-width: 486px;
+    }
+    .nostalgia-word { color: #6a8f0c; }
+    .hero-stat {
+      position: absolute;
+      left: 53px;
+      top: 276px;
+      width: 420px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .hero-stat-pct {
+      font-size: 75px;
+      color: #ffbe02;
+      vertical-align: baseline;
+    }
+    .hero-stat-loyalty {
+      font-size: 38px;
+      color: #ffbe02;
+    }
+    .hero-stat-desc {
+      font-size: 38px;
+      color: #f2f2f2;
+      font-weight: 500;
+    }
+    .hero-trade-btn {
+      position: absolute;
+      left: 53px;
+      top: 427px;
+      width: 119px;
+      height: 34px;
+      background: #757674;
+      border: none;
+      color: #000;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: not-allowed;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-chart-area {
+      position: absolute;
+      left: 614px;
+      top: 395px;
+      width: 497px;
+      height: 145px;
+      overflow: hidden;
+    }
+    .hero-chart-area svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .hero-divider {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .divider-seg {
+      width: 13px;
+      height: 1.2px;
+      border-radius: 1px;
+      background: rgba(255,255,255,0.15);
+    }
+    .divider-seg.active {
+      background: rgba(255,190,2,0.21);
+    }
+
+    /* ===== POINTS BANNER (full-width, vw-relative) ===== */
+    .page-wrap {
+      position: relative;
+      z-index: 2;
+    }
+    .points-banner {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: #19191c;
+      padding: clamp(32px, 4vw, 64px) clamp(24px, 5vw, 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 400px;
+      will-change: transform;
+      clip-path: inset(0 0 0 0);
+      transition: clip-path 700ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background 700ms cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 700ms cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 1px solid transparent;
+    }
+    .points-banner.banner-sticky {
+      clip-path: inset(0 0 324px 0); /* 400 - 76 = 324 */
+      background: #111111;
+      border-bottom-color: rgba(218,254,127,0.2);
+    }
+    .banner-full {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 2.5vw, 40px);
+      opacity: 1;
+      transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: auto;
+    }
+    .banner-sticky .banner-full {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .banner-mini {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(24px, 5vw, 80px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1) 300ms;
+    }
+    .banner-sticky .banner-mini {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .banner-mini-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.03em;
+    }
+    .banner-mini-btn {
+      background: #ffb205;
+      border: none;
+      color: #0a0a0a;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .points-inner {
+      padding: 0 clamp(16px, 3vw, 16px);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .points-copy {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 500;
+      font-size: 24px;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+    .points-copy .hl { color: #ffb205; font-weight: 700; }
+    .points-stats-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(12px, 2vw, 16px);
+      color: #ffb205;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .progress-dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-height: 28px; /* 2 rows: 10px + 8px gap + 10px */
+      overflow: hidden;
+    }
+    .pdot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+    .pdot.on { background: #ffb205; }
+    .earn-btn {
+      display: block;
+      will-change: opacity;
+      background: rgba(162,113,3,0.46);
+      border: 0.5px solid rgba(218,254,127,0.35);
+      color: #fff;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: clamp(13px, 1.6vw, 22px);
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      text-align: center;
+      width: calc(100% - clamp(40px, 6vw, 98px));
+      margin: 0 auto;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 0;
+      animation: earnPulse 2s ease-in-out infinite;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    @keyframes earnPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .earn-btn:hover {
+      animation: none;
+      background: rgba(162,113,3,0.72);
+
+      box-shadow: 0 0 24px rgba(218,254,127,0.2), 0 0 6px rgba(218,254,127,0.1);
+      opacity: 1;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .banner-mini-btn {
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .banner-mini-btn:hover {
+      background: #ffc933;
+      box-shadow: 0 0 16px rgba(255,178,5,0.4), 0 0 4px rgba(255,178,5,0.2);
+    }
+
+    /* ===== VALUES BAR CHART ===== */
+    .values-section {
+      background: #0f0f0f;
+      padding: 48px 40px;
+    }
+    .values-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2.8px;
+      text-transform: uppercase;
+      color: rgba(218,254,127,0.6);
+      margin-bottom: 48px;
+    }
+    .chart-wrap {
+      display: flex;
+      gap: 32px;
+      align-items: stretch;
+    }
+    .chart-y-labels {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-bottom: 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 1px;
+      width: 28px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .chart-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .chart-bars-row {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 24px;
+      border-bottom: 0.5px solid rgba(255,255,255,0.12);
+      padding: 0 20px;
+      position: relative;
+      max-height: 300px;
+    }
+    /* subtle horizontal gridlines */
+    .chart-bars-row::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.04) 0px,
+        rgba(255,255,255,0.04) 0.5px,
+        transparent 0.5px,
+        transparent 25%
+      );
+      pointer-events: none;
+    }
+    .chart-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .chart-bar {
+      width: 32px;
+      border-radius: 3px 3px 0 0;
+      transform-origin: bottom;
+      transform: scaleY(0);
+      transition: transform 0.4s ease-out;
+    }
+    .chart-bar.in { transform: scaleY(1); }
+    .chart-company-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #888888;
+      white-space: nowrap;
+    }
+    .chart-legend {
+      display: flex;
+      gap: 28px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ===== CARD GRID ===== */
+    .card-section {
+      background: #0a0a0a;
+      padding: 48px 0;
+    }
+    .card-section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 40px 24px;
+    }
+    .csection-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2.8px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .csection-title {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 500;
+      font-size: 28px;
+      color: #f2f2f2;
+      letter-spacing: -0.56px;
+      line-height: 42px;
+    }
+    .csection-title span { color: #dafe7f; }
+    .csection-controls {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .ctrl-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      color: #888;
+    }
+    .ctrl-btn {
+      border: 0.5px solid rgba(255,255,255,0.06);
+      border-radius: 2px;
+      padding: 10px 15px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      color: #888;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      padding: 0 40px 80px;
+    }
+    .market-card {
+      background: #141414;
+      border: 0.5px solid rgba(218,254,127,0.22);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+    .market-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .emotion-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2.6px;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 2px;
+      border: 0.5px solid;
+      white-space: nowrap;
+    }
+    .tag-nostalgia { color: #dafe7f; background: rgba(218,254,127,0.08); border-color: #dafe7f; }
+    .tag-fear      { color: #ff8a3d; background: rgba(255,138,61,0.08);   border-color: #ff8a3d; }
+    .tag-anger     { color: #ff4444; background: rgba(255,68,68,0.08);    border-color: #ff4444; }
+    .tag-happiness { color: #4caf50; background: rgba(76,175,80,0.08);    border-color: #4caf50; }
+    .card-vol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 1.47px;
+      text-transform: uppercase;
+      color: #555;
+    }
+    .card-company {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 2.64px;
+      text-transform: uppercase;
+      color: #ddd;
+      margin-bottom: 14px;
+    }
+    .card-question {
+      font-family: 'Liberation Serif', Georgia, 'Times New Roman', serif;
+      font-weight: 400;
+      font-size: 15px;
+      color: #fff;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      padding: 16px 0 0;
+    }
+    .card-stat {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-num {
+      font-size: 48px;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .stat-num.c-nst  { color: #dafe7f; }
+    .stat-num.c-fear { color: #c64a4a; }
+    .stat-num.c-ang  { color: #ff4444; }
+    .stat-num.c-hap  { color: #4caf50; }
+    .stat-arrow {
+      font-size: 23px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-tag {
+      font-size: 16px;
+      letter-spacing: 3.2px;
+      text-transform: uppercase;
+      color: #555;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .card-actions {
+      display: flex;
+      gap: 14px;
+      width: 100%;
+    }
+    .btn-buy {
+      flex: 1;
+      height: 48px;
+      background: rgba(218,254,127,0.37);
+      border: 0.5px solid rgba(218,254,127,0.35);
+      color: #fff;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 0;
+    }
+    .btn-sell {
+      flex: 1;
+      height: 48px;
+      background: rgba(198,74,74,0.52);
+      border: 0.5px solid rgba(255,68,68,0.3);
+      color: #fff;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      border-top: 0.5px solid rgba(255,255,255,0.06);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding: 49px 40px 36px;
+      background:#0a0a0a;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: 24px;
+      color: #f2f2f2;
+      letter-spacing: 4.32px;
+      line-height: 36px;
+      margin-bottom: 15px;
+    }
+    .footer-tagline {
+      font-size: 12px;
+      color: #888;
+      line-height: 18.6px;
+      max-width: 320px;
+      margin-bottom: 15px;
+    }
+    .footer-disclaimer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #555;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      line-height: 18px;
+    }
+    .footer-col-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2.8px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 18px;
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-link {
+      font-size: 12px;
+      color: #888;
+      line-height: 18px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: #f2f2f2; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-dot"></div>
+      <span class="header-title">THE EXCHANGE</span>
+    </div>
+    <div class="header-points">
+      <div class="header-pts-inner">
+        <span class="header-pts-num" id="ptsCount">0</span><span class="header-pts-label">pts</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== HERO CARD ===== -->
+  <section class="hero-section">
+    <div class="hero-card">
+
+      <!-- Headline -->
+      <div class="hero-headline">
+        Amul's trust held steady through FDA friction.
+        <span class="nostalgia-word">Nostalgia</span> absorbed the damage
+      </div>
+
+      <!-- Stats (absolutely positioned to match Figma y=276) -->
+      <div class="hero-stat">
+        <span class="hero-stat-pct" id="heroStatPct">41%</span><span class="hero-stat-loyalty"> loyalty</span><span class="hero-stat-desc"> rise, want to buy in?</span>
+      </div>
+
+      <!-- Trade button (absolutely positioned to match Figma y=427) -->
+      <button class="hero-trade-btn" disabled>TRADE</button>
+
+      <!-- Area chart -->
+      <div class="hero-chart-area">
+        <svg id="heroChart" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffbe02" stop-opacity="0.50"/>
+              <stop offset="55%" stop-color="#8a6400" stop-opacity="0.28"/>
+              <stop offset="100%" stop-color="#3a2800" stop-opacity="0.10"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Y-axis horizontal gridlines -->
+          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+
+          <!-- Y-axis value labels -->
+          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">75</text>
+          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">60</text>
+          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">45</text>
+          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">30</text>
+
+          <!-- X-axis tick marks -->
+          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+
+          <!-- X-axis month labels -->
+          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
+          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
+          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
+          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
+          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
+          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
+
+          <!-- fill area -->
+          <path d="M0 145 L0 118 C 50 112, 90 105, 130 92 C 170 79, 195 55, 235 38 C 265 25, 290 22, 315 28 C 340 35, 358 52, 385 68 C 410 82, 440 95, 470 90 C 480 88, 490 86, 497 84 L497 145 Z" fill="url(#areaGrad)"/>
+          <!-- curve line -->
+          <path d="M0 118 C 50 112, 90 105, 130 92 C 170 79, 195 55, 235 38 C 265 25, 290 22, 315 28 C 340 35, 358 52, 385 68 C 410 82, 440 95, 470 90 C 480 88, 490 86, 497 84" fill="none" stroke="#ffbe02" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- dot on curve -->
+          <circle id="chartDot" cx="0" cy="0" r="4" fill="#ffbe02" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+
+          <!-- interactive Y value marker on left -->
+          <g id="chartYAxisLabel" display="none" pointer-events="none">
+            <rect id="chartYAxisBg" x="0" y="0" width="24" height="13" rx="1" fill="rgba(255,190,2,0.15)" stroke="rgba(255,190,2,0.45)" stroke-width="0.5"/>
+            <text id="chartYAxisText" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#ffbe02" text-anchor="middle" letter-spacing="0.3">74</text>
+          </g>
+
+          <!-- floating NST tooltip near dot -->
+          <g id="chartLabelGroup" display="none" pointer-events="none">
+            <rect id="chartLabelBg" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(255,190,2,0.45)" stroke-width="0.5"/>
+            <text id="chartLabelText" x="0" y="0" fill="#ffbe02" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">74.6 NST</text>
+          </g>
+
+          <!-- custom scrubber: needle + top handle + bottom month pill -->
+          <g id="chartScrubber" display="none" pointer-events="none">
+            <line id="scrubLine" x1="0" y1="12" x2="0" y2="118" stroke="rgba(255,190,2,0.55)" stroke-width="1"/>
+            <circle id="scrubCapOuter" cx="0" cy="6" r="5.5" fill="#111" stroke="#ffbe02" stroke-width="1.5"/>
+            <circle id="scrubCapInner" cx="0" cy="6" r="2" fill="#ffbe02"/>
+            <line id="scrubTick" x1="0" y1="118" x2="0" y2="126" stroke="rgba(255,190,2,0.7)" stroke-width="1.5"/>
+            <rect id="scrubPillBg" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#ffbe02" stroke-width="1"/>
+            <text id="scrubPillText" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#ffbe02" text-anchor="middle" letter-spacing="0.5">MAR</text>
+          </g>
+
+          <!-- full-area hit target (on top) -->
+          <rect id="chartHitArea" x="0" y="0" width="497" height="145" fill="transparent"/>
+        </svg>
+      </div>
+
+      <!-- Bottom pagination -->
+      <div class="hero-divider">
+        <div class="divider-seg active"></div>
+        <div class="divider-seg"></div>
+        <div class="divider-seg"></div>
+        <div class="divider-seg"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== POINTS BANNER (full-width) ===== -->
+  <div id="bannerSentinel" style="height:1px;pointer-events:none;"></div>
+  <section class="points-banner" id="pointsBanner">
+    <div class="banner-full">
+      <div class="points-inner">
+        <p class="points-copy">You need at least <span class="hl">800 points</span> to keep up in the trade. The way to earn them is simple - play!</p>
+        <div class="points-stats-row">
+          <span>REQUIRED: 800</span>
+          <span id="balanceText">BALANCE: 0</span>
+        </div>
+        <div class="progress-dots" id="progressDots"></div>
+      </div>
+      <button class="earn-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+    </div>
+    <div class="banner-mini">
+      <span class="banner-mini-text">You need 800 points to trade.</span>
+      <button class="banner-mini-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+    </div>
+  </section>
+
+  <div class="page-wrap">
+
+  <!-- ===== VALUES BAR CHART ===== -->
+  <section class="values-section" id="valuesSection">
+    <div class="values-section-label">ALL VALUES · LIVE MARKET</div>
+    <div class="chart-wrap">
+      <div class="chart-y-labels">
+        <span>100</span>
+        <span>75</span>
+        <span>50</span>
+        <span>25</span>
+        <span>0</span>
+      </div>
+      <div class="chart-area">
+        <div class="chart-bars-row" id="chartBarsRow" style="height:300px;">
+
+          <!-- AMUL: Trust 74, Loyalty 41, Belonging 68 -->
+          <div class="chart-group">
+            <div class="chart-bars">
+              <div class="chart-bar" style="background:#dafe7f; height:222px;" data-idx="0"></div>
+              <div class="chart-bar" style="background:#c8922a; height:123px;" data-idx="1"></div>
+              <div class="chart-bar" style="background:#7b9fff; height:204px;" data-idx="2"></div>
+            </div>
+            <div class="chart-company-label">AMUL</div>
+          </div>
+
+          <!-- CAMPA: Trust 61, Loyalty 55, Belonging 40 -->
+          <div class="chart-group">
+            <div class="chart-bars">
+              <div class="chart-bar" style="background:#dafe7f; height:183px;" data-idx="3"></div>
+              <div class="chart-bar" style="background:#c8922a; height:165px;" data-idx="4"></div>
+              <div class="chart-bar" style="background:#7b9fff; height:120px;" data-idx="5"></div>
+            </div>
+            <div class="chart-company-label">CAMPA</div>
+          </div>
+
+          <!-- BYJU'S: Fear 82, Loyalty 29, Belonging 18 -->
+          <div class="chart-group">
+            <div class="chart-bars">
+              <div class="chart-bar" style="background:#ff4444; height:246px;" data-idx="6"></div>
+              <div class="chart-bar" style="background:#c8922a; height:87px;"  data-idx="7"></div>
+              <div class="chart-bar" style="background:#7b9fff; height:54px;"  data-idx="8"></div>
+            </div>
+            <div class="chart-company-label">BYJU'S</div>
+          </div>
+
+          <!-- ZOMATO: Anger 71, Loyalty 63, Belonging 44 -->
+          <div class="chart-group">
+            <div class="chart-bars">
+              <div class="chart-bar" style="background:#ff4444; height:213px;" data-idx="9"></div>
+              <div class="chart-bar" style="background:#c8922a; height:189px;" data-idx="10"></div>
+              <div class="chart-bar" style="background:#7b9fff; height:132px;" data-idx="11"></div>
+            </div>
+            <div class="chart-company-label">ZOMATO</div>
+          </div>
+
+          <!-- NETFLIX: Happiness 86, Loyalty 52, Belonging 61 -->
+          <div class="chart-group">
+            <div class="chart-bars">
+              <div class="chart-bar" style="background:#4caf50; height:258px;" data-idx="12"></div>
+              <div class="chart-bar" style="background:#c8922a; height:156px;" data-idx="13"></div>
+              <div class="chart-bar" style="background:#7b9fff; height:183px;" data-idx="14"></div>
+            </div>
+            <div class="chart-company-label">NETFLIX</div>
+          </div>
+
+        </div>
+        <!-- Legend -->
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-swatch" style="background:#dafe7f;"></div>TRUST</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#c8922a;"></div>LOYALTY</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#7b9fff;"></div>BELONGING</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#ff4444;"></div>FEAR / ANGER</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#4caf50;"></div>HAPPINESS</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CARD GRID ===== -->
+  <section class="card-section">
+    <div class="card-section-header">
+      <div>
+        <div class="csection-meta">● ACTIVE MARKETS · 1,284</div>
+        <div class="csection-title">All markets, priced by <span>values</span>.</div>
+      </div>
+      <div class="csection-controls">
+        <span class="ctrl-label">SORT</span>
+        <button class="ctrl-btn">24H VOLUME <span style="opacity:0.5;">▾</span></button>
+        <button class="ctrl-btn">GRID <span style="opacity:0.5;">▾</span></button>
+      </div>
+    </div>
+    <div class="card-grid">
+
+      <!-- Card 1: NOSTALGIA / AMUL -->
+      <div class="market-card" data-card-idx="0">
+        <div class="card-top-row">
+          <span class="emotion-tag tag-nostalgia">● NOSTALGIA</span>
+          <span class="card-vol">VOL $ 2.4M</span>
+        </div>
+        <div class="card-company">AMUL · DAIRY</div>
+        <div class="card-question">Amul's trust held steady through FDA friction. Nostalgia absorbed the damage</div>
+        <div class="card-body">
+          <div class="card-stat">
+            <span class="stat-num c-nst">74.6</span>
+            <span class="stat-arrow" style="color:#dafe7f;">▲</span>
+            <span class="stat-tag">NST</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-buy">BUY</button>
+            <button class="btn-sell">SELL</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: FEAR / BYJU'S -->
+      <div class="market-card" data-card-idx="1">
+        <div class="card-top-row">
+          <span class="emotion-tag tag-fear">● FEAR</span>
+          <span class="card-vol">VOL $ 1.1M</span>
+        </div>
+        <div class="card-company">BYJU'S · EDTECH</div>
+        <div class="card-question">BYJU's collapsed. The anxiety that built it didn't. Is fear still a sound investment?</div>
+        <div class="card-body">
+          <div class="card-stat">
+            <span class="stat-num c-fear">61.9</span>
+            <span class="stat-arrow" style="color:#c64a4a;">▼</span>
+            <span class="stat-tag">FEAR</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-buy">BUY</button>
+            <button class="btn-sell">SELL</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: ANGER / ZOMATO -->
+      <div class="market-card" data-card-idx="2">
+        <div class="card-top-row">
+          <span class="emotion-tag tag-anger">● ANGER</span>
+          <span class="card-vol">VOL $ 1.8M</span>
+        </div>
+        <div class="card-company">ZOMATO · FOOD</div>
+        <div class="card-question">Zomato's controversies kept coming. Engagement never dropped. Do you profit from the outrage?</div>
+        <div class="card-body">
+          <div class="card-stat">
+            <span class="stat-num c-ang">57.3</span>
+            <span class="stat-arrow" style="color:#ff4444;">▼</span>
+            <span class="stat-tag">ANG</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-buy">BUY</button>
+            <button class="btn-sell">SELL</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: HAPPINESS / NETFLIX -->
+      <div class="market-card" data-card-idx="3">
+        <div class="card-top-row">
+          <span class="emotion-tag tag-happiness">● HAPPINESS</span>
+          <span class="card-vol">VOL $ 3.2M</span>
+        </div>
+        <div class="card-company">NETFLIX · OTT</div>
+        <div class="card-question">Netflix turned rest into a ritual. Happiness is the most renewable resource in the market. Do you invest in the loop?</div>
+        <div class="card-body">
+          <div class="card-stat">
+            <span class="stat-num c-hap">82.1</span>
+            <span class="stat-arrow" style="color:#4caf50;">▲</span>
+            <span class="stat-tag">HAP</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-buy">BUY</button>
+            <button class="btn-sell">SELL</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div>
+      <div class="footer-brand">THE EXCHANGE</div>
+      <div class="footer-tagline">The world's first prediction market for emotional capital. Trade the sentiment beneath the balance sheet.</div>
+      <div class="footer-disclaimer">NOT FINANCIAL ADVICE · MARKETS ARE SIMULATED<br>VOLUMES ARE AGGREGATED FROM PUBLIC SOCIAL SIGNAL</div>
+    </div>
+    <div>
+      <div class="footer-col-head">Markets</div>
+      <div class="footer-links">
+        <a class="footer-link">Indices</a>
+        <a class="footer-link">Live markets</a>
+        <a class="footer-link">Launched today</a>
+        <a class="footer-link">Closing soon</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-head">Research</div>
+      <div class="footer-links">
+        <a class="footer-link">Methodology</a>
+        <a class="footer-link">The sentiment paper</a>
+        <a class="footer-link">Risk disclosures</a>
+        <a class="footer-link">API</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-head">Company</div>
+      <div class="footer-links">
+        <a class="footer-link">About</a>
+        <a class="footer-link">Careers</a>
+        <a class="footer-link">Contact</a>
+        <a class="footer-link">Terms · Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  </div><!-- /.page-wrap -->
+
+  <script src="js/main.js"></script>
+  <script>
+    // ── Sync pts counter from persisted state ──────────────────────────────
+    var _pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
+    document.getElementById('ptsCount').textContent = _pts;
+    var _balEl = document.getElementById('balanceText');
+    if (_balEl) _balEl.textContent = 'BALANCE: ' + _pts;
+
+    // ── Hero dot-grid: fill top-left → bottom-right, 80ms stagger ──────────
+    (function () {
+      var dots = document.querySelectorAll('#heroDotGrid .dot-cell');
+      dots.forEach(function (dot) {
+        var r = parseInt(dot.getAttribute('data-r'));
+        var c = parseInt(dot.getAttribute('data-c'));
+        var isEmpty = dot.getAttribute('data-empty') === '1';
+        if (!isEmpty) {
+          var delay = (r + c) * 80;
+          setTimeout(function () {
+            dot.classList.add('lit');
+          }, delay);
+        }
+      });
+    })();
+
+    // ── Progress dots — fill proportionally to 800pt goal ─────────────────
+    (function () {
+      var container = document.getElementById('progressDots');
+      var totalDots = 130;
+      var filled = Math.min(Math.round((_pts / 800) * totalDots), totalDots);
+      for (var i = 0; i < totalDots; i++) {
+        var d = document.createElement('div');
+        d.className = 'pdot' + (i < filled ? ' on' : '');
+        container.appendChild(d);
+      }
+    })();
+
+    // ── Bar chart: animate up on scroll into view, 60ms stagger ───────────
+    (function () {
+      var section = document.getElementById('valuesSection');
+      var bars = section.querySelectorAll('.chart-bar');
+      var done = false;
+
+      function runBars() {
+        if (done) return;
+        done = true;
+        bars.forEach(function (bar) {
+          var idx = parseInt(bar.getAttribute('data-idx'));
+          setTimeout(function () {
+            bar.classList.add('in');
+          }, idx * 60);
+        });
+      }
+
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function (entries) {
+          if (entries[0].isIntersecting) { runBars(); obs.disconnect(); }
+        }, { threshold: 0.25 });
+        obs.observe(section);
+      } else {
+        runBars();
+      }
+    })();
+
+    // ── Card grid: fade-up on scroll, 60ms stagger ─────────────────────────
+    (function () {
+      var cards = document.querySelectorAll('.market-card');
+
+      if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var card = entry.target;
+              var idx = parseInt(card.getAttribute('data-card-idx'));
+              setTimeout(function () {
+                card.classList.add('visible');
+              }, idx * 60);
+              obs.unobserve(card);
+            }
+          });
+        }, { threshold: 0.1 });
+        cards.forEach(function (c) { obs.observe(c); });
+      } else {
+        cards.forEach(function (c) { c.classList.add('visible'); });
+      }
+    })();
+
+    // ── Points banner sticky collapse ──────────────────────────────────────
+    (function () {
+      var sentinel = document.getElementById('bannerSentinel');
+      var banner   = document.getElementById('pointsBanner');
+      if (!sentinel || !banner) return;
+      var stickyTimer = null;
+      var obs = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) {
+          stickyTimer = setTimeout(function () {
+            banner.classList.add('banner-sticky');
+          }, 500);
+        } else {
+          clearTimeout(stickyTimer);
+          banner.classList.remove('banner-sticky');
+        }
+      }, { threshold: 0 });
+      obs.observe(sentinel);
+    })();
+
+    // ── Hero chart interactive scrubber ───────────────────────────────────
+    (function () {
+      var svg          = document.getElementById('heroChart');
+      var hitArea      = document.getElementById('chartHitArea');
+      var dot          = document.getElementById('chartDot');
+      var labelGroup   = document.getElementById('chartLabelGroup');
+      var labelBg      = document.getElementById('chartLabelBg');
+      var labelText    = document.getElementById('chartLabelText');
+      var yAxisLabel   = document.getElementById('chartYAxisLabel');
+      var yAxisBg      = document.getElementById('chartYAxisBg');
+      var yAxisText    = document.getElementById('chartYAxisText');
+      var scrubber     = document.getElementById('chartScrubber');
+      var scrubLine    = document.getElementById('scrubLine');
+      var scrubCapO    = document.getElementById('scrubCapOuter');
+      var scrubCapI    = document.getElementById('scrubCapInner');
+      var scrubTick    = document.getElementById('scrubTick');
+      var scrubPillBg  = document.getElementById('scrubPillBg');
+      var scrubPillTxt = document.getElementById('scrubPillText');
+      var statPct      = document.getElementById('heroStatPct');
+
+      if (!svg || !hitArea) return;
+
+      var MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN'];
+
+      var pts = [
+        {x:0,y:118},{x:50,y:112},{x:90,y:105},{x:130,y:92},
+        {x:170,y:79},{x:195,y:55},{x:235,y:38},{x:265,y:25},
+        {x:290,y:22},{x:315,y:28},{x:340,y:35},{x:358,y:52},
+        {x:385,y:68},{x:410,y:82},{x:440,y:95},{x:470,y:90},
+        {x:480,y:88},{x:490,y:86},{x:497,y:84}
+      ];
+
+      function getCurveY(x) {
+        for (var i = 0; i < pts.length - 1; i++) {
+          if (x >= pts[i].x && x <= pts[i + 1].x) {
+            var t = (x - pts[i].x) / (pts[i + 1].x - pts[i].x);
+            return pts[i].y + t * (pts[i + 1].y - pts[i].y);
+          }
+        }
+        return pts[pts.length - 1].y;
+      }
+
+      function toNST(svgY) {
+        return Math.max(30.0, Math.min(74.6, 74.6 - ((svgY - 22) / 96) * 44.6));
+      }
+
+      function toPct(nst) {
+        return Math.round(17 + ((nst - 30) / 44.6) * 24);
+      }
+
+      function getSvgX(e) {
+        var rect = svg.getBoundingClientRect();
+        return Math.max(0, Math.min(497, ((e.clientX - rect.left) / rect.width) * 497));
+      }
+
+      hitArea.addEventListener('mousemove', function (e) {
+        var sx  = getSvgX(e);
+        var sy  = getCurveY(sx);
+        var nst = toNST(sy);
+        var pct = toPct(nst);
+
+        // ── custom scrubber needle ─────────────────────────────────────────
+        // line + circles share the exact x=sx (no clamping, line looks correct)
+        scrubLine.setAttribute('x1', sx); scrubLine.setAttribute('x2', sx);
+        scrubCapO.setAttribute('cx', sx);
+        scrubCapI.setAttribute('cx', sx);
+        scrubTick.setAttribute('x1', sx); scrubTick.setAttribute('x2', sx);
+        // pill/handle: clamp so it never overflows the SVG edges
+        var hx = Math.max(15, Math.min(482, sx));
+        scrubPillBg.setAttribute('x', hx - 15);
+        scrubPillTxt.setAttribute('x', hx);
+        scrubPillTxt.textContent = MONTHS[Math.min(5, Math.floor(sx / (497 / 6)))];
+        scrubber.removeAttribute('display');
+
+        // ── dot on curve ──────────────────────────────────────────────────
+        dot.setAttribute('cx', sx);
+        dot.setAttribute('cy', sy);
+        dot.removeAttribute('display');
+
+        // ── floating NST tooltip (flips near right edge) ──────────────────
+        var LW = 62, LH = 19, pad = 6;
+        var lx = sx + pad, ly = sy - LH - pad;
+        if (lx + LW > 492) lx = sx - LW - pad;
+        if (ly < 14)        ly = sy + pad;   /* stay below top handle */
+        labelBg.setAttribute('x', lx);
+        labelBg.setAttribute('y', ly);
+        labelText.setAttribute('x', lx + 6);
+        labelText.setAttribute('y', ly + 13);
+        labelText.textContent = nst.toFixed(1) + ' NST';
+        labelGroup.removeAttribute('display');
+
+        // ── Y-axis pill (left edge, follows curve height) ─────────────────
+        var ym = Math.max(0, Math.min(132, sy - 6.5));
+        yAxisBg.setAttribute('y', ym);
+        yAxisText.setAttribute('y', ym + 10);
+        yAxisText.textContent = Math.round(nst);
+        yAxisLabel.removeAttribute('display');
+
+        // ── big stat number ───────────────────────────────────────────────
+        if (statPct) statPct.textContent = pct + '%';
+      });
+
+      hitArea.addEventListener('mouseleave', function () {
+        scrubber.setAttribute('display', 'none');
+        dot.setAttribute('display', 'none');
+        labelGroup.setAttribute('display', 'none');
+        yAxisLabel.setAttribute('display', 'none');
+        if (statPct) statPct.textContent = '41%';
+      });
+    })();
+  </script>
+</body>
+</html>

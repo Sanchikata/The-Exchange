@@ -1,0 +1,696 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #1f1f1f;
+  font-family: 'IBM Plex Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ── Game layout ─────────────────────────────────────────────────────────────── */
+
+.game-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 48px;
+  padding: 40px;
+}
+
+.game-sidebar {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.guide-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+/* ── Calibrate button ────────────────────────────────────────────────────────── */
+
+.calibrate-btn {
+  display: block;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.1s;
+}
+
+.calibrate-btn:hover {
+  opacity: 0.85;
+}
+
+.calibrate-btn:active {
+  opacity: 0.6;
+}
+
+/* ── Quit button ─────────────────────────────────────────────────────────────── */
+
+.quit-btn {
+  background: #230c05;
+  border: 1px solid #7a0909;
+  color: #e4e4e4;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  box-shadow: 0 0 24px rgba(122, 9, 9, 0.65);
+  text-shadow: 0 3px 16px #f88600;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.quit-btn:hover {
+  background: #3a1008;
+  box-shadow: 0 0 32px rgba(122, 9, 9, 0.9);
+}
+
+/* ── Maze wrapper ────────────────────────────────────────────────────────────── */
+
+.maze-wrapper {
+  flex-shrink: 0;
+}
+
+.maze-enter-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 8px;
+  padding-left: 34px; /* aligned with entrance gap center (canvas x=24 + 12px border) */
+}
+
+.enter-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.enter-dot-a { background: #22c93e; }
+.enter-dot-b { background: #fe6157; }
+.enter-dot-c { background: #fdbd2d; }
+
+.maze-border {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  padding: 12px;
+  background: #620707;
+  box-shadow: 0 0 0 1px rgba(122, 9, 9, 0.3);
+}
+
+/* entrance gap — top border, canvas x 0–32 */
+.maze-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: 32px;
+  height: 12px;
+  background: #1f1f1f;
+}
+
+/* exit gap — bottom border, canvas x 488–528 */
+.maze-border::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 12px;
+  width: 40px;
+  height: 12px;
+  background: #1f1f1f;
+}
+
+#mazeCanvas {
+  display: block;
+  position: relative;
+}
+
+/* ── Sensitivity control ─────────────────────────────────────────────────────── */
+
+.sens-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sens-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(200, 200, 196, 0.5);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+}
+
+.sens-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1px;
+  background: #7a0909;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.sens-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e4e4e4;
+  border: none;
+  box-shadow: 0 0 6px rgba(122, 9, 9, 0.8);
+}
+
+.sens-slider::-moz-range-thumb {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e4e4e4;
+  border: none;
+  box-shadow: 0 0 6px rgba(122, 9, 9, 0.8);
+}
+
+.sens-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 300;
+  color: #888880;
+  letter-spacing: 0.08em;
+}
+
+/* ── Maze enter label ────────────────────────────────────────────────────────── */
+
+.maze-enter-label-row {
+  padding-left: 36px;
+  margin-bottom: 4px;
+}
+
+.maze-enter-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(200, 200, 196, 0.5);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+}
+
+/* ── Maze exit indicator ─────────────────────────────────────────────────────── */
+
+.maze-exit-row {
+  display: flex;
+  justify-content: flex-end;
+  /* nudge left so the card centers over the 40px exit gap (gap starts at x=488 of 528px canvas + 12px border) */
+  padding-right: 3px;
+  margin-top: 8px;
+}
+
+.maze-exit-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.exit-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 300;
+  color: #888880;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.scratch-card-svg {
+  display: block;
+  opacity: 0.7;
+}
+
+/* ── Scratch card screen ─────────────────────────────────────────────────────── */
+
+.scratch-screen {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 250;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.scratch-screen.hidden {
+  display: none;
+}
+
+.scratch-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scratch-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.scratch-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #888880;
+  letter-spacing: 0.06em;
+}
+
+.scratch-area {
+  position: relative;
+  width: 220px;
+  height: 130px;
+  border: 1px solid #3a3a3a;
+  cursor: default;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.scratch-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: crosshair;
+}
+
+.scratch-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scratch-points {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 52px;
+  font-weight: 400;
+  color: #eeaa46;
+  line-height: 1;
+}
+
+.scratch-pts-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: #888880;
+  letter-spacing: 0.06em;
+}
+
+.scratch-next {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #e4e4e4;
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  padding: 7px 24px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  border-radius: 0;
+}
+
+.scratch-next.hidden {
+  display: none;
+}
+
+.scratch-next:hover {
+  border-color: #7a0909;
+  color: #eeaa46;
+}
+
+/* ── Calibration screen (Doordarshan colour bars) ────────────────────────────── */
+
+#calibration-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#calibration-screen.visible {
+  display: flex;
+}
+
+#calibration-screen::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 3px
+  );
+  pointer-events: none;
+  z-index: 301;
+}
+
+.cal-band-top,
+.cal-band-bottom {
+  width: 100%;
+  height: 80px;
+  background: #000000;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.cal-label.pulsing {
+  animation: calPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes calPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.cal-progress-track {
+  width: 300px;
+  height: 3px;
+  background: #333333;
+}
+
+.cal-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #ffffff;
+}
+
+.cal-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.cal-bar { flex: 1; }
+.cal-bar:nth-child(1) { background: #ffffff; }
+.cal-bar:nth-child(2) { background: #ff00ff; }
+.cal-bar:nth-child(3) { background: #00cc00; }
+.cal-bar:nth-child(4) { background: #e8820c; }
+.cal-bar:nth-child(5) { background: #0000ff; }
+.cal-bar:nth-child(6) { background: #ff00ff; }
+.cal-bar:nth-child(7) { background: #006600; }
+
+/* ── Reset flash + message ───────────────────────────────────────────────────── */
+
+.reset-flash {
+  position: fixed;
+  inset: 0;
+  background: #7a0909;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+  z-index: 200;
+}
+
+.reset-overlay {
+  z-index: 150;
+}
+
+.reset-card {
+  background: #1a1a1a;
+  border: 1px solid #7a0909;
+  padding: 36px 44px 32px;
+  text-align: center;
+}
+
+.reset-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: #e4e4e4;
+  margin-bottom: 22px;
+}
+
+.reset-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.reset-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #888880;
+  background: none;
+  border: 1px solid #444;
+  padding: 7px 20px;
+  cursor: pointer;
+  border-radius: 0;
+  letter-spacing: 0.02em;
+}
+
+.reset-btn:hover {
+  border-color: #7a0909;
+  color: #e4e4e4;
+}
+
+.reset-btn--primary {
+  background: #7a0909;
+  color: #e4e4e4;
+  border-color: #7a0909;
+}
+
+.reset-btn--primary:hover {
+  background: #9a1010;
+}
+
+/* ── Obstacle overlay ────────────────────────────────────────────────────────── */
+
+.obs-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.obs-overlay.hidden {
+  display: none;
+}
+
+.obs-card {
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  padding: 32px 36px 28px;
+  width: 320px;
+  position: relative;
+}
+
+.obs-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.obs-subtext {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #999999;
+  margin-bottom: 24px;
+}
+
+.obs-instruction {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #555555;
+  margin-bottom: 12px;
+}
+
+.obs-field {
+  margin-bottom: 16px;
+}
+
+.obs-label {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #555555;
+  margin-bottom: 5px;
+}
+
+.obs-input {
+  display: block;
+  width: 100%;
+  border: 1px solid #cccccc;
+  background: #ffffff;
+  padding: 7px 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #1a1a1a;
+  outline: none;
+  border-radius: 0;
+  -webkit-appearance: none;
+}
+
+.obs-input:focus {
+  border-color: #888888;
+}
+
+.obs-error {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #c0392b;
+  margin-top: 4px;
+  min-height: 15px;
+}
+
+.obs-submit {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  background: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  padding: 9px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 0;
+  letter-spacing: 0.02em;
+}
+
+.obs-submit:hover:not(:disabled) {
+  background: #333333;
+}
+
+.obs-submit:disabled {
+  background: #dddddd;
+  color: #999999;
+  cursor: not-allowed;
+}
+
+/* ── Captcha grid ────────────────────────────────────────────────────────────── */
+
+.captcha-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.captcha-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.captcha-img {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 3px solid transparent;
+}
+
+.captcha-img.captcha-selected {
+  border-color: #1a73e8;
+}
+
+.captcha-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  color: #666666;
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* ── Obstacle 3 — popup ad ───────────────────────────────────────────────────── */
+
+.obs3-card {
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  width: 400px;
+  position: relative;
+}
+
+.obs3-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  bottom: auto;
+  left: auto;
+  background: none;
+  border: none;
+  font-size: 10px;
+  color: #aaaaaa;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+  z-index: 1;
+}
+
+.obs3-close:hover {
+  color: #555555;
+}
+
+.obs3-image {
+  width: 100%;
+  height: 200px;
+  background: #cccccc;
+  display: block;
+}
+
+.obs3-headline {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #1a1a1a;
+  padding: 20px 24px 8px;
+}
+
+.obs3-subtext {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #999999;
+  padding: 0 24px 24px;
+}

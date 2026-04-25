@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Exchange — Happiness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/happiness.css">
+</head>
+<body>
+
+  <!-- Left Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-icon" title="Dashboard" onclick="location.href='market.html'">&#x229E;</div>
+    <div class="sidebar-icon" title="Portfolio" onclick="location.href='portfolio.html'">&#x2197;</div>
+    <div class="sidebar-icon active" title="Earn Points" onclick="location.href='games.html'">&#x2605;</div>
+    <div class="sidebar-icon sidebar-push" title="Settings">&#x2699;</div>
+    <div class="sidebar-icon" title="Help">?</div>
+  </nav>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-menu">&#x2630;</span>
+      <span class="topbar-brand">The Exchange</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-section">Happiness</span>
+    </div>
+    <div class="topbar-right">
+      <span id="happiness-score-display" style="display:none;font-size:12px;color:#d4857a;letter-spacing:0.04em;margin-right:20px;font-family:'IBM Plex Mono',monospace;"></span>
+      <span class="points-display" id="points-display">0 emotional points</span>
+    </div>
+  </header>
+
+  <main class="happiness-main">
+
+    <!-- ── Screen 0: Name Input ─────────────────────────────────────────── -->
+    <div class="screen" id="name-input">
+      <div class="name-wrap">
+        <span class="screen-eyebrow">Before we begin</span>
+        <p class="screen-heading">What's your name?</p>
+        <div class="name-field-row">
+          <input
+            class="name-field"
+            id="name-field"
+            type="text"
+            placeholder="First name"
+            maxlength="40"
+            autocomplete="off"
+            onkeydown="if(event.key==='Enter') submitName()"
+          />
+          <button class="quiz-next-btn" onclick="submitName()">Continue &#x2192;</button>
+        </div>
+        <p class="name-hint" id="name-hint"></p>
+      </div>
+    </div>
+
+
+    <!-- ── Screen 1: Quiz Selection ─────────────────────────────────────── -->
+    <div class="screen" id="quiz-selection">
+
+      <div class="quiz-selection-header">
+        <h1 class="quiz-selection-title">Choose a Quiz</h1>
+        <p class="quiz-selection-sub">Complete a quiz to earn emotional points</p>
+      </div>
+
+      <div class="quiz-grid">
+
+        <div class="quiz-card" onclick="enterQuiz('splitsvilla')">
+          <div class="quiz-img-placeholder">
+            <img src="assets/images/Splitsvilla.png" alt="Splitsvilla" style="width:100%;height:100%;object-fit:contain;display:block;">
+          </div>
+          <div class="quiz-card-body">
+            <span class="quiz-card-tag">Reality TV</span>
+            <h2 class="quiz-card-title">Which Splitsvilla X16 Contestant Are You?</h2>
+            <div class="quiz-card-footer">
+              <span class="quiz-card-meta">5 questions · Character-based</span>
+              <span class="quiz-card-cta">Start &#x2192;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-card" onclick="enterQuiz('bollywood')">
+          <div class="quiz-img-placeholder">
+            <img src="assets/images/Bollywood.jpg" alt="Bollywood" style="width:100%;height:100%;object-fit:contain;display:block;">
+          </div>
+          <div class="quiz-card-body">
+            <span class="quiz-card-tag">Cinema</span>
+            <h2 class="quiz-card-title">Which Bollywood Era Are You?</h2>
+            <div class="quiz-card-footer">
+              <span class="quiz-card-meta">5 questions · Era-based</span>
+              <span class="quiz-card-cta">Start &#x2192;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-card" onclick="enterQuiz('srishti')">
+          <div class="quiz-img-placeholder">
+            <img src="assets/images/Srishti.png" alt="Srishti" style="width:100%;height:100%;object-fit:contain;display:block;">
+          </div>
+          <div class="quiz-card-body">
+            <span class="quiz-card-tag">Srishti Match Maker</span>
+            <h2 class="quiz-card-title">Who Would You Be Friends With at Srishti, If It Was Computer Coded?</h2>
+            <div class="quiz-card-footer">
+              <span class="quiz-card-meta">6 questions · Bias-based</span>
+              <span class="quiz-card-cta">Start &#x2192;</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /quiz-selection -->
+
+
+    <!-- ── Screen 2: Quiz Runner ────────────────────────────────────────── -->
+    <div class="screen" id="quiz-run">
+
+      <div class="quiz-loading" id="quiz-loading">
+        <div class="quiz-loading-track">
+          <div class="quiz-loading-bar" id="quiz-loading-bar"></div>
+        </div>
+        <p class="quiz-loading-label" id="quiz-loading-label">Generating questions...</p>
+      </div>
+
+      <div class="quiz-body" id="quiz-body">
+
+        <div class="quiz-run-nav">
+          <button class="quiz-back-btn" onclick="exitQuiz()">&#x2190; Back</button>
+          <span class="quiz-progress-text" id="quiz-progress-text">1 / 5</span>
+        </div>
+
+        <div class="quiz-progress-track">
+          <div class="quiz-progress-fill" id="quiz-progress-bar-fill"></div>
+        </div>
+
+        <div class="quiz-question-wrap" id="quiz-question-wrap"></div>
+
+        <div class="quiz-run-footer">
+          <button class="quiz-next-btn" id="quiz-next-btn" onclick="nextQuestion()" disabled>Next &#x2192;</button>
+        </div>
+
+      </div>
+
+    </div><!-- /quiz-run -->
+
+
+    <!-- ── Screen 3: Result ─────────────────────────────────────────────── -->
+    <div class="screen" id="quiz-result">
+      <div class="result-wrap">
+        <button class="quiz-back-btn" onclick="exitQuiz()">&#x2190; Back to quizzes</button>
+        <div class="result-inner" id="result-inner"></div>
+      </div>
+    </div><!-- /quiz-result -->
+
+
+    <!-- ── Screen 3.5: Satisfaction ──────────────────────────────────────── -->
+    <div class="screen" id="quiz-satisfaction">
+      <div class="satisfaction-wrap">
+        <span class="screen-eyebrow">Before you continue</span>
+        <p class="screen-heading">How satisfied are you with your result?</p>
+        <div class="satisfaction-scale" id="satisfaction-scale">
+          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 1)">1</button>
+          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 2)">2</button>
+          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 3)">3</button>
+          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 4)">4</button>
+          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 5)">5</button>
+        </div>
+        <div class="satisfaction-labels">
+          <span>unsatisfied</span>
+          <span>very satisfied</span>
+        </div>
+        <div class="quiz-run-footer">
+          <button class="quiz-next-btn" id="satisfaction-next-btn" onclick="submitSatisfaction()" disabled>Continue &#x2192;</button>
+        </div>
+      </div>
+    </div><!-- /quiz-satisfaction -->
+
+
+    <!-- ── Screen 5: Share Intent ────────────────────────────────────────── -->
+    <div class="screen" id="quiz-share">
+      <div class="share-wrap">
+        <span class="screen-eyebrow">One last thing</span>
+        <p class="screen-heading">Would you share your result?</p>
+
+        <div class="share-options">
+          <button class="option-btn" id="share-yes" onclick="selectShare(this, true)">Yes</button>
+          <button class="option-btn" id="share-no"  onclick="selectShare(this, false)">No</button>
+        </div>
+
+        <div class="quiz-run-footer">
+          <button class="quiz-next-btn" id="share-submit-btn" onclick="submitSession()" disabled>Submit</button>
+        </div>
+      </div>
+    </div><!-- /quiz-share -->
+
+
+    <!-- ── Screen 6: Done ───────────────────────────────────────────────── -->
+    <div class="screen" id="quiz-done">
+      <div class="done-wrap">
+        <span class="screen-eyebrow">Done</span>
+        <p class="done-title" id="done-title">Thanks.</p>
+        <p class="done-desc">Your session has been recorded.</p>
+        <div class="result-actions" style="margin-top:32px">
+          <button class="quiz-retake-btn" onclick="startOver()">Start over</button>
+        </div>
+      </div>
+    </div><!-- /quiz-done -->
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/happiness.js"></script>
+</body>
+</html>
