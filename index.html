@@ -5,318 +5,838 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Exchange</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=Cormorant+Garamond:wght@500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     html, body {
-      width: 100%;
-      overflow-x: visible;
-      background: #0a0a0a;
-      color: #e8e8e0;
-      font-family: 'IBM Plex Mono', monospace;
-    }
-
-    /* ── Floating number background ── */
-    #bg-numbers {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
+      width: 100%; height: 100%;
       overflow: hidden;
-    }
-    #bg-numbers span {
-      position: absolute;
+      background: #080808;
+      color: #e8e4dc;
       font-family: 'IBM Plex Mono', monospace;
-      font-weight: 300;
-      color: #39FF14;
-      white-space: nowrap;
-      animation: glow-pulse 5s ease-in-out infinite;
-      will-change: text-shadow, opacity;
     }
 
-    @keyframes glow-pulse {
-      50% {
-        text-shadow:
-          0 0 4px #39FF14,
-          0 0 8px #39FF14;
-        opacity: 0.5;
-      }
+    .stage {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
     }
 
-    /* ── Section 1: Tagline ── */
-    .tagline-section {
-      position: relative;
-      z-index: 0;
-      height: 400vh; /* boxes appear only after tagline animation completes at 3×vh */
+    #globe-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 80px;
+      transform-origin: center center;
+      will-change: transform, opacity;
     }
 
-    .tagline-content {
+    #landing-brand {
       position: fixed;
       left: 50%;
-      top: 50vh; /* JS drives this from 50vh to 70vh */
-      transform: translateX(-50%) translateY(-90%);
-      text-align: center;
-      max-width: 680px;
-      width: calc(100% - 4rem);
-      z-index: 1;
-    }
-
-    .tagline-text {
-      font-size: 18px;
-      font-weight: 400;
-      color: #e8e8e0;
-      line-height: 1.6;
-      transition: opacity 0.3s ease;
-    }
-
-    .scroll-hint {
-      margin-top: 3rem;
-      font-size: 18px;
-      color: #ffffff;
-      transition: opacity 0.15s ease;
-      animation: arrow-bob 1.8s ease-in-out infinite;
-    }
-
-    @keyframes arrow-bob {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(6px); }
-    }
-
-    /* ── Section 2: Narrative ── */
-    /* Each box lives in its own 80vh scene so IntersectionObserver
-       fires them one at a time as the user scrolls through each scene. */
-    .box-scene {
-      min-height: 140vh;
+      top: 8vh;
+      transform: translateX(-50%);
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      position: relative;
-      z-index: 2;
+      gap: 12px;
+      z-index: 10;
+      pointer-events: none;
     }
 
-    .box {
-      background: #0f0f0f;
-      border: 0.5px solid #222222;
-      border-radius: 2px;
-      padding: 2rem 2.5rem;
-      max-width: 560px;
+    #landing-brand-dot {
+      width: 6px;
+      height: 6px;
+      background: #dafe7f;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(218,254,127,0.6);
+      flex-shrink: 0;
+    }
+
+    #landing-brand-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 22px;
+      color: #fff;
+      letter-spacing: 5px;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    /* ── Conversation columns ── */
+    #right-col {
+      position: fixed;
+      right: 40px;
+      top: 0;
+      width: 260px;
+      height: 100vh;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #left-col {
+      position: fixed;
+      left: 40px;
+      top: 0;
+      width: 260px;
+      height: 100vh;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* ── Bubbles ── */
+    .bubble {
+      position: absolute;
       width: 100%;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 15px;
-      line-height: 1.8;
-      color: #c8c8c0;
-      font-weight: 300;
       opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 2s ease, transform 2s ease;
     }
 
-    .box.visible {
+    .bubble-right {
+      background: rgba(200, 184, 138, 0.07);
+      border: 1px solid #c8b88a33;
+      border-radius: 2px 14px 14px 2px;
+      padding: 14px 20px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      color: #e8e4dc;
+      letter-spacing: 0.06em;
+      line-height: 1.8;
+      transform: translateY(20px);
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bubble-left {
+      background: #080808;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px 2px 2px 14px;
+      padding: 12px 18px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: #444;
+      letter-spacing: 0.22em;
+      line-height: 1.8;
+      transform: translateY(20px);
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bubble.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* ── Section 3: Entry ── */
-    .entry-section {
-      position: relative;
-      z-index: 1;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .entry-content {
+    /* ── CTA ── */
+    #cta-wrap {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       text-align: center;
-      max-width: 680px;
-      padding: 0 2rem;
-      background:#0a0a0a;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+      pointer-events: none;
+      z-index: 20;
     }
 
-    .entry-text {
-      font-size: 16px;
-      color: #e8e8e0;
-      font-weight: 400;
-      margin-bottom: 2.5rem;
+    #cta-wrap.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .enter-btn {
+    #enter-btn {
       display: inline-block;
-      background: #0a0a0a;
-      border: 0.5px solid #444444;
-      border-radius: 2px;
-      padding: 10px 32px;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 11px;
-      letter-spacing: 0.15em;
-      color: #e8e8e0;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #c8b88a;
+      border: 1px solid rgba(200, 184, 138, 0.4);
+      background: transparent;
+      padding: 14px 48px;
+      border-radius: 0;
       text-decoration: none;
-      cursor: pointer;
       transition: border-color 0.2s ease, color 0.2s ease;
     }
 
-    .enter-btn:hover {
-      border-color: #c4a45a;
-      color: #c4a45a;
+    #enter-btn:hover {
+      border-color: rgba(200, 184, 138, 0.8);
+      color: #e8e4dc;
+    }
+
+    #cta-tagline {
+      margin-bottom: 20px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: #e8e4dc;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.8;
+    }
+
+    #cta-sub {
+      margin-top: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 300;
+      color: #444;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    /* ── Bubble dissolve on explosion ── */
+    .dissolving {
+      opacity: 0 !important;
+      transform: translateY(-8px) !important;
+      transition: opacity 0.8s ease, transform 0.8s ease !important;
+      pointer-events: none;
+    }
+
+    /* ── Ambient particles ── */
+    #particle-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* ── Narrow screens ── */
+    @media (max-width: 700px) {
+      #left-col, #right-col { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── Floating number background ── -->
-  <div id="bg-numbers" aria-hidden="true"></div>
-
-  <!-- ── Section 1: Tagline ── -->
-  <section class="tagline-section" id="tagline">
-    <div class="tagline-content" id="tagline-content">
-      <p class="tagline-text">what is it worth to have emotions?</p>
-      <div class="scroll-hint">↓</div>
-    </div>
-  </section>
-
-  <!-- ── Section 2: Narrative ── -->
-  <div class="box-scene">
-    <div class="box">
-      <p>The Exchange operates on a simple principle: everything has value, including you. 
-        <br>For the first time, the market reflects what actually moves it — not quarterly reports, not interest rates, but something more complex and personal.</br></p>
-    </div>
-  </div>
-  <div class="box-scene">
-    <div class="box">
-      <p>Here, you're an active participant. Your attention earns points. Your points enable trades. Your trades build a portfolio, reflecting what you're worth.</p>
-    </div>
-  </div>
-  <div class="box-scene">
-    <div class="box">
-      <p>The market is honest. Welcome in, where you're seen.</p>
-    </div>
+  <div id="landing-brand">
+    <div id="landing-brand-dot"></div>
+    <span id="landing-brand-title">THE EXCHANGE</span>
   </div>
 
-  <!-- ── Section 3: Entry ── -->
-  <section class="entry-section" id="entry">
-    <div class="entry-content">
-      <p class="entry-text">trade what you're worth.</p>
-      <a href="market.html" class="enter-btn">enter the exchange</a>
-    </div>
-  </section>
+  <canvas id="particle-canvas"></canvas>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="supabase.js"></script>
+  <div class="stage">
+    <div id="globe-container"></div>
+  </div>
+
+  <!-- Conversation columns -->
+  <div id="right-col">
+    <div class="bubble bubble-right" data-order="0">Welcome to The Exchange.</div>
+    <div class="bubble bubble-right" data-order="2">We operate on a simple principle — everything has value.</div>
+    <div class="bubble bubble-right" data-order="4">For the first time, the market reflects what moves it.</div>
+    <div class="bubble bubble-right" data-order="6">Your attention earns points. Points enable trades. Trades build portfolios.</div>
+  </div>
+
+  <div id="left-col">
+    <div class="bubble bubble-left" data-order="1">— participant detected —</div>
+    <div class="bubble bubble-left" data-order="3">— value: unassigned —</div>
+    <div class="bubble bubble-left" data-order="5">— attention harvesting: initiated —</div>
+    <div class="bubble bubble-left" data-order="7">— nostalgia index / loyalty quotient / belonging score —</div>
+    <div class="bubble bubble-left" data-order="9">— portfolio generation: pending —</div>
+  </div>
+
+  <!-- Enter the Market CTA -->
+  <div id="cta-wrap">
+    <p id="cta-tagline">Step in where You're already seen.</p>
+    <a href="market.html" id="enter-btn">Enter the Market</a>
+    <p id="cta-sub">your attention is your entry fee</p>
+  </div>
+
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <script src="https://unpkg.com/globe.gl"></script>
   <script>
-    // ════════════════════════════════════════
-    //  BACKGROUND — static number spans
-    // ════════════════════════════════════════
-    (function () {
-      const container = document.getElementById('bg-numbers');
-      const VALUES = [
-        '0.4', '2.1', '84', '0.03', '1', '7', '0.9', '3.2',
-        '15', '0.7', '42', '0.1', '6', '99', '0.05', '2',
-        '8', '0.6', '0.01', '31', '5', '0.8', '17', '0.02',
-        '9', '0.3', '22', '0.07', '3', '56', '11', '0.12'
-      ];
-      // Grid: 10 cols × 9 rows = 90 cells, use 85 — one number per cell, no overlaps
-      const COLS = 10, ROWS = 9;
-      const cells = [];
-      for (let r = 0; r < ROWS; r++)
-        for (let c = 0; c < COLS; c++)
-          cells.push({ r, c });
-      // Shuffle cells
-      for (let i = cells.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const tmp = cells[i]; cells[i] = cells[j]; cells[j] = tmp;
-      }
+    /* ── Globe setup ─────────────────────────────────────────── */
+    const container = document.getElementById('globe-container');
+    const W = window.innerWidth;
+    const H = window.innerHeight;
 
-      const COUNT = 85;
-      const spans = [];
-      const cellW = 100 / COLS;
-      const cellH = 100 / ROWS;
+    const globe = Globe({ width: W, height: H })(container)
+      .globeImageUrl('')
+      .bumpImageUrl('')
+      .backgroundColor('rgba(0,0,0,0)')
+      .showAtmosphere(false)
+      .showGraticules(false)
+      .ringsData([])
+      .enablePointerInteraction(false);
 
-      for (let i = 0; i < COUNT; i++) {
-        const el = document.createElement('span');
-        const { r, c } = cells[i];
-        // Place within the inner 70% of each cell to keep clear margins
-        const left = c * cellW + cellW * 0.15 + Math.random() * cellW * 0.7;
-        const top  = r * cellH + cellH * 0.15 + Math.random() * cellH * 0.7;
-
-        el.textContent             = VALUES[Math.floor(Math.random() * VALUES.length)];
-        el.style.left              = left.toFixed(2) + '%';
-        el.style.top               = top.toFixed(2) + '%';
-        el.style.fontSize          = (9 + Math.floor(Math.random() * 4)) + 'px';
-        el.style.opacity           = (0.03 + Math.random() * 0.07).toFixed(3);
-        el.style.animationDelay    = -(Math.random() * 5).toFixed(2) + 's';
-
-        container.appendChild(el);
-        spans.push(el);
-      }
-
-      // Scroll — rapidly swap values as user scrolls
-      window.addEventListener('scroll', function () {
-        const batch = 14 + Math.floor(Math.random() * 10);
-        for (let k = 0; k < batch; k++) {
-          spans[Math.floor(Math.random() * spans.length)].textContent =
-            VALUES[Math.floor(Math.random() * VALUES.length)];
-        }
-      }, { passive: true });
-    })();
-
-    // ════════════════════════════════════════
-    //  SECTION 2 — intersection observer reveal
-    // ════════════════════════════════════════
-    const boxes = document.querySelectorAll('.box');
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
+    function hideGlobeSphere() {
+      globe.scene().traverse(obj => {
+        if (!obj.isMesh || !obj.material?.color) return;
+        const t = obj.geometry?.type;
+        if (t === 'SphereGeometry' || t === 'SphereBufferGeometry') obj.visible = false;
       });
-    }, {
-      threshold: 0.3,
-      rootMargin: '8px 8px -50px 8px'
-    });
-
-    boxes.forEach(box => observer.observe(box));
-
-    // ════════════════════════════════════════
-    //  SCROLL — arrow fade + tagline rise
-    // ════════════════════════════════════════
-    const taglineContent = document.querySelector('.tagline-content');
-    const scrollHint     = document.querySelector('.scroll-hint');
-    let rafPending = false;
-
-    function onScroll() {
-      const scrollY = window.scrollY;
-      const vh      = window.innerHeight;
-
-      // Arrow: fades out in the first 8% of viewport scroll
-      const hintT = Math.max(0, Math.min(1, scrollY / (vh * 0.08)));
-      scrollHint.style.opacity = 1 - hintT;
-
-      // Tagline: drifts from 50vh (center) to 70vh over the scroll section, then sticks
-      const progress = Math.min(1, scrollY / (vh * 2));
-      taglineContent.style.top = (50 - progress * 20) + 'vh';
-
-      rafPending = false;
+    }
+    function hideGraticules() {
+      globe.scene().traverse(obj => {
+        if (obj.isLine || obj.isLineSegments || obj.isLineLoop) obj.visible = false;
+      });
     }
 
-    window.addEventListener('scroll', function () {
-      if (!rafPending) {
-        rafPending = true;
-        requestAnimationFrame(onScroll);
-      }
-    }, { passive: true });
+    globe.onGlobeReady(() => {
+      globe.showGraticules(false);
+      hideGlobeSphere();
+      hideGraticules();
+      [100, 300, 700, 1500].forEach(ms => {
+        setTimeout(hideGlobeSphere, ms);
+        setTimeout(hideGraticules, ms);
+      });
+    });
 
-    onScroll();
+    const ctrl = globe.controls();
+    ctrl.autoRotate      = true;
+    ctrl.autoRotateSpeed = 0.12;
+    ctrl.enableZoom      = false;
+    ctrl.enablePan       = false;
+    ctrl.enableRotate    = false;
+
+    /* ── Globe outline dots ──────────────────────────────────── */
+    let globePoints = [];
+
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(r => r.json())
+      .then(world => {
+        const borders = topojson.mesh(world, world.objects.land);
+        const pts = [];
+        const SPACING = 1.2;
+        borders.coordinates.forEach(line => {
+          for (let i = 0; i < line.length - 1; i++) {
+            const [lng0, lat0] = line[i];
+            const [lng1, lat1] = line[i + 1];
+            const dist = Math.hypot(lng1 - lng0, lat1 - lat0);
+            const n = Math.max(1, Math.round(dist / SPACING));
+            for (let s = 0; s < n; s++) {
+              const t = s / n;
+              pts.push({ lat: lat0 + t * (lat1 - lat0), lng: lng0 + t * (lng1 - lng0) });
+            }
+          }
+        });
+        globePoints = pts;
+        // Set accessors once — never re-chain after this
+        globe
+          .pointsData(pts)
+          .pointLat(d => d.lat)
+          .pointLng(d => d.lng)
+          .pointColor(d => d.color || '#e8fff0')
+          .pointAltitude(0)
+          .pointRadius(d => d.isHalo ? 0.7 : d.color ? 0.15 : 0.10)
+          .pointsMerge(false);
+      })
+      .catch(() => {});
+
+    /* ── Rotation momentum loop ──────────────────────────────── */
+    const BASE_SPEED = 0.12;
+    let rotSpeed = BASE_SPEED;
+    (function rotLoop() {
+      rotSpeed += (BASE_SPEED - rotSpeed) * 0.03;
+      ctrl.autoRotateSpeed = rotSpeed;
+      requestAnimationFrame(rotLoop);
+    })();
+
+    /* ── Number values ───────────────────────────────────────── */
+    const NUM_VALUES = [
+      '0.4','2.1','84','0.03','1','7','0.9','3.2',
+      '15','0.7','42','0.1','6','99','0.05','2',
+      '8','0.6','0.01','31','5','0.8','17','0.02',
+      '9','0.3','22','0.07','3','56','11','0.12'
+    ];
+    function randVal() { return NUM_VALUES[Math.floor(Math.random() * NUM_VALUES.length)]; }
+
+    /* ── Scroll + conversation state ─────────────────────────── */
+    const MAX_SCROLL  = 3600;
+    const CONV_END    = 0.70;   // first 70% of scroll = conversation
+    let scrollTotal   = 0;
+    let isScattered   = false;
+    let isMorphed     = false;
+    let scatterEntries  = [];
+    let scatterOverlay  = null;
+    let morphTimer      = null;
+    let cleanupTimer    = null;
+    let explosionStarted = false;
+    let globeCurrentScale = 1;   // tracks live CSS scale of container
+
+    /* ── Scroll-triggered surface dots ──────────────────────── */
+    const SCROLL_DOT_COLORS = [
+      { core: 'rgba(255,210,80,0.95)',  halo: 'rgba(255,210,80,0.18)'  },
+      { core: 'rgba(255,190,50,0.95)',  halo: 'rgba(255,190,50,0.18)'  },
+      { core: 'rgba(240,170,40,0.95)',  halo: 'rgba(240,170,40,0.18)'  },
+      { core: 'rgba(255,220,110,0.95)', halo: 'rgba(255,220,110,0.18)' },
+      { core: 'rgba(200,150,40,0.95)',  halo: 'rgba(200,150,40,0.18)'  }
+    ];
+    const allScrollDots = Array.from({ length: 15000 }, () => {
+      const c = SCROLL_DOT_COLORS[Math.floor(Math.random() * SCROLL_DOT_COLORS.length)];
+      return { lat: Math.random() * 180 - 90, lng: Math.random() * 360 - 180,
+               color: c.core, haloColor: c.halo };
+    });
+    let visibleScrollDots = [];
+    let lastBubbleCount   = 0;
+
+    function addDotBatch() {
+      const batch = 20 + Math.floor(Math.random() * 20);
+      const start = visibleScrollDots.length;
+      const end   = Math.min(allScrollDots.length, start + batch);
+      if (end <= start) return;
+      visibleScrollDots = allScrollDots.slice(0, end);
+      const halos = visibleScrollDots.map(d => ({
+        lat: d.lat, lng: d.lng, color: d.haloColor, isHalo: true
+      }));
+      globe.pointsData([...globePoints, ...visibleScrollDots, ...halos]);
+    }
+
+    /* ── Conversation bubbles ────────────────────────────────── */
+    const bubblesAll = Array.from(document.querySelectorAll('.bubble'))
+      .sort((a, b) => +a.dataset.order - +b.dataset.order);
+
+    const colNextTop = { left: 80, right: 80 };
+
+    function revealBubble(b) {
+      const side = b.classList.contains('bubble-right') ? 'right' : 'left';
+      b.style.top = colNextTop[side] + 'px';
+      b.classList.add('visible');
+      // offsetHeight forces sync layout — gives actual content+padding height
+      colNextTop[side] += b.offsetHeight + 16;
+    }
+
+    function revealBubbles(p) {
+      const convProg = Math.min(1, p / CONV_END);
+      let count = 0;
+      bubblesAll.forEach((b, i) => {
+        if (convProg >= i / 10) {
+          if (!b.classList.contains('visible')) revealBubble(b);
+          count++;
+        }
+      });
+      if (count > lastBubbleCount) {
+        for (let n = lastBubbleCount; n < count; n++) addDotBatch();
+        lastBubbleCount = count;
+      }
+    }
+
+    /* ── Lat/lng → canvas px ─────────────────────────────────── */
+    function latLngToCanvas(lat, lng) {
+      const R   = globe.getGlobeRadius();
+      const phi = (90 - lat)  * Math.PI / 180;
+      const th  = (lng - 180) * Math.PI / 180;
+      const x3  = -R * Math.sin(phi) * Math.cos(th);
+      const y3  =  R * Math.cos(phi);
+      const z3  =  R * Math.sin(phi) * Math.sin(th);
+
+      const cam = globe.camera();
+      const mwe = cam.matrixWorldInverse.elements;
+      const pe  = cam.projectionMatrix.elements;
+
+      const vx = mwe[0]*x3 + mwe[4]*y3 + mwe[8]*z3  + mwe[12];
+      const vy = mwe[1]*x3 + mwe[5]*y3 + mwe[9]*z3  + mwe[13];
+      const vz = mwe[2]*x3 + mwe[6]*y3 + mwe[10]*z3 + mwe[14];
+      const vw = mwe[3]*x3 + mwe[7]*y3 + mwe[11]*z3 + mwe[15];
+
+      const cx = pe[0]*vx + pe[4]*vy + pe[8]*vz  + pe[12]*vw;
+      const cy = pe[1]*vx + pe[5]*vy + pe[9]*vz  + pe[13]*vw;
+      const cz = pe[2]*vx + pe[6]*vy + pe[10]*vz + pe[14]*vw;
+      const cw = pe[3]*vx + pe[7]*vy + pe[11]*vz + pe[15]*vw;
+
+      if (Math.abs(cw) < 1e-6) return null;
+      const nx = cx / cw, ny = cy / cw, nz = cz / cw;
+      if (nz > 1) return null;
+
+      return { x: (nx + 1) * 0.5 * W, y: (-ny + 1) * 0.5 * H };
+    }
+
+    /* ── Apply dot style to element ──────────────────────────── */
+    function styleDot(el, entry, extraTransform) {
+      const t = extraTransform !== undefined ? extraTransform : `translate(${entry.tx}px,${entry.ty}px)`;
+      el.style.cssText = [
+        'position:absolute',
+        `width:${entry.dotSize}px`, `height:${entry.dotSize}px`,
+        'border-radius:50%',
+        `background:${entry.dotBg}`,
+        `box-shadow:0 0 6px #ffd850,0 0 14px #ffd850,0 0 24px #ffd850`,
+        `left:${entry.sx}px`, `top:${entry.sy}px`,
+        'opacity:1',
+        `transform:${t}`,
+        'will-change:transform'
+      ].join(';');
+    }
+
+    /* ── Apply number style to element ──────────────────────── */
+    function styleNumber(el, entry, scale) {
+      const s = scale !== undefined ? scale : 1;
+      el.style.cssText = [
+        'position:absolute',
+        `left:${entry.finalX}px`, `top:${entry.finalY}px`,
+        "font-family:'IBM Plex Mono',monospace",
+        'font-weight:300',
+        `font-size:${entry.numSize}px`,
+        `color:${entry.dotBg}`,
+        `text-shadow:0 0 3px rgba(255,216,80,0.4),0 0 6px rgba(255,216,80,0.2)`,
+        'white-space:nowrap',
+        'opacity:0.30',
+        `transform:scale(${s})`,
+        'transform-origin:left center',
+        'will-change:transform'
+      ].join(';');
+    }
+
+    /* ── Morph: dot → number ─────────────────────────────────── */
+    function morphToNumbers() {
+      if (!isScattered || !scatterOverlay) return;
+      isMorphed = true;
+
+      scatterEntries.forEach(entry => {
+        const { el } = entry;
+        const delay = Math.random() * 700;
+
+        setTimeout(() => {
+          el.style.transition = 'transform 0.13s cubic-bezier(0.4,0,1,1)';
+          el.style.transform  = `translate(${entry.tx}px,${entry.ty}px) scale(0)`;
+        }, delay);
+
+        setTimeout(() => {
+          entry.numSize = 9 + Math.floor(Math.random() * 5);
+          el.textContent = randVal();
+          styleNumber(el, entry, 0);
+
+          requestAnimationFrame(() => {
+            el.style.transition = 'transform 0.18s cubic-bezier(0,0,0.2,1)';
+            el.style.transform  = 'scale(1)';
+          });
+        }, delay + 145);
+      });
+    }
+
+    /* ── Unmorph: number → dot ───────────────────────────────── */
+    function unmorph(callback) {
+      clearTimeout(morphTimer);
+
+      if (!isMorphed) {
+        callback();
+        return;
+      }
+
+      isMorphed = false;
+
+      scatterEntries.forEach(entry => {
+        const { el } = entry;
+        const delay = Math.random() * 120;
+
+        setTimeout(() => {
+          el.style.transition = 'transform 0.12s cubic-bezier(0.4,0,1,1)';
+          el.style.transform  = 'scale(0)';
+        }, delay);
+
+        setTimeout(() => {
+          el.textContent = '';
+          styleDot(el, entry, `translate(${entry.tx}px,${entry.ty}px) scale(0)`);
+
+          requestAnimationFrame(() => {
+            el.style.transition = 'transform 0.15s cubic-bezier(0,0,0.2,1)';
+            el.style.transform  = `translate(${entry.tx}px,${entry.ty}px) scale(1)`;
+          });
+        }, delay + 135);
+      });
+
+      setTimeout(callback, 350);
+    }
+
+    /* ── Fire scatter — uses globeCurrentScale for positioning ── */
+    function fireScatter() {
+      if (isScattered) return;
+      isScattered = true;
+      isMorphed   = false;
+      clearTimeout(cleanupTimer);
+      clearTimeout(morphTimer);
+
+      if (scatterOverlay) { scatterOverlay.remove(); scatterOverlay = null; }
+      scatterEntries = [];
+
+      ctrl.autoRotate = false;
+
+      const SCALE = 3;                               // original spread constant
+      const offX  = window.innerWidth  / 2 - W * SCALE / 2;
+      const offY  = window.innerHeight / 2 - H * SCALE / 2;
+      const vcx   = window.innerWidth  / 2;
+      const vcy   = window.innerHeight / 2;
+
+      // Column exclusion zones — keep numbers away from bubble text
+      // Right col: right: 40px, width 260px → x ∈ [W-300, W-40]
+      // Left col:  left:  40px, width 260px → x ∈ [40, 300]
+      // Both cols start at 30vh and stack ~420px down
+      const COL_Y_MIN = window.innerHeight * 0.28;
+      const COL_Y_MAX = window.innerHeight * 0.28 + 440;
+      const L_XMIN = 30, L_XMAX = 310;
+      const R_XMIN = window.innerWidth - 310, R_XMAX = window.innerWidth - 30;
+      const CTA_X_HALF = 160, CTA_Y_HALF = 50; // centre CTA exclusion
+
+      const sample = globePoints.filter((_, i) => i % 5 === 0);
+
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden;';
+      document.body.appendChild(overlay);
+      scatterOverlay = overlay;
+
+      const frag    = document.createDocumentFragment();
+      const entries = [];
+
+      for (const pt of sample) {
+        if (entries.length >= 480) break;
+        const cv = latLngToCanvas(pt.lat, pt.lng);
+        if (!cv) continue;
+
+        const sx = offX + cv.x * SCALE;
+        const sy = offY + cv.y * SCALE;
+        if (sx < -10 || sx > window.innerWidth + 10 || sy < -10 || sy > window.innerHeight + 10) continue;
+
+        const angle   = Math.atan2(sy - vcy, sx - vcx) + (Math.random() - 0.5) * 1.0;
+        const dist    = 60 + Math.random() * Math.max(window.innerWidth, window.innerHeight) * 0.6;
+        const tx      = Math.cos(angle) * dist;
+        const ty      = Math.sin(angle) * dist;
+        const dotSize = 1.5 + Math.random() * 1.2;
+        const dotBg   = '#ffd850';
+
+        const finalX = sx + tx, finalY = sy + ty;
+        const inColY = finalY > COL_Y_MIN && finalY < COL_Y_MAX;
+        if (inColY && ((finalX > L_XMIN && finalX < L_XMAX) || (finalX > R_XMIN && finalX < R_XMAX))) continue;
+        if (Math.abs(finalX - vcx) < CTA_X_HALF && Math.abs(finalY - vcy) < CTA_Y_HALF) continue;
+
+        // Skip if too close to an existing number (prevent overlap)
+        const tooClose = entries.some(e => Math.abs(e.finalX - finalX) < 52 && Math.abs(e.finalY - finalY) < 18);
+        if (tooClose) continue;
+
+        const el    = document.createElement('div');
+        const entry = { el, tx, ty, sx, sy, finalX, finalY, dotSize, dotBg, numSize: 10 };
+        styleDot(el, entry, 'translate(0,0)');
+
+        frag.appendChild(el);
+        entries.push(entry);
+      }
+
+      overlay.appendChild(frag);
+      scatterEntries = entries;
+
+      container.style.transition = 'opacity 0.6s ease';
+      container.style.opacity    = '0';
+
+      // Drift outward — slow wave, each dot floats to its final position
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        entries.forEach(entry => {
+          const dur   = 1000 + Math.random() * 600;
+          const delay = Math.random() * 300;
+          entry.el.style.transition = `transform ${dur}ms cubic-bezier(0.25,0.46,0.45,0.94) ${delay}ms`;
+          entry.el.style.transform  = `translate(${entry.tx}px,${entry.ty}px)`;
+        });
+      }));
+
+      // Morph dots → numbers, then show CTA
+      morphTimer = setTimeout(morphToNumbers, 1600);
+      setTimeout(() => {
+        document.getElementById('cta-wrap').classList.add('visible');
+      }, 2800);
+    }
+
+    /* ── Reverse scatter (pre-explosion scroll-back only) ─────── */
+    function reverseScatter() {
+      if (!isScattered) return;
+      isScattered = false;
+      clearTimeout(cleanupTimer);
+
+      unmorph(() => {
+        scatterEntries.forEach(entry => {
+          const dur   = 380 + Math.random() * 220;
+          const delay = Math.random() * 80;
+          entry.el.style.transition = `transform ${dur}ms cubic-bezier(0.4,0,0.2,1) ${delay}ms`;
+          entry.el.style.transform  = 'translate(0,0)';
+        });
+
+        container.style.transition = 'opacity 0.4s ease';
+        container.style.opacity    = '1';
+        ctrl.autoRotate = true;
+
+        cleanupTimer = setTimeout(() => {
+          if (scatterOverlay) { scatterOverlay.remove(); scatterOverlay = null; }
+          scatterEntries = [];
+        }, 700);
+      });
+    }
+
+    /* ── Explosion sequence: time-based scale 1→1.4 ──────────── */
+    function beginExplosionSequence() {
+      // Dissolve all visible bubbles
+      document.querySelectorAll('.bubble.visible').forEach(b => {
+        b.classList.add('dissolving');
+      });
+      setTimeout(() => {
+        document.querySelectorAll('.bubble').forEach(b => { b.style.display = 'none'; });
+      }, 800);
+
+      globe.pointsData([]);   // clear surface dots before scaling
+      const t0 = performance.now();
+
+      (function scaleLoop(ts) {
+        const elapsed = (ts - t0) / 1000;
+        const scale   = Math.min(1.4, 1 + elapsed * 0.2); // 2s to 1.4×, gentle
+        globeCurrentScale = scale;
+        container.style.transform = `scale(${scale})`;
+
+        // Disperse at 1.15× (~0.75s in) — globe is visibly grown before dots leave
+        if (scale >= 1.15 && !isScattered) {
+          fireScatter();
+        }
+
+        if (scale < 1.4) requestAnimationFrame(scaleLoop);
+      })(performance.now());
+    }
+
+    /* ── Unified scroll handler ──────────────────────────────── */
+    function onScrollDelta(dy) {
+      scrollTotal = Math.max(0, Math.min(MAX_SCROLL, scrollTotal + dy));
+      const p = scrollTotal / MAX_SCROLL;
+
+      rotSpeed = Math.max(-8, Math.min(8, rotSpeed + dy * 0.04));
+
+      // Bubble reveal (conversation phase only)
+      revealBubbles(p);
+
+      // Explosion: one-way trigger at 70% scroll
+      if (p >= CONV_END && !explosionStarted) {
+        explosionStarted = true;
+        beginExplosionSequence();
+      }
+    }
+
+    window.addEventListener('wheel', e => {
+      e.preventDefault();
+      onScrollDelta(e.deltaY);
+      fadeParticles();
+    }, { passive: false });
+
+    let ty0 = 0;
+    window.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const delta = ty0 - e.touches[0].clientY;
+      ty0 = e.touches[0].clientY;
+      onScrollDelta(delta * 2.5);
+      fadeParticles();
+    }, { passive: false });
+
+    /* ── Ambient particle system ─────────────────────────────── */
+    (function () {
+      const canvas = document.getElementById('particle-canvas');
+      const ctx    = canvas.getContext('2d');
+      const DPR    = Math.min(window.devicePixelRatio || 1, 2);
+
+      function resize() {
+        canvas.width  = window.innerWidth  * DPR;
+        canvas.height = window.innerHeight * DPR;
+        ctx.scale(DPR, DPR);
+      }
+      resize();
+
+      // Globe center — offset down by padding-top: 80px
+      const cx = window.innerWidth  / 2;
+      const cy = window.innerHeight / 2 + 40;
+
+      // Estimate globe visual radius (~38% of the shorter viewport dimension)
+      const globeR = Math.min(window.innerWidth, window.innerHeight) * 0.38;
+
+      const COUNT = 55;
+      const particles = Array.from({ length: COUNT }, () => {
+        // Random angle and radius in an annular band around the globe
+        const angle  = Math.random() * Math.PI * 2;
+        const band   = globeR * (0.85 + Math.random() * 0.7); // 85%–155% of globe radius
+        return {
+          // base position on the ring
+          angle,
+          band,
+          // slow drift speed (each particle orbits at slightly different rate)
+          orbitSpeed : (Math.random() - 0.5) * 0.00018,
+          // secondary wobble
+          wobbleAmp  : 8  + Math.random() * 18,
+          wobbleFreq : 0.3 + Math.random() * 0.5,
+          wobbleOff  : Math.random() * Math.PI * 2,
+          // vertical drift
+          vdriftAmp  : 5  + Math.random() * 12,
+          vdriftFreq : 0.2 + Math.random() * 0.4,
+          vdriftOff  : Math.random() * Math.PI * 2,
+          // appearance
+          radius     : 0.8 + Math.random() * 1.4,
+          baseAlpha  : 0.08 + Math.random() * 0.22,
+          pulseFreq  : 0.4 + Math.random() * 0.8,
+          pulseOff   : Math.random() * Math.PI * 2,
+          // color: mostly soft white/gold, occasional faint blue
+          hue        : Math.random() < 0.7 ? 'warm' : 'cool',
+        };
+      });
+
+      let globalAlpha = 1;   // master fade controlled by scroll
+      let fadingOut   = false;
+      let frameId;
+
+      function draw(ts) {
+        const t = ts / 1000;
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        if (globalAlpha <= 0) {
+          canvas.style.display = 'none';
+          return;
+        }
+
+        for (const p of particles) {
+          p.angle += p.orbitSpeed;
+
+          const wobbleR  = p.band + Math.sin(t * p.wobbleFreq + p.wobbleOff) * p.wobbleAmp;
+          const px = cx + Math.cos(p.angle) * wobbleR;
+          const py = cy + Math.sin(p.angle) * wobbleR
+                       + Math.sin(t * p.vdriftFreq + p.vdriftOff) * p.vdriftAmp;
+
+          const pulse    = 0.5 + 0.5 * Math.sin(t * p.pulseFreq + p.pulseOff);
+          const alpha    = p.baseAlpha * (0.5 + 0.5 * pulse) * globalAlpha;
+
+          const r = p.radius * (0.8 + 0.3 * pulse);
+
+          const color = p.hue === 'warm'
+            ? `rgba(200, 184, 138, ${alpha})`
+            : `rgba(180, 210, 255, ${alpha})`;
+
+          // glow
+          const grd = ctx.createRadialGradient(px, py, 0, px, py, r * 5);
+          grd.addColorStop(0, color);
+          grd.addColorStop(1, 'rgba(0,0,0,0)');
+
+          ctx.beginPath();
+          ctx.arc(px, py, r * 5, 0, Math.PI * 2);
+          ctx.fillStyle = grd;
+          ctx.fill();
+
+          // core dot
+          ctx.beginPath();
+          ctx.arc(px, py, r, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
+
+        frameId = requestAnimationFrame(draw);
+      }
+
+      frameId = requestAnimationFrame(draw);
+
+      // Called on first scroll — smoothly fades out over 800ms
+      let fadeStarted = false;
+      window.fadeParticles = function () {
+        if (fadeStarted) return;
+        fadeStarted = true;
+        const start = performance.now();
+        const dur   = 800;
+        (function fadeTick(now) {
+          globalAlpha = Math.max(0, 1 - (now - start) / dur);
+          if (globalAlpha > 0) requestAnimationFrame(fadeTick);
+        })(performance.now());
+      };
+    })();
+
   </script>
 </body>
 </html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      overflow-x: visible;
+      background: #0a0a0a;
+      color: #e8e8e0;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    /* ── Floating number background ── */
+    #bg-numbers {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    #bg-numbers span {
+      position: absolute;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 300;
+      color: #39FF14;
+      white-space: nowrap;
+      animation: glow-pulse 5s ease-in-out infinite;
+      will-change: text-shadow, opacity;
+    }
+
+    @keyframes glow-pulse {
+      50% {
+        text-shadow:
+          0 0 4px #39FF14,
+          0 0 8px #39FF14;
+        opacity: 0.5;
+      }
+    }
+
+    /* ── Section 1: Tagline ── */
+    .tagline-section {
+      position: relative;
+      z-index: 0;
+      height: 400vh; /* boxes appear only after tagline animation completes at 3×vh */
+    }
+
+    .tagline-content {
+      position: fixed;
+      left: 50%;
+      top: 50vh; /* JS drives this from 50vh to 70vh */
+      transform: translateX(-50%) translateY(-90%);
+      text-align: center;
+      max-width: 680px;
+      width: calc(100% - 4rem);
+      z-index: 1;
+    }
+
+    .tagline-text {
+      font-size: 18px;
+      font-weight: 400;
+      color: #e8e8e0;
+      line-height: 1.6;
+      transition: opacity 0.3s ease;
+    }
+
+    .scroll-hint {
+      margin-top: 3rem;
+      font-size: 18px;
+      color: #ffffff;
+      transition: opacity 0.15s ease;
+      animation: arrow-bob 1.8s ease-in-out infinite;
+    }
+
+    @keyframes arrow-bob {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(6px); }
+    }
+
+    /* ── Section 2: Narrative ── */
+    /* Each box lives in its own 80vh scene so IntersectionObserver
+       fires them one at a time as the user scrolls through each scene. */
+    .box-scene {
+      min-height: 140vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .box {
+      background: #0f0f0f;
+      border: 0.5px solid #222222;
+      border-radius: 2px;
+      padding: 2rem 2.5rem;
+      max-width: 560px;
+      width: 100%;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #c8c8c0;
+      font-weight: 300;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+
+    .box.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Section 3: Entry ── */
+    .entry-section {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .entry-content {
+      text-align: center;
+      max-width: 680px;
+      padding: 0 2rem;
+      background:#0a0a0a;
+    }
+
+    .entry-text {
+      font-size: 16px;
+      color: #e8e8e0;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+    }
+
+    .enter-btn {
+      display: inline-block;
+      background: #0a0a0a;
+      border: 0.5px solid #444444;
+      border-radius: 2px;
+      padding: 10px 32px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: #e8e8e0;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .enter-btn:hover {
+      border-color: #c4a45a;
+      color: #c4a45a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Floating number background ── -->
+  <div id="bg-numbers" aria-hidden="true"></div>
+
+  <!-- ── Section 1: Tagline ── -->
+  <section class="tagline-section" id="tagline">
+    <div class="tagline-content" id="tagline-content">
+      <p class="tagline-text">what is it worth to have emotions?</p>
+      <div class="scroll-hint">↓</div>
+    </div>
+  </section>
+
+  <!-- ── Section 2: Narrative ── -->
+  <div class="box-scene">
+    <div class="box">
+      <p>The Exchange operates on a simple principle: everything has value, including you. 
+        <br>For the first time, the market reflects what actually moves it — not quarterly reports, not interest rates, but something more complex and personal.</br></p>
+    </div>
+  </div>
+  <div class="box-scene">
+    <div class="box">
+      <p>Here, you're an active participant. Your attention earns points. Your points enable trades. Your trades build a portfolio, reflecting what you're worth.</p>
+    </div>
+  </div>
+  <div class="box-scene">
+    <div class="box">
+      <p>The market is honest. Welcome in, where you're seen.</p>
+    </div>
+  </div>
+
+  <!-- ── Section 3: Entry ── -->
+  <section class="entry-section" id="entry">
+    <div class="entry-content">
+      <p class="entry-text">trade what you're worth.</p>
+      <a href="market.html" class="enter-btn">enter the exchange</a>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
+  <script>
+    // ════════════════════════════════════════
+    //  BACKGROUND — static number spans
+    // ════════════════════════════════════════
+    (function () {
+      const container = document.getElementById('bg-numbers');
+      const VALUES = [
+        '0.4', '2.1', '84', '0.03', '1', '7', '0.9', '3.2',
+        '15', '0.7', '42', '0.1', '6', '99', '0.05', '2',
+        '8', '0.6', '0.01', '31', '5', '0.8', '17', '0.02',
+        '9', '0.3', '22', '0.07', '3', '56', '11', '0.12'
+      ];
+      // Grid: 10 cols × 9 rows = 90 cells, use 85 — one number per cell, no overlaps
+      const COLS = 10, ROWS = 9;
+      const cells = [];
+      for (let r = 0; r < ROWS; r++)
+        for (let c = 0; c < COLS; c++)
+          cells.push({ r, c });
+      // Shuffle cells
+      for (let i = cells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = cells[i]; cells[i] = cells[j]; cells[j] = tmp;
+      }
+
+      const COUNT = 85;
+      const spans = [];
+      const cellW = 100 / COLS;
+      const cellH = 100 / ROWS;
+
+      for (let i = 0; i < COUNT; i++) {
+        const el = document.createElement('span');
+        const { r, c } = cells[i];
+        // Place within the inner 70% of each cell to keep clear margins
+        const left = c * cellW + cellW * 0.15 + Math.random() * cellW * 0.7;
+        const top  = r * cellH + cellH * 0.15 + Math.random() * cellH * 0.7;
+
+        el.textContent             = VALUES[Math.floor(Math.random() * VALUES.length)];
+        el.style.left              = left.toFixed(2) + '%';
+        el.style.top               = top.toFixed(2) + '%';
+        el.style.fontSize          = (9 + Math.floor(Math.random() * 4)) + 'px';
+        el.style.opacity           = (0.03 + Math.random() * 0.07).toFixed(3);
+        el.style.animationDelay    = -(Math.random() * 5).toFixed(2) + 's';
+
+        container.appendChild(el);
+        spans.push(el);
+      }
+
+      // Scroll — rapidly swap values as user scrolls
+      window.addEventListener('scroll', function () {
+        const batch = 14 + Math.floor(Math.random() * 10);
+        for (let k = 0; k < batch; k++) {
+          spans[Math.floor(Math.random() * spans.length)].textContent =
+            VALUES[Math.floor(Math.random() * VALUES.length)];
+        }
+      }, { passive: true });
+    })();
+
+    // ════════════════════════════════════════
+    //  SECTION 2 — intersection observer reveal
+    // ════════════════════════════════════════
+    const boxes = document.querySelectorAll('.box');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.3,
+      rootMargin: '8px 8px -50px 8px'
+    });
+
+    boxes.forEach(box => observer.observe(box));
+
+    // ════════════════════════════════════════
+    //  SCROLL — arrow fade + tagline rise
+    // ════════════════════════════════════════
+    const taglineContent = document.querySelector('.tagline-content');
+    const scrollHint     = document.querySelector('.scroll-hint');
+    let rafPending = false;
+
+    function onScroll() {
+      const scrollY = window.scrollY;
+      const vh      = window.innerHeight;
+
+      // Arrow: fades out in the first 8% of viewport scroll
+      const hintT = Math.max(0, Math.min(1, scrollY / (vh * 0.08)));
+      scrollHint.style.opacity = 1 - hintT;
+
+      // Tagline: drifts from 50vh (center) to 70vh over the scroll section, then sticks
+      const progress = Math.min(1, scrollY / (vh * 2));
+      taglineContent.style.top = (50 - progress * 20) + 'vh';
+
+      rafPending = false;
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(onScroll);
+      }
+    }, { passive: true });
+
+    onScroll();
+  </script>
+</body>
+</html>
