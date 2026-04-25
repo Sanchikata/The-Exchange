@@ -300,7 +300,8 @@ function openDetail(i) {
       `<button class="btn-buy"  onclick="doBuy()">Buy</button>` +
       `<button class="btn-sell" onclick="doSell()">Sell</button>` +
     `</div>` +
-    `<div class="trade-cost">cost per trade: 10 emotional points</div>`;
+    `<div class="trade-cost">cost per trade: 10 emotional points</div>` +
+    `<div id="trade-feedback" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;margin-top:10px;opacity:0;transition:opacity 0.3s;"></div>`;
   document.getElementById('detail-panel').classList.add('open');
   document.getElementById('detail-overlay').classList.add('open');
 }
@@ -314,18 +315,37 @@ function closeDetail() {
 function saveTrade(type) {
   if (activeIdx === null) return;
   const co = COMPANIES[activeIdx];
-  window.ExchangeSession.trades.push({ type, name: co.name, ticker: co.ticker, price: co.price, emotion: co.emotion, ts: Date.now() });
+  const trade = { type, name: co.name, ticker: co.ticker, price: +co.price.toFixed(2), emotion: co.emotion, ts: Date.now() };
+  window.ExchangeSession.trades.push(trade);
+  localStorage.setItem('exchange_trades', JSON.stringify(window.ExchangeSession.trades));
+}
+
+function flashTrade(msg, ok) {
+  const el = document.getElementById('trade-feedback');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = ok ? '#5a9c6a' : '#c45a5a';
+  el.style.opacity = '1';
+  clearTimeout(window._tradeFadeTimer);
+  window._tradeFadeTimer = setTimeout(() => { el.style.opacity = '0'; }, 1800);
 }
 
 function doBuy() {
-  window.exchangePoints = (window.exchangePoints || 0) - 10;
+  if ((window.exchangePoints || 0) < 10) { flashTrade('INSUFFICIENT POINTS', false); return; }
+  window.exchangePoints -= 10;
+  localStorage.setItem('exchange_total_pts', window.exchangePoints);
   refreshPoints();
   saveTrade('buy');
+  flashTrade('BUY CONFIRMED', true);
+  refreshPortfolioBtn();
 }
 function doSell() {
   window.exchangePoints = (window.exchangePoints || 0) + 7;
+  localStorage.setItem('exchange_total_pts', window.exchangePoints);
   refreshPoints();
   saveTrade('sell');
+  flashTrade('SELL CONFIRMED', true);
+  refreshPortfolioBtn();
 }
 
 // ════════════════════════════════════════
@@ -451,6 +471,31 @@ renderHeatmap('emotions');
 renderIndexes();
 renderCompanies();
 refreshPoints();
+
+// Load any trades persisted from a previous page visit in this session
+(function () {
+  var stored = JSON.parse(localStorage.getItem('exchange_trades') || '[]');
+  window.ExchangeSession.trades = stored;
+})();
+
+function goToPortfolio() {
+  var pts = window.exchangePoints || 0;
+  localStorage.setItem('exchange_total_pts', pts);
+  window.location.href = 'portfolio.html?pts=' + pts;
+}
+
+function refreshPortfolioBtn() {
+  var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+  var storedPts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
+  var hasPlayed = played.length > 0 || (window.exchangePoints || 0) > 0 || storedPts > 0;
+  var btn = document.getElementById('genPortfolioBtn');
+  var miniBtn = document.getElementById('genPortfolioMiniBtn');
+  var headerBtn = document.getElementById('headerPortfolioBtn');
+  if (btn) btn.style.display = hasPlayed ? 'flex' : 'none';
+  if (miniBtn) miniBtn.style.display = hasPlayed ? 'inline-block' : 'none';
+  if (headerBtn) headerBtn.style.display = hasPlayed ? 'inline-block' : 'none';
+}
+refreshPortfolioBtn();
 
 // ════════════════════════════════════════
 //  VALUE DELTA — apply session market impact

@@ -85,6 +85,25 @@
       color: #8c8b8b;
       display: inline;
     }
+    .header-portfolio-btn {
+      display: none;
+      background: rgba(90,156,106,0.2);
+      border: 0.5px solid rgba(90,156,106,0.5);
+      color: #5a9c6a;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(9px, 1vw, 13px);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: clamp(8px, 1vw, 14px) clamp(14px, 2vw, 28px);
+      cursor: pointer;
+      border-radius: 2px;
+      white-space: nowrap;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .header-portfolio-btn:hover {
+      background: rgba(90,156,106,0.4);
+      box-shadow: 0 0 16px rgba(90,156,106,0.2);
+    }
 
     /* ===== HERO CARD ===== */
     .hero-section {
@@ -396,6 +415,33 @@
       box-shadow: 0 0 24px rgba(218,254,127,0.2), 0 0 6px rgba(218,254,127,0.1);
       opacity: 1;
       transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .earn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .gen-portfolio-btn {
+      background: rgba(90,156,106,0.35);
+      border-color: rgba(90,156,106,0.45);
+      animation: none;
+    }
+    .gen-portfolio-btn:hover {
+      background: rgba(90,156,106,0.65);
+      box-shadow: 0 0 24px rgba(90,156,106,0.25), 0 0 6px rgba(90,156,106,0.15);
+    }
+    .banner-mini-btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .gen-portfolio-mini-btn {
+      background: rgba(90,156,106,0.85);
+    }
+    .gen-portfolio-mini-btn:hover {
+      background: rgba(90,156,106,1);
+      box-shadow: 0 0 16px rgba(90,156,106,0.4), 0 0 4px rgba(90,156,106,0.2);
     }
     .banner-mini-btn {
       transition: background 0.2s, box-shadow 0.2s;
@@ -770,6 +816,7 @@
       <div class="header-dot"></div>
       <span class="header-title">THE EXCHANGE</span>
     </div>
+    <button class="header-portfolio-btn" id="headerPortfolioBtn" onclick="goToPortfolio()">Generate Portfolio</button>
     <div class="header-points">
       <div class="header-pts-inner">
         <span class="header-pts-num" id="ptsCount">0</span><span class="header-pts-label">pts</span>
@@ -1131,11 +1178,17 @@
         </div>
         <div class="progress-dots" id="progressDots"></div>
       </div>
-      <button class="earn-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+      <div class="earn-row">
+        <button class="earn-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+        <button class="earn-btn gen-portfolio-btn" id="genPortfolioBtn" style="display:none" onclick="goToPortfolio()">GENERATE PORTFOLIO</button>
+      </div>
     </div>
     <div class="banner-mini">
       <span class="banner-mini-text">You need 800 points to trade.</span>
-      <button class="banner-mini-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+      <div class="banner-mini-btns">
+        <button class="banner-mini-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+        <button class="banner-mini-btn gen-portfolio-mini-btn" id="genPortfolioMiniBtn" style="display:none" onclick="goToPortfolio()">GENERATE PORTFOLIO</button>
+      </div>
     </div>
   </section>
 
@@ -1742,6 +1795,27 @@
       } catch (e) {
         // default nostalgia card remains visible
       }
+    })();
+
+    // ── Generate Portfolio button visibility ───────────────────────────────
+    function goToPortfolio() {
+      var pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
+      localStorage.setItem('exchange_total_pts', pts);
+      window.location.href = 'portfolio.html?pts=' + pts;
+    }
+
+    (function () {
+      var played    = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+      var storedPts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
+      var hasPlayed = played.length > 0 || storedPts > 0;
+      var ids = ['headerPortfolioBtn', 'genPortfolioBtn', 'genPortfolioMiniBtn'];
+      ids.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.style.display = hasPlayed
+          ? (id === 'genPortfolioBtn' ? 'flex' : 'inline-block')
+          : 'none';
+      });
     })();
   </script>
 </body>

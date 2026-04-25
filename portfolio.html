@@ -448,7 +448,72 @@
         }).catch(function () { alert('Could not load receipt.'); });
       });
 
+      function populateDossierFromTrades() {
+        var trades = JSON.parse(localStorage.getItem('exchange_trades') || '[]');
+        var buys   = trades.filter(function(t) { return t.type === 'buy'; });
+
+        // HOLDINGS_DATA quadrant
+        var holdingsBody = document.querySelector('#dq-tr .dos-q-body');
+        if (holdingsBody) {
+          var html = '';
+          if (buys.length === 0) {
+            html += '<div style="color:rgba(255,255,255,0.35);font-size:11px;padding:6px 0;letter-spacing:0.06em;">NO_POSITIONS_HELD</div>';
+          } else {
+            buys.forEach(function(t, i) {
+              html +=
+                '<div class="dos-holding">' +
+                  '<span class="dos-holding-num">' + String(i + 1).padStart(2, '0') + '</span>' +
+                  '<div class="dos-holding-info">' +
+                    '<div class="dos-holding-name">' + t.name.toUpperCase() + ' <span class="dos-ticker">[' + t.ticker + ']</span></div>' +
+                    '<div class="dos-holding-row"><span>HELD_TYPE: ' + (t.emotion || 'EQUITY').toUpperCase() + '</span><span class="dos-pts">\u20B9' + t.price.toFixed(2) + '</span></div>' +
+                    '<div>EMOTION_COST: ' + (t.emotion || 'UNKNOWN').toUpperCase() + '</div>' +
+                  '</div>' +
+                '</div>';
+            });
+          }
+          html +=
+            '<div class="dos-divider"></div>' +
+            '<table class="dos-table">' +
+              '<tr><td>TOTAL_POSITIONS:</td><td>' + buys.length + '</td></tr>' +
+              '<tr><td>EMOTIONAL_COST:</td><td>' + (buys.length * 10) + ' pts</td></tr>' +
+              '<tr><td>PRIMARY_ASSET:</td><td>EMOTIONAL_EQUITY</td></tr>' +
+            '</table>' +
+            '<div class="dos-reveal" id="reveal-tr"></div>';
+          holdingsBody.innerHTML = html;
+        }
+
+        // TRANSACTION_LOG quadrant
+        var logBody = document.querySelector('#dq-br .dos-q-body');
+        if (logBody) {
+          var logHtml = '<div class="dos-log">';
+          if (trades.length === 0) {
+            logHtml += '<div class="dos-log-entry"><span class="dos-log-ts">[——:——:——]</span><span>NO_TRANSACTIONS_RECORDED</span></div>';
+          } else {
+            trades.forEach(function(t) {
+              var d   = new Date(t.ts);
+              var hh  = d.getHours().toString().padStart(2, '0');
+              var mm  = d.getMinutes().toString().padStart(2, '0');
+              var ss  = d.getSeconds().toString().padStart(2, '0');
+              var ts  = '[' + hh + ':' + mm + ':' + ss + ']';
+              var act = t.type === 'buy'
+                ? t.ticker + ' PURCHASED  +\u20B9' + t.price.toFixed(2)
+                : t.ticker + ' SOLD  -\u20B9' + t.price.toFixed(2);
+              logHtml += '<div class="dos-log-entry"><span class="dos-log-ts">' + ts + '</span><span>' + act + '</span></div>';
+            });
+          }
+          var now = new Date();
+          var nh = now.getHours().toString().padStart(2,'0');
+          var nm = now.getMinutes().toString().padStart(2,'0');
+          var ns = now.getSeconds().toString().padStart(2,'0');
+          logHtml += '<div class="dos-log-entry dos-log-final"><span class="dos-log-ts">[' + nh + ':' + nm + ':' + ns + ']</span><span>DOSSIER_ASSEMBLY_COMPLETE &#9679;</span></div>';
+          logHtml += '</div>';
+          logHtml += '<div class="dos-reveal" id="reveal-br"></div>';
+          logBody.innerHTML = logHtml;
+        }
+      }
+
       function openDossier() {
+        populateDossierFromTrades();
         var scene = document.querySelector('.p-scene');
         scene.style.transition = 'opacity 0.4s ease';
         scene.style.opacity = '0';
