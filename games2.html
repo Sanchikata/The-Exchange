@@ -71,11 +71,43 @@
       text-decoration: none;
       transition: transform 0.22s ease, box-shadow 0.22s ease;
       cursor: pointer;
+      position: relative;
     }
     .game-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 16px 48px rgba(0,0,0,0.11);
     }
+
+    /* ── Played overlay ── */
+    .game-card.played .card-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(240, 240, 237, 0.72);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .game-card.played .card-thumb {
+      position: relative;
+    }
+    .played-tag {
+      display: none;
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      z-index: 3;
+      background: #e0e0dc;
+      color: #888;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.09);
+    }
+    .game-card.played .played-tag { display: block; }
 
     /* ── Thumbnail shell ── */
     .card-thumb {
@@ -324,8 +356,9 @@
     <div class="games-grid">
 
       <!-- ── Card 1: Things We Grew Up With ── -->
-      <a href="games.html" class="game-card">
+      <a href="games.html" class="game-card" data-game="nostalgia">
         <div class="card-thumb thumb-1">
+          <span class="played-tag">play again</span>
           <svg class="const-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 270" preserveAspectRatio="xMidYMid slice">
             <!-- constellation lines -->
             <g stroke="#ffffff" stroke-width="0.6" opacity="0.15">
@@ -384,8 +417,9 @@
       </a>
 
       <!-- ── Card 2: Nothing To Hide ── -->
-      <a href="fear.html" class="game-card">
+      <a href="fear.html" class="game-card" data-game="fear">
         <div class="card-thumb thumb-2">
+          <span class="played-tag">play again</span>
           <div class="checkbox-wrap">
             <div class="big-checkbox">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -403,8 +437,9 @@
       </a>
 
       <!-- ── Card 3: Almost There ── -->
-      <a href="anger.html" class="game-card">
+      <a href="anger.html" class="game-card" data-game="anger">
         <div class="card-thumb thumb-3">
+          <span class="played-tag">play again</span>
           <div class="progress-label">completing task</div>
           <div class="progress-pct">97<span>%</span></div>
           <div class="progress-track">
@@ -418,8 +453,9 @@
       </a>
 
       <!-- ── Card 4: Which One Are You? ── -->
-      <a href="happiness.html" class="game-card">
+      <a href="happiness.html" class="game-card" data-game="happiness">
         <div class="card-thumb thumb-4">
+          <span class="played-tag">play again</span>
           <div class="quad quad-a">A</div>
           <div class="quad quad-b">B</div>
           <div class="quad quad-c">C</div>
@@ -449,6 +485,15 @@
     if (el && typeof window.exchangePoints !== 'undefined') {
       el.textContent = window.exchangePoints + ' emotional points';
     }
+
+    // Mark cards for already-played games
+    (function () {
+      var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+      played.forEach(function (key) {
+        var card = document.querySelector('[data-game="' + key + '"]');
+        if (card) card.classList.add('played');
+      });
+    })();
   </script>
 
 </body>

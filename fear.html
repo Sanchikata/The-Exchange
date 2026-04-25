@@ -651,7 +651,7 @@
 
         <div class="results-actions">
           <button class="action-btn" onclick="location.href='market.html'">Return to Market &#x2192;</button>
-          <button class="action-btn" onclick="location.href='games.html'">Back to Games</button>
+          <button class="action-btn" onclick="location.href='games2.html'">Back to Games</button>
         </div>
       </div>
     </div>
@@ -1095,6 +1095,10 @@
 
       // Expose metrics globally for portfolio page
       window.fearSessionMetrics = { ...fearMetrics };
+
+      var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+      if (played.indexOf('fear') === -1) played.push('fear');
+      localStorage.setItem('exchange_played_games', JSON.stringify(played));
 
       showScreen('screen-results');
     }

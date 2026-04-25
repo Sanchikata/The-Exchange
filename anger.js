@@ -525,9 +525,11 @@ document.getElementById('resetQuit').addEventListener('click', () => {
   updateDebugDisplay(frustrationPoints, null, total);
   saveAngerSession(frustrationPoints, null, total);
 
-  // Hide all game content — leave a blank page
-  document.querySelector('.game-layout').style.display = 'none';
-  document.getElementById('calibration-screen').style.display = 'none';
+  var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+  if (played.indexOf('anger') === -1) played.push('anger');
+  localStorage.setItem('exchange_played_games', JSON.stringify(played));
+
+  window.location.href = 'games2.html';
 });
 
 // ── Finish / scratch card / calibration ──────────────────────────────────────
@@ -673,7 +675,10 @@ function showCalibration() {
   }, 100);
 
   setTimeout(() => {
-    window.location.href = 'portfolio.html?pts=' + (window.angerData.pointsEarned || 0);
+    var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+    if (played.indexOf('anger') === -1) played.push('anger');
+    localStorage.setItem('exchange_played_games', JSON.stringify(played));
+    window.location.href = 'games2.html';
   }, 6500);
 }
 

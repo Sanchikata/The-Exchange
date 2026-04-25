@@ -714,6 +714,9 @@ async function submitSession() {
 // ─────────────────────────────────────────────────────────────────────────────
 function showDone() {
   document.getElementById('done-title').textContent = `Thanks, ${participantName}.`;
+  var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+  if (played.indexOf('happiness') === -1) played.push('happiness');
+  localStorage.setItem('exchange_played_games', JSON.stringify(played));
   showScreen('quiz-done');
 }
 

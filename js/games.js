@@ -88,16 +88,12 @@
 
     const animPromise = new Promise(function (resolve) { setTimeout(resolve, 6000); });
 
-    Promise.all([savePromise, animPromise]).then(function (results) {
-      var sid = results[0];
+    Promise.all([savePromise, animPromise]).then(function () {
       if (typeof Exchange !== 'undefined') Exchange.addPoints(nostalgiaPoints);
-      var url = 'portfolio.html'
-        + '?ni=' + nostalgiaIndex
-        + '&wc=' + (g1.wrongClicks || 0)
-        + '&gr=' + (g1.gotItRight ? '1' : '0')
-        + '&pts=' + (window.participantData.totalPoints || 0)
-        + (sid ? '&sid=' + sid : '');
-      window.location.href = url;
+      var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+      if (played.indexOf('nostalgia') === -1) played.push('nostalgia');
+      localStorage.setItem('exchange_played_games', JSON.stringify(played));
+      window.location.href = 'games2.html';
     });
   }
 
