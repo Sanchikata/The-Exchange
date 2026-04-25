@@ -523,6 +523,30 @@ html, body {
   margin-bottom: 24px;
 }
 
+/* ── Srishti match result ─────────────────────────────────────────────────── */
+.match-hero-name {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--h-text);
+  line-height: 1.2;
+  margin-bottom: 28px;
+}
+.match-reason-card {
+  background: var(--h-bg-card);
+  border: 1px solid var(--h-border);
+  border-radius: var(--h-r-lg);
+  padding: 20px 24px;
+  font-size: 15px;
+  color: var(--h-muted);
+  line-height: 1.75;
+  margin-bottom: 32px;
+  max-width: 480px;
+}
+.match-reason-card--fallback {
+  font-size: 13px;
+  color: var(--h-soft);
+}
+
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SCREEN 3.5 — Satisfaction

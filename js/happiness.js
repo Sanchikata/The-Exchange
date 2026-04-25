@@ -90,6 +90,107 @@ const SRISHTI_BIAS_MAP = [
   ['social',    'optimism',  'ikea',       'groupthink']   // Q6
 ];
 
+// ── Srishti complementary matching constants ─────────────────────────────────
+const SRISHTI_MATCH_TABLE = {
+  scarcity:   { primary: 'belief',     secondary: 'optimism'   },
+  optimism:   { primary: 'groupthink', secondary: 'ikea'       },
+  social:     { primary: 'ikea',       secondary: 'scarcity'   },
+  belief:     { primary: 'scarcity',   secondary: 'groupthink' },
+  ikea:       { primary: 'belief',     secondary: 'social'     },
+  groupthink: { primary: 'optimism',   secondary: 'scarcity'   }
+};
+
+const SRISHTI_MATCH_EXPLANATIONS = {
+  'scarcity+primary':    "You move fast under pressure. They strip everything back to the simplest truth. Where you react, they clarify.",
+  'optimism+primary':    "You back yourself to win. They start by asking what could go wrong. Together you cover both ends.",
+  'social+primary':      "You read the room. They only trust people with something to lose. They'll tell you when the room is being played.",
+  'belief+primary':      "You trust your convictions. They question whether cause and effect are actually connected. They'll challenge your priors without dismissing them.",
+  'ikea+primary':        "You attach value to what you've built. They care only about what works. They'll tell you honestly when your thing isn't the best thing.",
+  'groupthink+primary':  "You find safety in consensus. They start by asking what everyone else is getting wrong. They'll pull you out of the herd without losing you from the room.",
+  'scarcity+secondary':  "You move on instinct. They reverse-engineer the problem from failure. They'll catch what your urgency misses.",
+  'optimism+secondary':  "You believe in what you're building. They ask who else has skin in the game. They'll ground your optimism in accountability.",
+  'social+secondary':    "You trust patterns in people. They trace cause back to effect before drawing conclusions. They'll question what's really driving the room.",
+  'belief+secondary':    "You hold your ground. They question whether cause and effect are actually linked. They'll help you separate conviction from assumption.",
+  'ikea+secondary':      "You're invested in what you've made. They ask who has something real to lose. That checks your attachment against real stakes.",
+  'groupthink+secondary':"You move with the group. They simplify down to what actually matters. They'll help you see the signal inside the consensus."
+};
+
+const SRISHTI_BIAS_LABELS = {
+  scarcity: 'Scarcity', optimism: 'Optimism', social: 'Social Proof',
+  belief: 'Belief Bias', ikea: 'IKEA Effect', groupthink: 'Groupthink'
+};
+
+async function findArchetypeMatch(bias, name) {
+  const db = window.supabaseClient;
+  if (!db) throw new Error('Supabase client not available.');
+
+  const { data, error } = await db
+    .from('archetypes')
+    .select('full_name, archetype, dominant_bias');
+
+  if (error) throw new Error(error.message);
+  if (!data || data.length === 0) throw new Error('No archetypes found.');
+
+  const pool = data.filter(row => row.full_name && row.full_name.trim().toLowerCase() !== name.trim().toLowerCase());
+  const source = pool.length > 0 ? pool : data;
+
+  const { primary, secondary } = SRISHTI_MATCH_TABLE[bias];
+
+  const primaryMatches = source.filter(r => r.dominant_bias === primary);
+  if (primaryMatches.length > 0) {
+    return { row: primaryMatches[0], matchType: 'primary', explanation: SRISHTI_MATCH_EXPLANATIONS[bias + '+primary'] };
+  }
+
+  const secondaryMatches = source.filter(r => r.dominant_bias === secondary);
+  if (secondaryMatches.length > 0) {
+    return { row: secondaryMatches[0], matchType: 'secondary', explanation: SRISHTI_MATCH_EXPLANATIONS[bias + '+secondary'] };
+  }
+
+  return { row: source[0], matchType: 'fallback', explanation: null };
+}
+
+function showSrishtiResult(result, match) {
+  S.resultTitle = result.title;
+
+  if (!quizzesTaken.includes('quiz3')) quizzesTaken.push('quiz3');
+
+  const rc  = S.tracking.retakeCount;
+  const pts = rc === 0 ? 100 : -30 + (rc - 1) * 20;
+  const scoreEl = document.getElementById('happiness-score-display');
+  if (scoreEl) {
+    scoreEl.textContent = (pts >= 0 ? '+' : '') + pts + ' happiness pts';
+    scoreEl.style.display = 'inline';
+  }
+
+  const avgMs  = S.tracking.perQ.reduce((s, p) => s + p.timeMs, 0) / S.tracking.perQ.length;
+  const changes = S.tracking.perQ.reduce((s, p) => s + p.answerChanges, 0);
+
+  const isFallback = match.matchType === 'fallback';
+  const reasonCardHTML = match.explanation
+    ? `<div class="match-reason-card">${match.explanation}</div>`
+    : isFallback
+      ? `<div class="match-reason-card match-reason-card--fallback">Your closest available match.</div>`
+      : '';
+
+  document.getElementById('result-inner').innerHTML = `
+    <span class="result-label">Who Would You Be Friends With at Srishti</span>
+    <h2 class="match-hero-name">You'd be friends with<br>${match.row.full_name}</h2>
+    ${reasonCardHTML}
+    <div class="result-divider"></div>
+    <p class="result-stats">
+      avg. response time ${(avgMs / 1000).toFixed(1)}s
+      &nbsp;&middot;&nbsp; answer changes ${changes}
+      &nbsp;&middot;&nbsp; retakes ${S.tracking.retakeCount}
+    </p>
+    <div class="result-actions">
+      <button class="quiz-next-btn" onclick="showSatisfaction()">Continue &#x2192;</button>
+      <button class="quiz-retake-btn" onclick="retakeQuiz()">Retake</button>
+    </div>
+  `;
+
+  showScreen('quiz-result');
+}
+
 const SRISHTI_RESULTS = {
   scarcity: {
     title: 'You are The Early Access Friend',
@@ -124,6 +225,7 @@ function getSrishtiResult(answers) {
     if (bias) scores[bias]++;
   });
   const dominant = Object.keys(scores).reduce((a, b) => scores[a] >= scores[b] ? a : b);
+  S.dominantBias = dominant;
   return SRISHTI_RESULTS[dominant];
 }
 
@@ -380,6 +482,7 @@ function resetState(quizId) {
     selectedOpt:    null,
     qStartTime:     null,
     resultTitle:    '',
+    dominantBias:       null,    // string: scarcity | optimism | social | belief | ikea | groupthink
     matchedPersona:     null,    // string: "Name — Archetype"
     shareIntent:        null,    // boolean
     satisfactionRating: null,    // 1–5
@@ -576,7 +679,17 @@ function nextQuestion() {
     } else if (S.quizId === 'bollywood') {
       showResult(getBollywoodResult(S.answers));
     } else if (S.quizId === 'srishti') {
-      showResult(getSrishtiResult(S.answers));
+      setLoading(true, 'Finding your complementary mind...');
+      const baseResult = getSrishtiResult(S.answers);
+      findArchetypeMatch(S.dominantBias, participantName)
+        .then(match => {
+          S.matchedPersona = match.row.full_name + ' — ' + match.row.archetype;
+          showSrishtiResult(baseResult, match);
+        })
+        .catch(err => {
+          console.error('[srishti match] fetch failed:', err);
+          showSrishtiResult(baseResult, { row: { full_name: '—', archetype: '' }, matchType: 'fallback', explanation: null });
+        });
     } else {
       setLoading(true, 'Calculating your result...');
       fetchResult(S.quizId, S.answers)
@@ -756,6 +869,7 @@ async function saveHappinessSession() {
     retake_count:     S.tracking.retakeCount,
     share_intent:     S.shareIntent,
     matched_persona:  S.matchedPersona,
+    dominant_bias:    S.dominantBias || null,
     happiness_points: happinessPoints,
     happiness_index:  happinessIndex,
     quizzes_taken:    quizzesTaken.join(', '),

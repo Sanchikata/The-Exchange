@@ -191,6 +191,63 @@
       background: rgba(255,190,2,0.21);
     }
 
+    /* ===== HERO CARD META ROW ===== */
+    .hero-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .hero-meta-company {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+    }
+    .hero-meta-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border: 0.5px solid;
+      border-radius: 2px;
+    }
+    .pill-nostalgia { color: #6a8f0c; border-color: rgba(106,143,12,0.5); background: rgba(106,143,12,0.08); }
+    .pill-fear      { color: #FF7F50; border-color: rgba(255,127,80,0.5); background: rgba(255,127,80,0.08); }
+    .pill-anger     { color: #C7A6FF; border-color: rgba(199,166,255,0.5); background: rgba(199,166,255,0.08); }
+    .pill-happiness { color: #7FD4FE; border-color: rgba(127,212,254,0.5); background: rgba(127,212,254,0.08); }
+
+    /* Hero card border variants */
+    #heroCardFear      { border-color: rgba(255,127,80,0.35); }
+    #heroCardAnger     { border-color: rgba(199,166,255,0.35); }
+    #heroCardHappiness { border-color: rgba(127,212,254,0.35); }
+
+    /* Outlined hero trade button for variant cards */
+    .hero-trade-btn-outlined {
+      position: absolute;
+      left: 53px;
+      top: 427px;
+      width: 119px;
+      height: 34px;
+      background: transparent;
+      border: 1.5px solid;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: not-allowed;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-fear      { border-color: #FF7F50; color: #FF7F50; }
+    .btn-anger     { border-color: #C7A6FF; color: #C7A6FF; }
+    .btn-happiness { border-color: #7FD4FE; color: #7FD4FE; }
+
     /* ===== POINTS BANNER (full-width, vw-relative) ===== */
     .page-wrap {
       position: relative;
@@ -351,7 +408,7 @@
     /* ===== VALUES BAR CHART ===== */
     .values-section {
       background: #0f0f0f;
-      padding: 48px 40px;
+      padding: clamp(80px, 10vw, 140px) 40px 48px;
     }
     .values-section-label {
       font-family: 'JetBrains Mono', monospace;
@@ -722,7 +779,13 @@
 
   <!-- ===== HERO CARD ===== -->
   <section class="hero-section">
-    <div class="hero-card">
+    <div class="hero-card" id="heroCardNostalgia">
+
+      <!-- Meta row -->
+      <div class="hero-card-meta">
+        <span class="hero-meta-company">AMUL · DAIRY</span>
+        <span class="hero-meta-pill pill-nostalgia">NOSTALGIA</span>
+      </div>
 
       <!-- Headline -->
       <div class="hero-headline">
@@ -818,6 +881,240 @@
         <div class="divider-seg"></div>
         <div class="divider-seg"></div>
         <div class="divider-seg"></div>
+      </div>
+    </div>
+
+    <!-- ===== CARD 2: FEAR / BYJU'S ===== -->
+    <div class="hero-card" id="heroCardFear" style="display:none">
+
+      <div class="hero-card-meta">
+        <span class="hero-meta-company">BYJU'S · EDTECH</span>
+        <span class="hero-meta-pill pill-fear">FEAR</span>
+      </div>
+
+      <div class="hero-headline">
+        BYJU's collapsed. The <span style="color:#FF7F50">anxiety</span> that built it didn't.
+      </div>
+
+      <div class="hero-stat" style="left:53px;top:276px;position:absolute;width:420px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;line-height:1.1;">
+        <span style="font-size:75px;color:#FF7F50;vertical-align:baseline" id="heroStatPctFear">82%</span><span style="font-size:38px;color:#FF7F50"> fear index</span><span style="font-size:26px;color:#f2f2f2;font-weight:500"> rising, is fear still a sound investment?</span>
+      </div>
+
+      <button class="hero-trade-btn-outlined btn-fear" disabled>TRADE</button>
+
+      <div class="hero-chart-area">
+        <svg id="heroChartFear" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+          <defs>
+            <linearGradient id="areaGradFear" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FF7F50" stop-opacity="0.45"/>
+              <stop offset="55%" stop-color="#8a3a1a" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#3a1a0a" stop-opacity="0.08"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">75</text>
+          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">60</text>
+          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">45</text>
+          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">30</text>
+          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
+          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
+          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
+          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
+          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
+          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
+          <path d="M0 145 L0 55 C 40 52, 70 50, 100 62 C 130 74, 155 92, 185 110 C 205 120, 222 125, 248 116 C 272 107, 292 90, 322 72 C 348 56, 372 44, 402 38 C 427 33, 458 31, 497 32 L497 145 Z" fill="url(#areaGradFear)"/>
+          <path d="M0 55 C 40 52, 70 50, 100 62 C 130 74, 155 92, 185 110 C 205 120, 222 125, 248 116 C 272 107, 292 90, 322 72 C 348 56, 372 44, 402 38 C 427 33, 458 31, 497 32" fill="none" stroke="#FF7F50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle id="chartDotFear" cx="0" cy="0" r="4" fill="#FF7F50" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+          <g id="chartYAxisLabelFear" display="none" pointer-events="none">
+            <rect id="chartYAxisBgFear" x="0" y="0" width="24" height="13" rx="1" fill="rgba(255,127,80,0.15)" stroke="rgba(255,127,80,0.45)" stroke-width="0.5"/>
+            <text id="chartYAxisTextFear" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#FF7F50" text-anchor="middle" letter-spacing="0.3">60</text>
+          </g>
+          <g id="chartLabelGroupFear" display="none" pointer-events="none">
+            <rect id="chartLabelBgFear" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(255,127,80,0.45)" stroke-width="0.5"/>
+            <text id="chartLabelTextFear" x="0" y="0" fill="#FF7F50" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">60.0 FEA</text>
+          </g>
+          <g id="chartScrubberFear" display="none" pointer-events="none">
+            <line id="scrubLineFear" x1="0" y1="12" x2="0" y2="118" stroke="rgba(255,127,80,0.55)" stroke-width="1"/>
+            <circle id="scrubCapOuterFear" cx="0" cy="6" r="5.5" fill="#111" stroke="#FF7F50" stroke-width="1.5"/>
+            <circle id="scrubCapInnerFear" cx="0" cy="6" r="2" fill="#FF7F50"/>
+            <line id="scrubTickFear" x1="0" y1="118" x2="0" y2="126" stroke="rgba(255,127,80,0.7)" stroke-width="1.5"/>
+            <rect id="scrubPillBgFear" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#FF7F50" stroke-width="1"/>
+            <text id="scrubPillTextFear" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#FF7F50" text-anchor="middle" letter-spacing="0.5">MAR</text>
+          </g>
+          <rect id="chartHitAreaFear" x="0" y="0" width="497" height="145" fill="transparent"/>
+        </svg>
+      </div>
+
+      <div class="hero-divider">
+        <div class="divider-seg"></div>
+        <div class="divider-seg active" style="background:rgba(255,127,80,0.4)"></div>
+        <div class="divider-seg"></div>
+        <div class="divider-seg"></div>
+      </div>
+    </div>
+
+    <!-- ===== CARD 3: ANGER / ZOMATO ===== -->
+    <div class="hero-card" id="heroCardAnger" style="display:none">
+
+      <div class="hero-card-meta">
+        <span class="hero-meta-company">ZOMATO · FOOD</span>
+        <span class="hero-meta-pill pill-anger">ANGER</span>
+      </div>
+
+      <div class="hero-headline">
+        Zomato's <span style="color:#C7A6FF">controversies</span> kept coming. Engagement never dropped.
+      </div>
+
+      <div class="hero-stat" style="left:53px;top:276px;position:absolute;width:420px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;line-height:1.1;">
+        <span style="font-size:75px;color:#C7A6FF;vertical-align:baseline" id="heroStatPctAnger">71%</span><span style="font-size:38px;color:#C7A6FF"> anger index</span><span style="font-size:26px;color:#f2f2f2;font-weight:500"> active, do you profit from the outrage?</span>
+      </div>
+
+      <button class="hero-trade-btn-outlined btn-anger" disabled>TRADE</button>
+
+      <div class="hero-chart-area">
+        <svg id="heroChartAnger" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+          <defs>
+            <linearGradient id="areaGradAnger" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#C7A6FF" stop-opacity="0.40"/>
+              <stop offset="55%" stop-color="#5a3a8a" stop-opacity="0.20"/>
+              <stop offset="100%" stop-color="#1a0a3a" stop-opacity="0.06"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">75</text>
+          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">60</text>
+          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">45</text>
+          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">30</text>
+          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
+          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
+          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
+          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
+          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
+          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
+          <path d="M0 145 L0 88 C 25 80, 45 55, 70 62 C 90 68, 100 90, 125 82 C 148 74, 162 48, 192 56 C 212 62, 228 80, 255 68 C 275 58, 292 36, 320 46 C 340 54, 358 72, 385 60 C 406 50, 435 36, 465 44 C 478 48, 490 50, 497 48 L497 145 Z" fill="url(#areaGradAnger)"/>
+          <path d="M0 88 C 25 80, 45 55, 70 62 C 90 68, 100 90, 125 82 C 148 74, 162 48, 192 56 C 212 62, 228 80, 255 68 C 275 58, 292 36, 320 46 C 340 54, 358 72, 385 60 C 406 50, 435 36, 465 44 C 478 48, 490 50, 497 48" fill="none" stroke="#C7A6FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle id="chartDotAnger" cx="0" cy="0" r="4" fill="#C7A6FF" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+          <g id="chartYAxisLabelAnger" display="none" pointer-events="none">
+            <rect id="chartYAxisBgAnger" x="0" y="0" width="24" height="13" rx="1" fill="rgba(199,166,255,0.15)" stroke="rgba(199,166,255,0.45)" stroke-width="0.5"/>
+            <text id="chartYAxisTextAnger" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#C7A6FF" text-anchor="middle" letter-spacing="0.3">55</text>
+          </g>
+          <g id="chartLabelGroupAnger" display="none" pointer-events="none">
+            <rect id="chartLabelBgAnger" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(199,166,255,0.45)" stroke-width="0.5"/>
+            <text id="chartLabelTextAnger" x="0" y="0" fill="#C7A6FF" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">55.0 ANG</text>
+          </g>
+          <g id="chartScrubberAnger" display="none" pointer-events="none">
+            <line id="scrubLineAnger" x1="0" y1="12" x2="0" y2="118" stroke="rgba(199,166,255,0.55)" stroke-width="1"/>
+            <circle id="scrubCapOuterAnger" cx="0" cy="6" r="5.5" fill="#111" stroke="#C7A6FF" stroke-width="1.5"/>
+            <circle id="scrubCapInnerAnger" cx="0" cy="6" r="2" fill="#C7A6FF"/>
+            <line id="scrubTickAnger" x1="0" y1="118" x2="0" y2="126" stroke="rgba(199,166,255,0.7)" stroke-width="1.5"/>
+            <rect id="scrubPillBgAnger" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#C7A6FF" stroke-width="1"/>
+            <text id="scrubPillTextAnger" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#C7A6FF" text-anchor="middle" letter-spacing="0.5">MAR</text>
+          </g>
+          <rect id="chartHitAreaAnger" x="0" y="0" width="497" height="145" fill="transparent"/>
+        </svg>
+      </div>
+
+      <div class="hero-divider">
+        <div class="divider-seg"></div>
+        <div class="divider-seg"></div>
+        <div class="divider-seg active" style="background:rgba(199,166,255,0.4)"></div>
+        <div class="divider-seg"></div>
+      </div>
+    </div>
+
+    <!-- ===== CARD 4: HAPPINESS / NETFLIX ===== -->
+    <div class="hero-card" id="heroCardHappiness" style="display:none">
+
+      <div class="hero-card-meta">
+        <span class="hero-meta-company">NETFLIX · OTT</span>
+        <span class="hero-meta-pill pill-happiness">HAPPINESS</span>
+      </div>
+
+      <div class="hero-headline">
+        Netflix turned rest into a ritual. <span style="color:#7FD4FE">Happiness</span> is the most renewable resource in the market.
+      </div>
+
+      <div class="hero-stat" style="left:53px;top:276px;position:absolute;width:420px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;line-height:1.1;">
+        <span style="font-size:75px;color:#7FD4FE;vertical-align:baseline" id="heroStatPctHappiness">86%</span><span style="font-size:38px;color:#7FD4FE"> happiness index</span><span style="font-size:26px;color:#f2f2f2;font-weight:500"> stable, do you invest in the loop?</span>
+      </div>
+
+      <button class="hero-trade-btn-outlined btn-happiness" disabled>TRADE</button>
+
+      <div class="hero-chart-area">
+        <svg id="heroChartHappiness" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+          <defs>
+            <linearGradient id="areaGradHappiness" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7FD4FE" stop-opacity="0.40"/>
+              <stop offset="55%" stop-color="#1a5a8a" stop-opacity="0.20"/>
+              <stop offset="100%" stop-color="#0a1a2a" stop-opacity="0.06"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">75</text>
+          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">60</text>
+          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">45</text>
+          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">30</text>
+          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
+          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
+          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
+          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
+          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
+          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
+          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
+          <path d="M0 145 L0 118 C 35 110, 70 102, 105 90 C 138 79, 168 67, 200 57 C 228 48, 256 41, 288 34 C 316 28, 348 23, 378 20 C 403 18, 435 18, 465 18 C 478 18, 490 19, 497 19 L497 145 Z" fill="url(#areaGradHappiness)"/>
+          <path d="M0 118 C 35 110, 70 102, 105 90 C 138 79, 168 67, 200 57 C 228 48, 256 41, 288 34 C 316 28, 348 23, 378 20 C 403 18, 435 18, 465 18 C 478 18, 490 19, 497 19" fill="none" stroke="#7FD4FE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle id="chartDotHappiness" cx="0" cy="0" r="4" fill="#7FD4FE" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+          <g id="chartYAxisLabelHappiness" display="none" pointer-events="none">
+            <rect id="chartYAxisBgHappiness" x="0" y="0" width="24" height="13" rx="1" fill="rgba(127,212,254,0.15)" stroke="rgba(127,212,254,0.45)" stroke-width="0.5"/>
+            <text id="chartYAxisTextHappiness" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7FD4FE" text-anchor="middle" letter-spacing="0.3">65</text>
+          </g>
+          <g id="chartLabelGroupHappiness" display="none" pointer-events="none">
+            <rect id="chartLabelBgHappiness" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(127,212,254,0.45)" stroke-width="0.5"/>
+            <text id="chartLabelTextHappiness" x="0" y="0" fill="#7FD4FE" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">65.0 HAP</text>
+          </g>
+          <g id="chartScrubberHappiness" display="none" pointer-events="none">
+            <line id="scrubLineHappiness" x1="0" y1="12" x2="0" y2="118" stroke="rgba(127,212,254,0.55)" stroke-width="1"/>
+            <circle id="scrubCapOuterHappiness" cx="0" cy="6" r="5.5" fill="#111" stroke="#7FD4FE" stroke-width="1.5"/>
+            <circle id="scrubCapInnerHappiness" cx="0" cy="6" r="2" fill="#7FD4FE"/>
+            <line id="scrubTickHappiness" x1="0" y1="118" x2="0" y2="126" stroke="rgba(127,212,254,0.7)" stroke-width="1.5"/>
+            <rect id="scrubPillBgHappiness" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#7FD4FE" stroke-width="1"/>
+            <text id="scrubPillTextHappiness" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7FD4FE" text-anchor="middle" letter-spacing="0.5">MAR</text>
+          </g>
+          <rect id="chartHitAreaHappiness" x="0" y="0" width="497" height="145" fill="transparent"/>
+        </svg>
+      </div>
+
+      <div class="hero-divider">
+        <div class="divider-seg"></div>
+        <div class="divider-seg"></div>
+        <div class="divider-seg"></div>
+        <div class="divider-seg active" style="background:rgba(127,212,254,0.4)"></div>
       </div>
     </div>
   </section>
@@ -1061,6 +1358,8 @@
 
   </div><!-- /.page-wrap -->
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
   <script src="js/main.js"></script>
   <script>
     // ── Sync pts counter from persisted state ──────────────────────────────
@@ -1275,6 +1574,174 @@
         yAxisLabel.setAttribute('display', 'none');
         if (statPct) statPct.textContent = '41%';
       });
+    })();
+
+    // ── Generic scrubber init for variant hero cards ───────────────────────
+    (function () {
+      function initVariantScrubber(suffix, curvePts, toVal, defaultPct, label, accentColor) {
+        var svg        = document.getElementById('heroChart' + suffix);
+        var hitArea    = document.getElementById('chartHitArea' + suffix);
+        if (!svg || !hitArea) return;
+
+        var dot        = document.getElementById('chartDot' + suffix);
+        var labelGroup = document.getElementById('chartLabelGroup' + suffix);
+        var labelBg    = document.getElementById('chartLabelBg' + suffix);
+        var labelText  = document.getElementById('chartLabelText' + suffix);
+        var yAxisLabel = document.getElementById('chartYAxisLabel' + suffix);
+        var yAxisBg    = document.getElementById('chartYAxisBg' + suffix);
+        var yAxisText  = document.getElementById('chartYAxisText' + suffix);
+        var scrubber   = document.getElementById('chartScrubber' + suffix);
+        var scrubLine  = document.getElementById('scrubLine' + suffix);
+        var scrubCapO  = document.getElementById('scrubCapOuter' + suffix);
+        var scrubCapI  = document.getElementById('scrubCapInner' + suffix);
+        var scrubTick  = document.getElementById('scrubTick' + suffix);
+        var scrubPillBg  = document.getElementById('scrubPillBg' + suffix);
+        var scrubPillTxt = document.getElementById('scrubPillText' + suffix);
+        var statPct    = document.getElementById('heroStatPct' + suffix);
+
+        var MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN'];
+
+        function getCurveY(x) {
+          for (var i = 0; i < curvePts.length - 1; i++) {
+            if (x >= curvePts[i].x && x <= curvePts[i+1].x) {
+              var t = (x - curvePts[i].x) / (curvePts[i+1].x - curvePts[i].x);
+              return curvePts[i].y + t * (curvePts[i+1].y - curvePts[i].y);
+            }
+          }
+          return curvePts[curvePts.length - 1].y;
+        }
+
+        function getSvgX(e) {
+          var rect = svg.getBoundingClientRect();
+          return Math.max(0, Math.min(497, ((e.clientX - rect.left) / rect.width) * 497));
+        }
+
+        hitArea.addEventListener('mousemove', function (e) {
+          var sx  = getSvgX(e);
+          var sy  = getCurveY(sx);
+          var val = toVal(sy);
+          var pct = Math.round(val);
+
+          scrubLine.setAttribute('x1', sx); scrubLine.setAttribute('x2', sx);
+          scrubCapO.setAttribute('cx', sx);
+          scrubCapI.setAttribute('cx', sx);
+          scrubTick.setAttribute('x1', sx); scrubTick.setAttribute('x2', sx);
+          var hx = Math.max(15, Math.min(482, sx));
+          scrubPillBg.setAttribute('x', hx - 15);
+          scrubPillTxt.setAttribute('x', hx);
+          scrubPillTxt.textContent = MONTHS[Math.min(5, Math.floor(sx / (497 / 6)))];
+          scrubber.removeAttribute('display');
+
+          dot.setAttribute('cx', sx);
+          dot.setAttribute('cy', sy);
+          dot.removeAttribute('display');
+
+          var LW = 62, LH = 19, pad = 6;
+          var lx = sx + pad, ly = sy - LH - pad;
+          if (lx + LW > 492) lx = sx - LW - pad;
+          if (ly < 14)        ly = sy + pad;
+          labelBg.setAttribute('x', lx);
+          labelBg.setAttribute('y', ly);
+          labelText.setAttribute('x', lx + 6);
+          labelText.setAttribute('y', ly + 13);
+          labelText.textContent = val.toFixed(1) + ' ' + label;
+          labelGroup.removeAttribute('display');
+
+          var ym = Math.max(0, Math.min(132, sy - 6.5));
+          yAxisBg.setAttribute('y', ym);
+          yAxisText.setAttribute('y', ym + 10);
+          yAxisText.textContent = Math.round(val);
+          yAxisLabel.removeAttribute('display');
+
+          if (statPct) statPct.textContent = pct + '%';
+        });
+
+        hitArea.addEventListener('mouseleave', function () {
+          scrubber.setAttribute('display', 'none');
+          dot.setAttribute('display', 'none');
+          labelGroup.setAttribute('display', 'none');
+          yAxisLabel.setAttribute('display', 'none');
+          if (statPct) statPct.textContent = defaultPct;
+        });
+      }
+
+      var fearPts = [
+        {x:0,y:55},{x:40,y:52},{x:70,y:50},{x:100,y:62},
+        {x:130,y:74},{x:155,y:92},{x:185,y:110},{x:205,y:120},
+        {x:222,y:125},{x:248,y:116},{x:272,y:107},{x:292,y:90},
+        {x:322,y:72},{x:348,y:56},{x:372,y:44},{x:402,y:38},
+        {x:427,y:33},{x:458,y:31},{x:497,y:32}
+      ];
+      function fearToVal(svgY) { return Math.max(30, Math.min(82, 82 - ((svgY - 22) / 103) * 52)); }
+
+      var angerPts = [
+        {x:0,y:88},{x:25,y:80},{x:45,y:55},{x:70,y:62},
+        {x:90,y:68},{x:100,y:90},{x:125,y:82},{x:148,y:74},
+        {x:162,y:48},{x:192,y:56},{x:212,y:62},{x:228,y:80},
+        {x:255,y:68},{x:275,y:58},{x:292,y:36},{x:320,y:46},
+        {x:340,y:54},{x:358,y:72},{x:385,y:60},{x:406,y:50},
+        {x:435,y:36},{x:465,y:44},{x:478,y:48},{x:497,y:48}
+      ];
+      function angerToVal(svgY) { return Math.max(30, Math.min(71, 71 - ((svgY - 22) / 66) * 41)); }
+
+      var hapPts = [
+        {x:0,y:118},{x:35,y:110},{x:70,y:102},{x:105,y:90},
+        {x:138,y:79},{x:168,y:67},{x:200,y:57},{x:228,y:48},
+        {x:256,y:41},{x:288,y:34},{x:316,y:28},{x:348,y:23},
+        {x:378,y:20},{x:403,y:18},{x:435,y:18},{x:465,y:18},
+        {x:478,y:18},{x:490,y:19},{x:497,y:19}
+      ];
+      function hapToVal(svgY) { return Math.max(30, Math.min(86, 86 - ((svgY - 18) / 100) * 56)); }
+
+      initVariantScrubber('Fear',      fearPts,  fearToVal,  '82%', 'FEA', '#FF7F50');
+      initVariantScrubber('Anger',     angerPts, angerToVal, '71%', 'ANG', '#C7A6FF');
+      initVariantScrubber('Happiness', hapPts,   hapToVal,   '86%', 'HAP', '#7FD4FE');
+    })();
+
+    // ── Hero card: one game played → show it; multiple → highest normalised index ──
+    (async function () {
+      try {
+        var db = window.supabaseClient;
+        if (!db) return;
+
+        var results = await Promise.all([
+          db.from('sessions').select('nostalgia_index, created_at').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+          db.from('fear_sessions').select('fear_index, created_at').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+          db.from('anger_sessions').select('anger_index, created_at').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+          db.from('happiness_sessions').select('happiness_index, created_at').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+        ]);
+
+        // Normalise each index to 0-1 using its known maximum
+        // nostalgia max = 350/50 = 7 | fear max = 120/120 = 1 | anger max = 280/280 = 1 | happiness max = 100/70 ≈ 1.43
+        var entries = [
+          { name: 'Nostalgia', ts: results[0].data ? results[0].data.created_at : null, norm: results[0].data ? Math.max(0, results[0].data.nostalgia_index / 7.0)   : null },
+          { name: 'Fear',      ts: results[1].data ? results[1].data.created_at : null, norm: results[1].data ? Math.max(0, results[1].data.fear_index      / 1.0)   : null },
+          { name: 'Anger',     ts: results[2].data ? results[2].data.created_at : null, norm: results[2].data ? Math.max(0, results[2].data.anger_index     / 1.0)   : null },
+          { name: 'Happiness', ts: results[3].data ? results[3].data.created_at : null, norm: results[3].data ? Math.max(0, results[3].data.happiness_index / 1.43)  : null },
+        ];
+
+        var played = entries.filter(function (e) { return e.ts !== null; });
+
+        var winner = 'Nostalgia';
+        if (played.length === 1) {
+          // Only one game played — show it regardless of score
+          winner = played[0].name;
+        } else if (played.length > 1) {
+          // Multiple games played — show the one with the highest normalised index
+          played.forEach(function (e) {
+            var current = entries.find(function (x) { return x.name === winner; });
+            var currentNorm = current && current.norm !== null ? current.norm : -1;
+            if (e.norm !== null && e.norm > currentNorm) winner = e.name;
+          });
+        }
+
+        if (winner !== 'Nostalgia') {
+          document.getElementById('heroCardNostalgia').style.display = 'none';
+          document.getElementById('heroCard' + winner).style.display = 'block';
+        }
+      } catch (e) {
+        // default nostalgia card remains visible
+      }
     })();
   </script>
 </body>
