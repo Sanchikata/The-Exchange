@@ -204,6 +204,25 @@
       z-index: 5;
     }
 
+    #scroll-hint {
+      position: fixed;
+      left: 50%;
+      top: calc(8vh + 51px);
+      transform: translateX(-50%);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 300;
+      color: #9f9f9f;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* ── Narrow screens ── */
     @media (max-width: 700px) {
       #left-col, #right-col { display: none; }
@@ -215,6 +234,10 @@
   <div id="landing-brand">
     <div id="landing-brand-dot"></div>
     <span id="landing-brand-title">THE EXCHANGE</span>
+  </div>
+  <div id="scroll-hint">
+    <span>scroll</span>
+    <span>↓</span>
   </div>
 
   <canvas id="particle-canvas"></canvas>
@@ -249,6 +272,36 @@
   <script src="https://unpkg.com/topojson-client@3"></script>
   <script src="https://unpkg.com/globe.gl"></script>
   <script>
+    /* ── Audio playback (right column only) ─────────────────── */
+    const audioMap = {
+      0: 'r1.mp3',
+      2: 'r2.mp3',
+      4: 'r3.mp3',
+      6: 'r4.mp3',
+    };
+
+    let currentAudio    = null;
+    let pendingAudioIndex = null;
+
+    function playLine(index) {
+      if (!audioMap[index]) return;
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+      currentAudio = new Audio(audioMap[index]);
+      currentAudio.volume = 0.9;
+      currentAudio.play().catch(() => {});
+    }
+
+    // Unlock audio pipeline on first real activation gesture.
+    // wheel alone doesn't count as user-activation for HTMLMediaElement in Chrome.
+    function unlockAudio() {
+      const a = new Audio(); a.play().catch(() => {});
+    }
+    document.addEventListener('click',   unlockAudio, { once: true });
+    document.addEventListener('keydown', unlockAudio, { once: true });
+
     /* ── Globe setup ─────────────────────────────────────────── */
     const container = document.getElementById('globe-container');
     const W = window.innerWidth;
@@ -392,12 +445,13 @@
 
     const colNextTop = { left: 80, right: 80 };
 
-    function revealBubble(b) {
+    function revealBubble(b, index) {
       const side = b.classList.contains('bubble-right') ? 'right' : 'left';
       b.style.top = colNextTop[side] + 'px';
       b.classList.add('visible');
       // offsetHeight forces sync layout — gives actual content+padding height
       colNextTop[side] += b.offsetHeight + 16;
+      if (side === 'right') pendingAudioIndex = index;
     }
 
     function revealBubbles(p) {
@@ -405,7 +459,7 @@
       let count = 0;
       bubblesAll.forEach((b, i) => {
         if (convProg >= i / 10) {
-          if (!b.classList.contains('visible')) revealBubble(b);
+          if (!b.classList.contains('visible')) revealBubble(b, i);
           count++;
         }
       });
@@ -708,7 +762,9 @@
 
     window.addEventListener('wheel', e => {
       e.preventDefault();
+      pendingAudioIndex = null;
       onScrollDelta(e.deltaY);
+      if (pendingAudioIndex !== null) { playLine(pendingAudioIndex); pendingAudioIndex = null; }
       fadeParticles();
     }, { passive: false });
 
@@ -718,7 +774,9 @@
       e.preventDefault();
       const delta = ty0 - e.touches[0].clientY;
       ty0 = e.touches[0].clientY;
+      pendingAudioIndex = null;
       onScrollDelta(delta * 2.5);
+      if (pendingAudioIndex !== null) { playLine(pendingAudioIndex); pendingAudioIndex = null; }
       fadeParticles();
     }, { passive: false });
 

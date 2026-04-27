@@ -25,6 +25,7 @@
       <div class="obs-field">
         <label class="obs-label">Password</label>
         <input type="password" class="obs-input" id="obs1Password">
+        <span class="obs-error" id="obs1PasswordError"></span>
       </div>
       <button class="obs-submit" id="obs1Submit">Continue</button>
     </div>
@@ -33,7 +34,7 @@
   <div id="obstacle2Overlay" class="obs-overlay hidden">
     <div class="obs-card">
       <h2 class="obs-title">Verify you're not a robot</h2>
-      <p class="obs-instruction">Select all squares with traffic lights</p>
+      <p class="obs-instruction">Select all images that are nostalgic</p>
       <div class="captcha-grid" id="captchaGrid"></div>
       <span class="obs-error" id="obs2Error"></span>
       <button class="obs-submit" id="obs2Submit">Verify</button>
@@ -43,9 +44,23 @@
   <div id="obstacle3Overlay" class="obs-overlay hidden">
     <div class="obs3-card" id="obs3Card">
       <button class="obs3-close" id="obs3CloseBtn">&#x2715;</button>
-      <div class="obs3-image"></div>
-      <p class="obs3-headline">You won't believe this deal.</p>
-      <p class="obs3-subtext">Limited time offer. Act now.</p>
+
+      <div class="obs3-byjus-banner">
+        <div class="obs3-byjus-orb obs3-byjus-orb--a"></div>
+        <div class="obs3-byjus-orb obs3-byjus-orb--b"></div>
+        <div class="obs3-byjus-orb obs3-byjus-orb--c"></div>
+        <div class="obs3-byjus-logo">BYJU'S</div>
+        <div class="obs3-byjus-sub">The Learning App</div>
+        <div class="obs3-byjus-stars">★★★★★ <span>4.8</span></div>
+      </div>
+
+      <div class="obs3-byjus-body">
+        <p class="obs3-byjus-headline">India's #1 Learning App</p>
+        <p class="obs3-byjus-copy">Join <strong>150 Million+</strong> students already learning smarter. Personalised lessons. Expert teachers. Zero boredom.</p>
+        <button class="obs3-byjus-cta">Start Learning Free &rarr;</button>
+        <p class="obs3-byjus-fine">*No credit card required &nbsp;·&nbsp; Cancel anytime</p>
+      </div>
+
     </div>
   </div>
 
@@ -85,10 +100,13 @@
     </div>
   </div>
 
+  <div id="obs3CustomCursor"></div>
+
   <div id="resetFlash" class="reset-flash"></div>
 
   <div id="resetBox" class="obs-overlay hidden reset-overlay">
     <div class="reset-card">
+      <p class="reset-header hidden" id="resetHeader"></p>
       <p class="reset-text">let's start over.</p>
       <div class="reset-btns">
         <button class="reset-btn reset-btn--primary" id="resetTryAgain">try again</button>

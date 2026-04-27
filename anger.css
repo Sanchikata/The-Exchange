@@ -459,8 +459,21 @@ body {
   text-align: center;
 }
 
+.reset-header {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #e4e4e4;
+  margin-bottom: 10px;
+}
+
+.reset-header.hidden {
+  display: none;
+}
+
 .reset-text {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
   font-size: 13px;
   color: #e4e4e4;
   margin-bottom: 22px;
@@ -630,10 +643,18 @@ body {
   width: 100%;
   aspect-ratio: 1;
   border: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  line-height: 1;
+  filter: sepia(0.25) brightness(0.97);
+  box-sizing: border-box;
 }
 
 .captcha-img.captcha-selected {
   border-color: #1a73e8;
+  filter: sepia(0) brightness(1);
 }
 
 .captcha-label {
@@ -644,13 +665,42 @@ body {
   text-align: center;
 }
 
+/* ── Obstacle 3 custom cursor ────────────────────────────────────────────────── */
+
+body.obs3-active * {
+  cursor: none !important;
+}
+
+#obs3CustomCursor {
+  position: fixed;
+  width: 28px;
+  height: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 18'%3E%3Cpath d='M1 1 L1 14 L4 11 L6 16 L8.5 15 L6.5 10 L10 10 Z' fill='%23111' stroke='%23fff' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 9999;
+  display: none;
+  transition: width 0.13s ease, height 0.13s ease;
+}
+
+#obs3CustomCursor.obs3-cursor-visible {
+  display: block;
+}
+
+#obs3CustomCursor.obs3-cursor-chase {
+  width: 58px;
+  height: 70px;
+}
+
 /* ── Obstacle 3 — popup ad ───────────────────────────────────────────────────── */
 
 .obs3-card {
   background: #ffffff;
   border: 1px solid #cccccc;
-  width: 400px;
+  width: 380px;
   position: relative;
+  overflow: hidden;
 }
 
 .obs3-close {
@@ -659,38 +709,151 @@ body {
   right: 14px;
   bottom: auto;
   left: auto;
-  background: none;
+  background: rgba(0,0,0,0.25);
   border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
   font-size: 10px;
-  color: #aaaaaa;
+  color: #ffffff;
   cursor: pointer;
-  padding: 4px 6px;
-  line-height: 1;
-  z-index: 1;
+  padding: 0;
+  line-height: 22px;
+  text-align: center;
+  z-index: 2;
 }
 
 .obs3-close:hover {
-  color: #555555;
+  background: rgba(0,0,0,0.45);
 }
 
-.obs3-image {
+/* ── BYJU'S banner ── */
+
+.obs3-byjus-banner {
+  position: relative;
   width: 100%;
-  height: 200px;
-  background: #cccccc;
-  display: block;
+  height: 190px;
+  background: linear-gradient(135deg, #4a1472 0%, #2d1b69 60%, #1a0f40 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow: hidden;
 }
 
-.obs3-headline {
+.obs3-byjus-orb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.18;
+}
+
+.obs3-byjus-orb--a {
+  width: 160px;
+  height: 160px;
+  background: #a855f7;
+  top: -40px;
+  left: -40px;
+}
+
+.obs3-byjus-orb--b {
+  width: 120px;
+  height: 120px;
+  background: #f7b731;
+  bottom: -30px;
+  right: -20px;
+}
+
+.obs3-byjus-orb--c {
+  width: 80px;
+  height: 80px;
+  background: #60a5fa;
+  top: 20px;
+  right: 60px;
+}
+
+.obs3-byjus-logo {
   font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 400;
-  color: #1a1a1a;
-  padding: 20px 24px 8px;
+  font-size: 38px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+  position: relative;
+  z-index: 1;
 }
 
-.obs3-subtext {
+.obs3-byjus-sub {
   font-family: 'Inter', sans-serif;
   font-size: 11px;
-  color: #999999;
-  padding: 0 24px 24px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.obs3-byjus-stars {
+  font-size: 13px;
+  color: #f7b731;
+  position: relative;
+  z-index: 1;
+  margin-top: 4px;
+}
+
+.obs3-byjus-stars span {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  margin-left: 4px;
+}
+
+/* ── BYJU'S body ── */
+
+.obs3-byjus-body {
+  padding: 20px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.obs3-byjus-headline {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.obs3-byjus-copy {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #555555;
+  line-height: 1.6;
+}
+
+.obs3-byjus-cta {
+  display: block;
+  width: 100%;
+  background: #f7b731;
+  color: #1a1a1a;
+  border: none;
+  padding: 11px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  letter-spacing: 0.01em;
+  margin-top: 2px;
+}
+
+.obs3-byjus-cta:hover {
+  background: #f0aa1a;
+}
+
+.obs3-byjus-fine {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: #aaaaaa;
+  text-align: center;
 }

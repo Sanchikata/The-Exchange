@@ -187,9 +187,30 @@ let obs1Attempts     = 0;      // total Continue button clicks
 let obs1CheckingDone = false;  // true after the 2s "checking" delay resolves
 let obs1StartTime    = null;
 
-const obs1Overlay  = document.getElementById('obstacle1Overlay');
-const obs1Submit   = document.getElementById('obs1Submit');
-const obs1ErrSpan  = document.getElementById('obs1UsernameError');
+const obs1Overlay    = document.getElementById('obstacle1Overlay');
+const obs1Submit     = document.getElementById('obs1Submit');
+const obs1ErrSpan    = document.getElementById('obs1UsernameError');
+const obs1PwdErrSpan = document.getElementById('obs1PasswordError');
+
+function obs1PasswordValid() {
+  const val = document.getElementById('obs1Password').value;
+  if (val.length < 6) {
+    obs1PwdErrSpan.textContent = val.length === 0 ? '' : 'Minimum 6 characters';
+    return false;
+  }
+  if (!/\d/.test(val)) {
+    obs1PwdErrSpan.textContent = 'Must contain at least 1 number';
+    return false;
+  }
+  obs1PwdErrSpan.textContent = '';
+  return true;
+}
+
+document.getElementById('obs1Password').addEventListener('input', () => {
+  const valid  = obs1PasswordValid();
+  const inWait = obs1Attempts === 1 && !obs1CheckingDone;
+  obs1Submit.disabled = !valid || inWait;
+});
 
 function showObstacle1() {
   movementPaused   = true;
@@ -201,7 +222,8 @@ function showObstacle1() {
   document.getElementById('obs1Username').value = '';
   document.getElementById('obs1Password').value  = '';
   obs1ErrSpan.textContent      = '';
-  obs1Submit.disabled          = false;
+  obs1PwdErrSpan.textContent   = '';
+  obs1Submit.disabled          = true;
   obs1Submit.textContent       = 'Continue';
 
   obs1Overlay.classList.remove('hidden');
@@ -225,7 +247,7 @@ function closeObstacle1(success) {
 }
 
 obs1Submit.addEventListener('click', () => {
-  // If the 2s check has resolved, next click is the final success submit
+  // Second click after the "username taken" turn — proceed
   if (obs1CheckingDone) {
     obs1Attempts++;
     closeObstacle1(true);
@@ -234,42 +256,53 @@ obs1Submit.addEventListener('click', () => {
 
   obs1Attempts++;
 
-  if (obs1Attempts < 4) {
-    // Attempts 1–3: username already taken
+  if (obs1Attempts === 1) {
+    // First click: show error once, disable button for this turn
     obs1ErrSpan.textContent = 'Username already taken';
-  } else {
-    // Attempt 4: username "accepted", start availability check
-    obs1ErrSpan.textContent = '';
     obs1Submit.disabled     = true;
-    obs1Submit.textContent  = 'checking availability...';
 
     setTimeout(() => {
-      obs1CheckingDone       = true;
-      obs1Submit.disabled    = false;
-      obs1Submit.textContent = 'Continue';
+      obs1ErrSpan.textContent = '';
+      obs1CheckingDone        = true;
+      obs1Submit.textContent  = 'Continue';
+      obs1Submit.disabled     = !obs1PasswordValid();
     }, 2000);
   }
 });
 
-// ── Obstacle 2 — captcha ──────────────────────────────────────────────────────
+// ── Obstacle 2 — nostalgia captcha ───────────────────────────────────────────
 
-let obstacle2Active = false;
-let obs2Attempts    = 0;
-let obs2StartTime   = null;
+let obstacle2Active    = false;
+let obs2Attempts       = 0;
+let obs2StartTime      = null;
+let obs2EverSubmitted  = false; // persists across maze resets
 
 const obs2Overlay = document.getElementById('obstacle2Overlay');
 const obs2Submit  = document.getElementById('obs2Submit');
 const obs2ErrSpan = document.getElementById('obs2Error');
 const captchaGrid = document.getElementById('captchaGrid');
 
-const CAPTCHA_LABELS = [
-  'traffic light', 'bus', 'car', 'bicycle',
-  'motorcycle', 'truck', 'stop sign', 'crosswalk', 'fire hydrant',
+const NOSTALGIA_POOL = [
+  { emoji: '📼', label: 'VHS tape'         },
+  { emoji: '💾', label: 'floppy disk'      },
+  { emoji: '📟', label: 'pager'            },
+  { emoji: '📺', label: 'CRT TV'           },
+  { emoji: '🕹️', label: 'joystick'         },
+  { emoji: '📻', label: 'walkman'          },
+  { emoji: '💿', label: 'CD/DVD'           },
+  { emoji: '🖥️', label: 'old PC'           },
+  { emoji: '📷', label: 'disposable cam'   },
+  { emoji: '🎧', label: 'discman'          },
+  { emoji: '🖨️', label: 'dot matrix'       },
+  { emoji: '📞', label: 'corded phone'     },
+  { emoji: '🎮', label: 'game boy'         },
+  { emoji: '🖱️', label: 'ball mouse'       },
+  { emoji: '📡', label: 'satellite dish'   },
 ];
 
-const CELL_COLORS = [
-  '#c4c4c4', '#b8bec8', '#c8beb8', '#bec8b8',
-  '#c8b4c8', '#b4c8c8', '#c8c8b4', '#bec0c8', '#c8c0be',
+const SEPIA_TONES = [
+  '#ede8da', '#e5dfd0', '#dbd4c2', '#e8e2d5',
+  '#e0d9c8', '#e9e3d6', '#ddd7c6', '#e6e0d2', '#e2dccb',
 ];
 
 function shuffle(arr) {
@@ -281,31 +314,27 @@ function shuffle(arr) {
   return a;
 }
 
-let trafficLightImg = null;
-
 function buildCaptchaGrid() {
   captchaGrid.innerHTML = '';
-  trafficLightImg = null;
-  const labels = shuffle(CAPTCHA_LABELS);
-  const colors = shuffle(CELL_COLORS);
+  const items = shuffle(NOSTALGIA_POOL).slice(0, 9);
+  const tones = shuffle(SEPIA_TONES);
 
-  labels.forEach((label, i) => {
+  items.forEach((item, i) => {
     const cell = document.createElement('div');
     cell.className = 'captcha-cell';
 
-    const img = document.createElement('div');
-    img.className = 'captcha-img';
-    img.style.background = colors[i];
+    const tile = document.createElement('div');
+    tile.className = 'captcha-img';
+    tile.style.background = tones[i];
+    tile.textContent = item.emoji;
 
     const lbl = document.createElement('span');
     lbl.className = 'captcha-label';
-    lbl.textContent = label;
+    lbl.textContent = item.label;
 
-    if (label === 'traffic light') trafficLightImg = img;
-
-    cell.appendChild(img);
+    cell.appendChild(tile);
     cell.appendChild(lbl);
-    cell.addEventListener('click', () => img.classList.toggle('captcha-selected'));
+    cell.addEventListener('click', () => tile.classList.toggle('captcha-selected'));
     captchaGrid.appendChild(cell);
   });
 }
@@ -343,13 +372,16 @@ function closeObstacle2(success) {
 obs2Submit.addEventListener('click', () => {
   obs2Attempts++;
 
-  const correctSelected = trafficLightImg && trafficLightImg.classList.contains('captcha-selected');
-
-  if (correctSelected || obs2Attempts >= 3) {
-    closeObstacle2(true);
-  } else {
-    // Wrong submission — close captcha and reset character to start
+  if (!obs2EverSubmitted) {
+    // First time ever — set reset card header then reset the maze
+    obs2EverSubmitted = true;
+    const resetHeader = document.getElementById('resetHeader');
+    resetHeader.textContent = 'dig your memories deeper';
+    resetHeader.classList.remove('hidden');
     closeObstacle2(false);
+  } else {
+    // Second time reaching the captcha — always passes
+    closeObstacle2(true);
   }
 });
 
@@ -361,8 +393,11 @@ let obs3ButtonMoves   = 0;
 let obs3Locked        = false;
 let obs3LockTimer     = null;
 let obs3MoveListener  = null;
+let obs3CursorListener = null;
 let obs3MoveCooldown  = false;
 let obs3CurrentCorner = 0;
+
+const obs3CustomCursor = document.getElementById('obs3CustomCursor');
 
 const obs3Overlay  = document.getElementById('obstacle3Overlay');
 const obs3CloseBtn = document.getElementById('obs3CloseBtn');
@@ -406,8 +441,26 @@ function showObstacle3() {
   applyObs3Corner(0);
   obs3Overlay.classList.remove('hidden');
 
+  // Activate custom cursor
+  document.body.classList.add('obs3-active');
+  obs3CustomCursor.classList.add('obs3-cursor-visible');
+
   // Unlock close button after exactly 10 seconds
   obs3LockTimer = setTimeout(() => { obs3Locked = true; }, 10000);
+
+  // Cursor tracker — moves custom cursor div and grows it near the button
+  obs3CursorListener = (e) => {
+    obs3CustomCursor.style.left = (e.clientX + 1) + 'px';
+    obs3CustomCursor.style.top  = (e.clientY + 1) + 'px';
+
+    const rect = obs3CloseBtn.getBoundingClientRect();
+    const dist = Math.hypot(
+      e.clientX - (rect.left + rect.width  / 2),
+      e.clientY - (rect.top  + rect.height / 2)
+    );
+    obs3CustomCursor.classList.toggle('obs3-cursor-chase', dist < 120);
+  };
+  document.addEventListener('mousemove', obs3CursorListener);
 
   // Proximity listener — button escapes when cursor gets within 60px
   obs3MoveListener = (e) => {
@@ -424,10 +477,18 @@ function showObstacle3() {
 
 function closeObstacle3(success) {
   clearTimeout(obs3LockTimer);
+  if (obs3CursorListener) {
+    document.removeEventListener('mousemove', obs3CursorListener);
+    obs3CursorListener = null;
+  }
   if (obs3MoveListener) {
     document.removeEventListener('mousemove', obs3MoveListener);
     obs3MoveListener = null;
   }
+
+  // Restore native cursor
+  document.body.classList.remove('obs3-active');
+  obs3CustomCursor.classList.remove('obs3-cursor-visible', 'obs3-cursor-chase');
 
   obs3Overlay.classList.add('hidden');
   obstacle3Active = false;
@@ -492,6 +553,9 @@ function resetGame() {
 
   // Reset obstacle 2 state
   obs2Attempts = 0;
+  const resetHeader = document.getElementById('resetHeader');
+  resetHeader.textContent = '';
+  resetHeader.classList.add('hidden');
 
   // Reset obstacle 3 state (timer/listener already cleared by closeObstacle3)
   obs3ButtonMoves   = 0;
