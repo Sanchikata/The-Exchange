@@ -168,22 +168,44 @@
 
     <!-- ── Screen 3.5: Satisfaction ──────────────────────────────────────── -->
     <div class="screen" id="quiz-satisfaction">
-      <div class="satisfaction-wrap">
+      <div class="smile-sat-wrap">
         <span class="screen-eyebrow">Before you continue</span>
-        <p class="screen-heading">How satisfied are you with your result?</p>
-        <div class="satisfaction-scale" id="satisfaction-scale">
-          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 1)">1</button>
-          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 2)">2</button>
-          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 3)">3</button>
-          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 4)">4</button>
-          <button class="satisfaction-btn" onclick="selectSatisfaction(this, 5)">5</button>
+        <p class="screen-heading">Allow camera access to rate your experience.</p>
+
+        <div class="smile-preview-row">
+          <div class="smile-preview-shell">
+            <video id="smile-video" autoplay muted playsinline></video>
+            <div class="smile-no-cam-msg" id="smile-no-cam-msg"></div>
+            <div class="smile-face-overlay" id="smile-face-overlay"></div>
+          </div>
         </div>
-        <div class="satisfaction-labels">
-          <span>unsatisfied</span>
-          <span>very satisfied</span>
+
+        <div class="smile-scale">
+          <div class="smile-dot" id="smile-dot-1"><span class="smile-dot-label">1</span></div>
+          <div class="smile-dot" id="smile-dot-2"><span class="smile-dot-label">2</span></div>
+          <div class="smile-dot" id="smile-dot-3"><span class="smile-dot-label">3</span></div>
+          <div class="smile-dot" id="smile-dot-4"><span class="smile-dot-label">4</span></div>
+          <div class="smile-dot" id="smile-dot-5"><span class="smile-dot-label">5</span></div>
         </div>
-        <div class="quiz-run-footer">
-          <button class="quiz-next-btn" id="satisfaction-next-btn" onclick="submitSatisfaction()" disabled>Continue &#x2192;</button>
+
+        <div class="smile-lock-area">
+          <svg class="smile-lock-svg" id="smile-lock-svg" viewBox="0 0 48 48">
+            <circle class="smile-ring-bg"   cx="24" cy="24" r="20"/>
+            <circle class="smile-ring-fill" id="smile-ring-fill" cx="24" cy="24" r="20"/>
+          </svg>
+        </div>
+
+        <p class="smile-prompt-text" id="smile-prompt-text">We can see you. Smile to rate your experience.</p>
+        <p class="smile-status-text" id="smile-status-text">Loading models...</p>
+
+        <a href="#" class="smile-fallback-link" onclick="showSmileFallback(event)">Rate without camera</a>
+
+        <div class="smile-fallback-scale" id="smile-fallback-scale">
+          <button class="sat-tap-btn" onclick="lockSmileScore(1)">1</button>
+          <button class="sat-tap-btn" onclick="lockSmileScore(2)">2</button>
+          <button class="sat-tap-btn" onclick="lockSmileScore(3)">3</button>
+          <button class="sat-tap-btn" onclick="lockSmileScore(4)">4</button>
+          <button class="sat-tap-btn" onclick="lockSmileScore(5)">5</button>
         </div>
       </div>
     </div><!-- /quiz-satisfaction -->
@@ -223,6 +245,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
   <script src="supabase.js"></script>
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>

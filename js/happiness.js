@@ -519,6 +519,7 @@ function submitName() {
 // SCREEN 1 — Quiz selection
 // ─────────────────────────────────────────────────────────────────────────────
 function exitQuiz() {
+  stopSmileCamera();
   showScreen('quiz-selection');
 }
 
@@ -764,24 +765,214 @@ function retakeQuiz() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SCREEN 3.5 — Satisfaction
+// SCREEN 3.5 — Smile-based satisfaction
 // ─────────────────────────────────────────────────────────────────────────────
-function showSatisfaction() {
-  // Reset state and UI
-  S.satisfactionRating = null;
-  document.querySelectorAll('.satisfaction-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('satisfaction-next-btn').disabled = true;
-  showScreen('quiz-satisfaction');
+
+const FACE_MODEL_URL  = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/';
+const SMILE_LOCK_MS   = 2000;    // ms to hold a smile before locking
+const SMILE_RING_C    = 125.66;  // 2 * π * r20
+
+let smileStream      = null;
+let smileDetecting   = false;
+let faceApiReady     = false;
+let smileLockStart   = null;
+
+function happinessToScore(h) {
+  if (h < 0.10) return 1;
+  if (h < 0.25) return 2;
+  if (h < 0.45) return 3;
+  if (h < 0.70) return 4;
+  return 5;
 }
 
-function selectSatisfaction(el, value) {
-  document.querySelectorAll('.satisfaction-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  S.satisfactionRating = value;
-  document.getElementById('satisfaction-next-btn').disabled = false;
+const SMILE_PROMPTS = {
+  1: 'We can see you. Smile to rate your experience.',
+  2: 'A little more — we know you enjoyed it.',
+  3: 'Getting there. Show us how you really feel.',
+  4: 'Almost at your peak. Keep going.',
+  5: 'There it is. Rating locked.'
+};
+
+async function showSatisfaction() {
+  stopSmileCamera();
+  S.satisfactionRating = null;
+  smileLockStart       = null;
+
+  updateSmileDots(0);
+  updateSmilePrompt(1);
+  updateSmileLockRing(0);
+  document.getElementById('smile-lock-svg').style.display      = 'none';
+  document.getElementById('smile-fallback-scale').style.display = 'none';
+  document.getElementById('smile-no-cam-msg').style.display     = 'flex';
+  setSmileStatus('Loading models...');
+
+  showScreen('quiz-satisfaction');
+  await initSmileDetection();
+}
+
+async function initSmileDetection() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setSmileStatus('Camera API not available. Use the link below to rate.');
+    return;
+  }
+
+  // Step 1 — request camera (permission popup appears here)
+  const video = document.getElementById('smile-video');
+  try {
+    setSmileStatus('Requesting camera access...');
+    smileStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } },
+      audio: false
+    });
+    document.getElementById('smile-no-cam-msg').style.display = 'none';
+    video.srcObject = smileStream;
+    await new Promise((res, rej) => { video.onloadedmetadata = res; video.onerror = rej; });
+    await video.play();
+  } catch (e) {
+    const msg = e.name === 'NotAllowedError'
+      ? 'Camera access denied. Use the link below to rate.'
+      : 'Camera unavailable. Use the link below to rate.';
+    setSmileStatus(msg);
+    return;
+  }
+
+  // Step 2 — load models (camera is already live)
+  if (typeof faceapi === 'undefined') {
+    setSmileStatus('Detection library not loaded. Use the link below to rate.');
+    return;
+  }
+  if (!faceApiReady) {
+    try {
+      setSmileStatus('Loading detection models...');
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URL),
+        faceapi.nets.faceExpressionNet.loadFromUri(FACE_MODEL_URL)
+      ]);
+      faceApiReady = true;
+    } catch (e) {
+      console.error('[face-api] model load failed:', e);
+      setSmileStatus('Could not load models. Use the link below to rate.');
+      return;
+    }
+  }
+
+  setSmileStatus('Look at the camera and smile');
+  runSmileDetection(video);
+}
+
+async function runSmileDetection(video) {
+  smileDetecting = true;
+  while (smileDetecting) {
+    if (!smileStream || video.paused || video.ended) break;
+    try {
+      const result = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }))
+        .withFaceExpressions();
+
+      if (!smileDetecting) break;
+
+      if (result) {
+        const h = result.expressions.happy || 0;
+        updateSmileFaceOverlay(h);
+        updateSmileScore(happinessToScore(h));
+      } else {
+        updateSmileFaceOverlay(null);
+        smileLockStart = null;
+        updateSmileLockRing(0);
+        document.getElementById('smile-lock-svg').style.display = 'none';
+      }
+    } catch (_) { /* continue */ }
+
+    await new Promise(r => setTimeout(r, 80));
+  }
+}
+
+function updateSmileScore(score) {
+  updateSmileDots(score);
+  updateSmilePrompt(score);
+
+  const lockSvg = document.getElementById('smile-lock-svg');
+
+  if (score >= 2) {
+    if (!smileLockStart) smileLockStart = Date.now();
+    const elapsed  = Date.now() - smileLockStart;
+    const progress = Math.min(elapsed / SMILE_LOCK_MS, 1);
+    lockSvg.style.display = 'block';
+    updateSmileLockRing(progress);
+    if (elapsed >= SMILE_LOCK_MS) lockSmileScore(score);
+  } else {
+    smileLockStart = null;
+    lockSvg.style.display = 'none';
+    updateSmileLockRing(0);
+  }
+}
+
+function updateSmileDots(score) {
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById('smile-dot-' + i);
+    if (dot) dot.classList.toggle('active', i <= score);
+  }
+}
+
+function updateSmilePrompt(score) {
+  const el = document.getElementById('smile-prompt-text');
+  if (el) el.textContent = SMILE_PROMPTS[score] || SMILE_PROMPTS[1];
+}
+
+function updateSmileLockRing(progress) {
+  const fill = document.getElementById('smile-ring-fill');
+  if (fill) fill.style.strokeDashoffset = SMILE_RING_C * (1 - progress);
+}
+
+function updateSmileFaceOverlay(h) {
+  const el = document.getElementById('smile-face-overlay');
+  if (!el) return;
+  if (h === null) {
+    el.textContent = 'no face detected';
+    el.style.display = 'block';
+  } else {
+    el.textContent = `happy ${h.toFixed(3)}  →  ${happinessToScore(h)} / 5`;
+    el.style.display = 'block';
+  }
+}
+
+function lockSmileScore(score) {
+  if (S.satisfactionRating !== null) return;
+  stopSmileCamera();
+  S.satisfactionRating = score;
+  updateSmileDots(score);
+  updateSmilePrompt(5);
+  updateSmileLockRing(1);
+  document.getElementById('smile-lock-svg').style.display = 'block';
+  document.getElementById('smile-face-overlay').style.display = 'none';
+  setSmileStatus('Score locked — ' + score + ' / 5');
+  setTimeout(() => submitSatisfaction(), 700);
+}
+
+function stopSmileCamera() {
+  smileDetecting = false;
+  smileLockStart = null;
+  if (smileStream) {
+    smileStream.getTracks().forEach(t => t.stop());
+    smileStream = null;
+  }
+}
+
+function showSmileFallback(e) {
+  e.preventDefault();
+  stopSmileCamera();
+  setSmileStatus('Tap a number to rate your experience.');
+  document.getElementById('smile-fallback-scale').style.display = 'flex';
+  document.getElementById('smile-lock-svg').style.display = 'none';
+}
+
+function setSmileStatus(text) {
+  const el = document.getElementById('smile-status-text');
+  if (el) el.textContent = text;
 }
 
 function submitSatisfaction() {
+  stopSmileCamera();
   showScreen('quiz-share');
   document.querySelectorAll('#quiz-share .option-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('share-submit-btn').disabled = true;
@@ -878,6 +1069,7 @@ async function saveHappinessSession() {
   if (quizSatisfactionCol) {
     payload[quizSatisfactionCol] = S.satisfactionRating;
   }
+  payload.satisfaction_score = S.satisfactionRating;
   console.log('[happiness] INSERT payload:', JSON.stringify(payload, null, 2));
 
   const { error } = await db
