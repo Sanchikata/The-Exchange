@@ -11,14 +11,14 @@
   <style>
 
     /* ── Page shell ── */
-    body { background: #f7f7f4; }
+    body { background: #141414; }
 
     .topbar {
       position: fixed;
       top: 0; left: 0; right: 0;
       height: 48px;
-      background: #ffffff;
-      border-bottom: 1px solid #ebebeb;
+      background: #0f0f0f;
+      border-bottom: 0.5px solid #222222;
       z-index: 99;
       display: flex;
       align-items: center;
@@ -26,15 +26,15 @@
       padding: 0 24px;
     }
     .topbar-left { display: flex; align-items: center; gap: 14px; }
-    .topbar-menu  { font-size: 16px; color: #bbb; cursor: pointer; }
-    .topbar-brand { font-size: 12px; color: #222; letter-spacing: 0.06em; }
+    .topbar-menu  { font-size: 16px; color: #555; cursor: pointer; }
+    .topbar-brand { font-size: 12px; color: #e8e8e0; letter-spacing: 0.06em; }
     .points-display { font-size: 12px; color: #c4a45a; letter-spacing: 0.04em; font-family: 'IBM Plex Mono', monospace; }
 
     /* ── Main layout ── */
     .games-main {
       margin-top: 48px;
       padding: 36px 32px 0;
-      background: #f7f7f4;
+      background: #141414;
       min-height: calc(100vh - 48px);
     }
     .games-content { max-width: 1280px; margin: 0 auto; }
@@ -45,7 +45,7 @@
       font-size: 12px;
       font-weight: 400;
       letter-spacing: 0.22em;
-      color: #000000;
+      color: #888880;
       text-align: center;
       text-transform: uppercase;
       line-height: 1.8;
@@ -62,9 +62,9 @@
 
     /* ── Card shell ── */
     .game-card {
-      background: #ffffff;
+      background: #0f0f0f;
       border-radius: 18px;
-      border: 1px solid rgba(0,0,0,0.07);
+      border: 0.5px solid #222222;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -75,7 +75,7 @@
     }
     .game-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.11);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
     }
 
     /* ── Played overlay ── */
@@ -83,7 +83,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(240, 240, 237, 0.72);
+      background: rgba(10, 10, 10, 0.62);
       pointer-events: none;
       z-index: 2;
     }
@@ -96,8 +96,8 @@
       top: 10px;
       left: 12px;
       z-index: 3;
-      background: #e0e0dc;
-      color: #888;
+      background: #1a1a1a;
+      color: #555;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 9px;
       font-weight: 400;
@@ -105,7 +105,7 @@
       text-transform: uppercase;
       padding: 4px 8px;
       border-radius: 3px;
-      border: 1px solid rgba(0,0,0,0.09);
+      border: 0.5px solid #2a2a2a;
     }
     .game-card.played .played-tag { display: block; }
 
@@ -130,7 +130,7 @@
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-size: 17px;
       font-weight: 700;
-      color: #111;
+      color: #e8e8e0;
       margin: 0;
       line-height: 1.25;
       letter-spacing: -0.01em;
@@ -139,7 +139,7 @@
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 14px;
       font-weight: 400;
-      color: #888;
+      color: #555550;
       margin: 0;
       line-height: 1.5;
     }
@@ -303,9 +303,9 @@
     }
     .return-trade-btn {
       display: none;
-      background: #111;
-      color: #f7f7f4;
-      border: none;
+      background: transparent;
+      color: #c4a45a;
+      border: 0.5px solid #c4a45a;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
       font-weight: 400;
@@ -314,14 +314,15 @@
       padding: 16px 48px;
       cursor: pointer;
       border-radius: 2px;
-      transition: background 0.2s, box-shadow 0.2s;
+      transition: background 0.2s, box-shadow 0.2s, color 0.2s;
     }
     .return-trade-btn.active {
       display: inline-block;
     }
     .return-trade-btn:hover {
-      background: #000;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      background: #c4a45a;
+      color: #0a0a0a;
+      box-shadow: 0 4px 24px rgba(196,164,90,0.2);
     }
 
     /* ── Footer ── */
@@ -329,7 +330,7 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 11px;
       font-weight: 300;
-      color: #000000;
+      color: #444440;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       text-align: center;
@@ -338,7 +339,7 @@
     .games-footer {
       margin-top: 40px;
       padding: 48px 0 72px;
-      border-top: 1px solid #e8e8e4;
+      border-top: 0.5px solid #1a1a1a;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -348,13 +349,13 @@
     .games-footer-divider {
       width: 80px;
       height: 1px;
-      background: #e0e0dc;
+      background: #222222;
     }
     .games-footer-copy {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
       font-weight: 300;
-      color: #ccc;
+      color: #333330;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       margin: 0;
@@ -519,17 +520,6 @@
       el.textContent = window.exchangePoints + ' emotional points';
     }
 
-    // Mark cards for already-played games and show return button if any played
-    (function () {
-      var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
-      played.forEach(function (key) {
-        var card = document.querySelector('[data-game="' + key + '"]');
-        if (card) card.classList.add('played');
-      });
-      if (played.length >= 1) {
-        document.getElementById('returnTradeBtn').classList.add('active');
-      }
-    })();
 
     function returnToTrade() {
       var pts = window.exchangePoints || 0;

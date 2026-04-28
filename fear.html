@@ -20,38 +20,10 @@
       min-height: 100vh;
     }
 
-    /* ── Sidebar ── */
-    .sidebar {
-      position: fixed;
-      top: 0; left: 0;
-      width: 48px;
-      height: 100vh;
-      border-right: 0.5px solid #222222;
-      background: #0a0a0a;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 60px 0 16px;
-      gap: 6px;
-    }
-    .sidebar-icon {
-      width: 36px; height: 36px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px;
-      color: #383835;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: color 0.2s;
-      user-select: none;
-    }
-    .sidebar-icon:hover, .sidebar-icon.active { color: #c4a45a; }
-    .sidebar-push { margin-top: auto; }
-
-    /* ── Topbar ── */
+/* ── Topbar ── */
     .topbar {
       position: fixed;
-      top: 0; left: 48px; right: 0;
+      top: 0; left: 0; right: 0;
       height: 44px;
       border-bottom: 0.5px solid #222222;
       background: #0a0a0a;
@@ -70,7 +42,7 @@
 
     /* ── Main layout ── */
     .fear-main {
-      margin-left: 48px;
+      margin-left: 0;
       margin-top: 44px;
       min-height: calc(100vh - 44px);
       position: relative;
@@ -501,14 +473,24 @@
 </head>
 <body>
 
-  <!-- Left Sidebar -->
-  <nav class="sidebar">
-    <div class="sidebar-icon" title="Dashboard" onclick="location.href='market.html'">&#x229E;</div>
-    <div class="sidebar-icon" title="Portfolio" onclick="location.href='portfolio.html'">&#x2197;</div>
-    <div class="sidebar-icon active" title="Earn Points" onclick="location.href='games.html'">&#x2605;</div>
-    <div class="sidebar-icon sidebar-push" title="Settings">&#x2699;</div>
-    <div class="sidebar-icon" title="Help">?</div>
-  </nav>
+  <!-- ── Intro Overlay ── -->
+  <div id="game-intro" style="position:fixed;inset:0;z-index:1000;background:#f5f0e8;">
+    <div style="position:absolute;top:0;left:0;right:0;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+      <a href="games2.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">← The Exchange</a>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.15em;">02 / 04</span>
+    </div>
+    <div style="position:absolute;top:18vh;left:0;padding-left:48px;">
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:12px;">Game 02</p>
+      <h1 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(28px,3.5vw,48px);font-weight:300;color:#0a0a0a;letter-spacing:-0.02em;line-height:1.05;">Nothing To Hide</h1>
+      <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:300;color:#666;margin-top:10px;line-height:1.6;">Simple questions. No consequences.</p>
+      <div style="margin-top:24px;max-width:600px;background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:24px 28px;">
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;font-style:italic;color:#000;line-height:1.4;">Can you solve under pressure?<br>Because time is ticking.</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:400;color:#000;line-height:2;margin-top:6px;">Answer 10 math questions in 45 seconds.<br>+30 for every correct answer / −10 for every wrong one.<br>One trick question waits at the end — no timer, just you.</p>
+      </div>
+      <button onclick="document.getElementById('game-intro').style.display='none'" style="display:inline-flex;align-items:center;gap:8px;margin-top:32px;border:1.5px solid #0a0a0a;border-radius:999px;background:transparent;color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;cursor:pointer;"><span style="color:#c8b88a;">●</span> BEGIN</button>
+    </div>
+    <p style="position:absolute;bottom:48px;left:0;right:0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.15em;text-transform:uppercase;">complete all games to access the market.</p>
+  </div>
 
   <!-- Topbar -->
   <header class="topbar">

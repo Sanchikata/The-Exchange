@@ -11,6 +11,25 @@
 </head>
 <body>
 
+  <!-- ── Intro Overlay ── -->
+  <div id="game-intro" style="position:fixed;inset:0;z-index:1000;background:#f5f0e8;">
+    <div style="position:absolute;top:0;left:0;right:0;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;">
+      <a href="games2.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;">← The Exchange</a>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.15em;">03 / 04</span>
+    </div>
+    <div style="position:absolute;top:18vh;left:0;padding-left:48px;">
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:12px;">Game 03</p>
+      <h1 style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:clamp(28px,3.5vw,48px);font-weight:300;color:#0a0a0a;letter-spacing:-0.02em;line-height:1.05;">Almost There</h1>
+      <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:300;color:#666;margin-top:10px;line-height:1.6;">Just get to the end.</p>
+      <div style="margin-top:24px;max-width:600px;background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.08);border-radius:4px;padding:24px 28px;">
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;font-style:italic;color:#000;line-height:1.4;">You are 97% done. You just have to finish.</p>
+        <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:400;color:#000;line-height:2;margin-top:6px;">A task is waiting to be completed.<br>Obstacles will appear to slow you down.<br>Your frustration is part of the data.</p>
+      </div>
+      <button onclick="document.getElementById('game-intro').style.display='none'" style="display:inline-flex;align-items:center;gap:8px;margin-top:32px;border:1.5px solid #0a0a0a;border-radius:999px;background:transparent;color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;padding:14px 28px;cursor:pointer;"><span style="color:#c8b88a;">●</span> BEGIN</button>
+    </div>
+    <p style="position:absolute;bottom:48px;left:0;right:0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:300;color:#999;letter-spacing:0.15em;text-transform:uppercase;">complete all games to access the market.</p>
+  </div>
+
   <!-- ── Fixed overlays ──────────────────────────────────────────────────────── -->
 
   <div id="obstacle1Overlay" class="obs-overlay hidden">

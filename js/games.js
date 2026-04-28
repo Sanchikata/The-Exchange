@@ -5,39 +5,59 @@
 
   window.participantData = window.participantData || {};
 
-  const entryScreen = document.getElementById('entry-screen');
-  const gameWrapper  = document.getElementById('game-wrapper');
-  const entryBtn     = document.getElementById('entry-btn');
-  const stopwatch    = document.getElementById('stopwatch');
+  // ── State management ──────────────────────────────────────────────────────
 
-  let elapsed = 0;
+  var activeClosureState = null;
 
-  function formatTime(s) {
-    const h   = String(Math.floor(s / 3600)).padStart(2, '0');
-    const m   = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
-    const sec = String(s % 60).padStart(2, '0');
-    return `${h}:${m}:${sec}`;
+  function showState(id) {
+    document.getElementById(id).classList.add('active');
   }
 
-  function startStopwatch() {
-    stopwatch.classList.add('visible');
-    setInterval(function () {
-      elapsed++;
-      stopwatch.textContent = formatTime(elapsed);
-    }, 1000);
+  function hideState(id) {
+    document.getElementById(id).classList.remove('active');
   }
 
-  function showGameShell() {
-    entryScreen.classList.add('fade-out');
+  function goToState2() {
+    hideState('state-1');
+    showState('state-2');
+    initGame1();
+  }
+
+  function goToState3A() {
+    hideState('state-2');
+    activeClosureState = 'state-3a';
+    showState('state-3a');
     setTimeout(function () {
-      entryScreen.style.display = 'none';
-      gameWrapper.classList.add('visible');
-      startStopwatch();
-      initGame1();
-    }, 650);
+      document.getElementById('next-btn-3a').classList.add('visible');
+    }, 1500);
   }
 
-  entryBtn.addEventListener('click', showGameShell);
+  function goToState3B() {
+    hideState('state-2');
+    activeClosureState = 'state-3b';
+    showState('state-3b');
+    setTimeout(function () {
+      document.getElementById('next-btn-3b').classList.add('visible');
+    }, 1500);
+  }
+
+  function goToState4() {
+    document.getElementById('state-4').classList.add('active');
+  }
+
+  function goToState5() {
+    document.getElementById('state-4').classList.remove('active');
+    if (activeClosureState) hideState(activeClosureState);
+    showState('state-5');
+    showShakalaka();
+  }
+
+  document.getElementById('begin-btn').addEventListener('click', goToState2);
+  document.getElementById('next-btn-3a').addEventListener('click', goToState4);
+  document.getElementById('next-btn-3b').addEventListener('click', goToState4);
+  document.getElementById('ready-btn').addEventListener('click', goToState5);
+
+  // ── Calibration ───────────────────────────────────────────────────────────
 
   function showCalibrationScreen() {
     const screen = document.getElementById('calibration-screen');
@@ -792,40 +812,11 @@
         arena.appendChild(glow);
         requestAnimationFrame(() => requestAnimationFrame(() => glow.classList.add('visible')));
 
+        // Let the gold burst breathe, then transition to STATE 3A
         setTimeout(function () {
-          const overlay = document.createElement('div');
-          overlay.className = 'game1-result-overlay';
-
-          const popup = document.createElement('div');
-          popup.className = 'game1-popup';
-          popup.innerHTML =
-            '<p class="game1-popup-title">you found it.</p>' +
-            '<p class="game1-popup-sub">your instincts are noted.</p>' +
-            '<div class="game1-popup-btns">' +
-              '<button class="game1-btn-secondary" id="game1-play-again">play again</button>' +
-              '<button class="game1-btn-primary"   id="game1-next">next</button>' +
-            '</div>';
-
-          overlay.appendChild(popup);
-          card.appendChild(overlay);
-          requestAnimationFrame(() => requestAnimationFrame(() => overlay.classList.add('visible')));
-
-          document.getElementById('game1-play-again').addEventListener('click', function () {
-            card.classList.remove('visible');
-            setTimeout(function () {
-              card.remove();
-              initGame1();
-            }, 400);
-          });
-
-          document.getElementById('game1-next').addEventListener('click', function () {
-            card.classList.remove('visible');
-            setTimeout(function () {
-              card.style.display = 'none';
-              showShakalaka();
-            }, 650);
-          });
-        }, 400);
+          card.style.display = 'none';
+          goToState3A();
+        }, 900);
       }, 500);
     }
 
@@ -846,11 +837,8 @@
       localStorage.setItem('game1Right',       window.participantData.game1.gotItRight);
       localStorage.setItem('game1WrongClicks', window.participantData.game1.wrongClicks || 0);
 
-      card.classList.remove('visible');
-      setTimeout(function () {
-        card.style.display = 'none';
-        showShakalaka();
-      }, 650);
+      card.style.display = 'none';
+      goToState3B();
     });
   }
 

@@ -6,29 +6,379 @@
   <title>The Exchange — Games</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Loved+by+the+King&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/games.css">
+  <style>
+    /* ── Reset / shell ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* ── State base ── */
+    .state {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #f5f0e8;
+    }
+
+    #state-1.active             { display: block; }
+    #state-2.active             { display: block; background: #000; }
+    #state-3a.active,
+    #state-3b.active            { display: flex; align-items: center; justify-content: center; }
+    #state-5.active             { display: block; }
+
+    /* STATE 4 — always in DOM as flex; shown/hidden via opacity */
+    #state-4 {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    #state-4.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ──────────────────────────────────────────────────
+       STATE 1 — DVD Intro
+    ────────────────────────────────────────────────── */
+    .s1-topbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .s1-back {
+      font-family: 'helvetica neue', Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      color: #999;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .s1-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      color: #999;
+      letter-spacing: 0.15em;
+    }
+
+    .s1-hero {
+      position: absolute;
+      top: 18vh;
+      left: 0;
+      padding-left: 48px;
+    }
+    .s1-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      color: #999;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .s1-title {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 300;
+      color: #0a0a0a;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .s1-subtitle {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: #666;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .s1-how-card {
+      margin-top: 24px;
+      max-width: 600px;
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      padding: 24px 28px;
+    }
+    .s1-how-text {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: #000000;
+      line-height: 2;
+    }
+    .s1-how-note {
+      margin-top: 10px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 300;
+      color: #888;
+      font-style: italic;
+    }
+
+    /* Shared pill button */
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1.5px solid #0a0a0a;
+      border-radius: 999px;
+      background: transparent;
+      color: #0a0a0a;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .pill-btn:hover { background: rgba(0, 0, 0, 0.04); }
+    .pill-btn .dot  { color: #c8b88a; }
+
+    .s1-begin-btn { margin-top: 32px; }
+
+    .s1-footer {
+      position: absolute;
+      bottom: 48px;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      color: #999;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* ──────────────────────────────────────────────────
+       STATE 3A / 3B — Closure
+    ────────────────────────────────────────────────── */
+    .closure-content { text-align: center; }
+
+    .closure-title {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: clamp(36px, 5vw, 68px);
+      font-weight: 300;
+      color: #0a0a0a;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .closure-sub {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: #666;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+    .next-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 40px;
+      border: 1.5px solid #0a0a0a;
+      border-radius: 999px;
+      background: transparent;
+      color: #0a0a0a;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease, background 0.2s ease;
+    }
+    .next-btn.visible { opacity: 1; pointer-events: auto; }
+    .next-btn:hover   { background: rgba(0, 0, 0, 0.04); }
+
+    /* ──────────────────────────────────────────────────
+       STATE 4 — Shakalaka Modal
+    ────────────────────────────────────────────────── */
+    .sk-modal {
+      background: #f5f0e8;
+      border-radius: 4px;
+      padding: 48px;
+      max-width: 500px;
+      width: 90%;
+      opacity: 0;
+      transform: scale(0.96);
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+                  transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
+    }
+    #state-4.active .sk-modal {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .sk-modal-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      color: #999;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .sk-modal-title {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 28px;
+      font-weight: 300;
+      color: #0a0a0a;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    .sk-modal-how {
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      padding: 18px 22px;
+    }
+    .sk-modal-how-text {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: #000000;
+      line-height: 2;
+    }
+    .sk-modal-note {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      color: #999;
+      font-style: italic;
+      margin-top: 8px;
+    }
+    .sk-modal-ready-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+      border: 1.5px solid #0a0a0a;
+      border-radius: 999px;
+      background: transparent;
+      color: #0a0a0a;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .sk-modal-ready-btn:hover { background: rgba(0, 0, 0, 0.04); }
+    .sk-modal-ready-btn .dot  { color: #c8b88a; }
+    .sk-modal-game-count {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 300;
+      color: #999;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Stopwatch — monospace, clinical, slightly out of place -->
-  <div class="stopwatch" id="stopwatch">00:00:00</div>
-
-  <!-- Entry Screen -->
-  <div class="entry-screen" id="entry-screen">
-    <div class="entry-card">
-      <p class="entry-heading">When you give, you receive.</p>
-      <p class="entry-subtext">It's nothing much — just a few minutes of your attention<br>while you enjoy these games.</p>
-      <button class="entry-btn" id="entry-btn">I'm ready</button>
+  <!-- ── STATE 1: DVD Intro ── -->
+  <div id="state-1" class="state active">
+    <div class="s1-topbar">
+      <a href="games2.html" class="s1-back">← The Exchange</a>
+      <span class="s1-count">01 / 03</span>
     </div>
+
+    <div class="s1-hero">
+      <p class="s1-label">Game 01</p>
+      <h1 class="s1-title">Things We Grew Up With</h1>
+      <p class="s1-subtitle">A few minutes of your memory.</p>
+
+      <div class="s1-how-card">
+        <p class="s1-how-text" style="font-style: italic; font-weight: bold; line-height: 1.4;">Remember the DVDs you used to watch as a kid, waiting for it<br>to hit the corner?</p>
+        <p class="s1-how-text" style="margin-top: 6px;">Here is a chance to actually see it happen, only if you can spot it.<br>
+          Click on the logo that hits the corner and earn points —<br>
+          +350 for the correct one<br>
+          -100 for every wrong click</p>
+      </div>
+      <p class="s1-how-note">you choose when to stop watching.</p>
+
+      <button class="pill-btn s1-begin-btn" id="begin-btn">
+        <span class="dot">●</span> BEGIN
+      </button>
+    </div>
+
+    <p class="s1-footer">complete all games to access the market.</p>
   </div>
 
-  <!-- Game Shell — fades in after entry -->
-  <div class="game-wrapper" id="game-wrapper">
+  <!-- ── STATE 2: DVD Game ── -->
+  <div id="state-2" class="state">
     <div id="game-container"></div>
   </div>
 
-  <!-- Calibration Screen — appears after DVD game celebration "next", before portfolio.html -->
+  <!-- ── STATE 3A: Closure — found it ── -->
+  <div id="state-3a" class="state">
+    <div class="closure-content">
+      <h1 class="closure-title">You found it.</h1>
+      <button class="next-btn" id="next-btn-3a">next game →</button>
+    </div>
+  </div>
+
+  <!-- ── STATE 3B: Closure — ended early ── -->
+  <div id="state-3b" class="state">
+    <div class="closure-content">
+      <h1 class="closure-title">Not nostalgic enough?</h1>
+      <p class="closure-sub">Never mind. Let's try another game.</p>
+      <button class="next-btn" id="next-btn-3b">next game →</button>
+    </div>
+  </div>
+
+  <!-- ── STATE 4: Shakalaka Modal (always in DOM, shown via opacity) ── -->
+  <div id="state-4">
+    <div class="sk-modal">
+      <p class="sk-modal-label">Game 02</p>
+      <h2 class="sk-modal-title">Let's see the pencil do its magic</h2>
+      <div class="sk-modal-how">
+        <p class="sk-modal-how-text">You'll be given a category.<br>
+          Choose what you relate to most.<br>
+          End the interaction after you're satisfied.</p>
+      </div>
+      <p class="sk-modal-note">what you draw and how long you take matters.</p>
+      <button class="sk-modal-ready-btn" id="ready-btn">
+        <span class="dot">●</span> I'M READY
+      </button>
+      <span class="sk-modal-game-count">game 02 of 03</span>
+    </div>
+  </div>
+
+  <!-- ── STATE 5: Shakalaka Game ── -->
+  <div id="state-5" class="state"></div>
+
+  <!-- ── Calibration Screen ── -->
   <div id="calibration-screen">
     <div class="cal-band-top">
       <span class="cal-label" id="cal-label"></span>
@@ -55,4 +405,3 @@
   <script src="js/games.js"></script>
 </body>
 </html>
-
