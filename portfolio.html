@@ -263,14 +263,14 @@
           <div class="dos-divider"></div>
           <div class="dos-q-body">
             <table class="dos-table">
-              <tr><td>NOSTALGIA_INDEX:</td><td>74.3 / 100</td><td><span class="dos-bar">████████░░</span></td></tr>
-              <tr><td>ANGER_INDEX:</td><td>68.0 / 100</td><td><span class="dos-bar">███████░░░</span></td></tr>
-              <tr><td>FEAR_INDEX:</td><td>61.0 / 100</td><td><span class="dos-bar">██████░░░░</span></td></tr>
-              <tr><td>HAPPINESS_INDEX:</td><td>72.5 / 100</td><td><span class="dos-bar">███████░░░</span></td></tr>
+              <tr><td>NOSTALGIA_INDEX:</td><td id="dos-ni-val">74.3 / 100</td><td><span class="dos-bar" id="dos-ni-bar">████████░░</span></td></tr>
+              <tr><td>ANGER_INDEX:</td><td id="dos-ai-val">68.0 / 100</td><td><span class="dos-bar" id="dos-ai-bar">███████░░░</span></td></tr>
+              <tr><td>FEAR_INDEX:</td><td id="dos-xi-val">61.0 / 100</td><td><span class="dos-bar" id="dos-xi-bar">██████░░░░</span></td></tr>
+              <tr><td>HAPPINESS_INDEX:</td><td id="dos-hi-val">72.5 / 100</td><td><span class="dos-bar" id="dos-hi-bar">███████░░░</span></td></tr>
             </table>
             <div class="dos-divider"></div>
             <table class="dos-table">
-              <tr><td>OVERALL_SIGNAL:</td><td>STRONG</td></tr>
+              <tr><td>OVERALL_SIGNAL:</td><td id="dos-signal-val">STRONG</td></tr>
               <tr><td>CLASSIFICATION:</td><td>HIGH_VALUE_PARTICIPANT</td></tr>
             </table>
             <div class="dos-reveal" id="reveal-tl"></div>
@@ -433,19 +433,16 @@
       document.getElementById('receiptBtn').addEventListener('click', openDossier);
 
       document.getElementById('dossierReceiptBtn').addEventListener('click', function () {
-        var params = new URLSearchParams(window.location.search);
-        var sid = params.get('sid') || (window.ExchangeSession && window.ExchangeSession.sid);
-        if (!sid || !window.DB) { alert('No session found.'); return; }
-        window.DB.getReceipt(sid).then(function (trades) {
-          if (!trades || trades.length === 0) { alert('No trades on record.'); return; }
-          var lines = ['RECEIPT — THE_EXCHANGE', ''];
-          trades.forEach(function (t) {
-            var d = new Date(t.ts);
-            var time = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-            lines.push(t.type.toUpperCase() + '  ' + t.ticker + '  ₹' + parseFloat(t.price).toFixed(2) + '  ' + time);
-          });
-          alert(lines.join('\n'));
-        }).catch(function () { alert('Could not load receipt.'); });
+        var pageParams = new URLSearchParams(window.location.search);
+        var ni = pageParams.get('ni') || localStorage.getItem('exchange_ni') || localStorage.getItem('nostalgiaIndex') || 0;
+        var ai = pageParams.get('ai') || localStorage.getItem('exchange_ai') || 0;
+        var hi = pageParams.get('hi') || localStorage.getItem('exchange_hi') || 0;
+        var xi = pageParams.get('xi') || localStorage.getItem('exchange_xi') || 0;
+        var nr = localStorage.getItem('exchange_ni_raw') || ni;
+        var ar = localStorage.getItem('exchange_ai_raw') || ai;
+        var hr = localStorage.getItem('exchange_hi_raw') || hi;
+        var xr = localStorage.getItem('exchange_xi_raw') || xi;
+        window.location.href = 'generative-receipt.html?ni=' + ni + '&ai=' + ai + '&hi=' + hi + '&xi=' + xi + '&nr=' + nr + '&ar=' + ar + '&hr=' + hr + '&xr=' + xr;
       });
 
       function populateDossierFromTrades() {
@@ -512,8 +509,34 @@
         }
       }
 
+      function makeBar(score) {
+        var filled = Math.round(score / 10);
+        return '█'.repeat(filled) + '░'.repeat(10 - filled);
+      }
+
+      function populateDossierMetrics() {
+        var ni = parseInt(localStorage.getItem('exchange_ni')) || 0;
+        var ai = parseInt(localStorage.getItem('exchange_ai')) || 0;
+        var hi = parseInt(localStorage.getItem('exchange_hi')) || 0;
+        var xi = parseInt(localStorage.getItem('exchange_xi')) || 0;
+
+        document.getElementById('dos-ni-val').textContent = ni + ' / 100';
+        document.getElementById('dos-ai-val').textContent = ai + ' / 100';
+        document.getElementById('dos-xi-val').textContent = xi + ' / 100';
+        document.getElementById('dos-hi-val').textContent = hi + ' / 100';
+        document.getElementById('dos-ni-bar').textContent = makeBar(ni);
+        document.getElementById('dos-ai-bar').textContent = makeBar(ai);
+        document.getElementById('dos-xi-bar').textContent = makeBar(xi);
+        document.getElementById('dos-hi-bar').textContent = makeBar(hi);
+
+        var avg = Math.round((ni + ai + hi + xi) / 4);
+        document.getElementById('dos-signal-val').textContent =
+          avg >= 70 ? 'STRONG' : avg >= 45 ? 'MODERATE' : 'LOW';
+      }
+
       function openDossier() {
         populateDossierFromTrades();
+        populateDossierMetrics();
         var scene = document.querySelector('.p-scene');
         scene.style.transition = 'opacity 0.4s ease';
         scene.style.opacity = '0';

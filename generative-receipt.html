@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Exchange — Emotional Receipt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0a0a; }
+    canvas { display: block; }
+
+    #receipt-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(10, 10, 10, 0.9);
+      padding: 12px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    #scores-left {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      color: #666660;
+      letter-spacing: 0.06em;
+    }
+
+    #download-btn {
+      background: transparent;
+      border: 1px solid #C9A84C;
+      color: #C9A84C;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      cursor: pointer;
+    }
+    #download-btn:hover { background: rgba(201, 168, 76, 0.06); }
+  </style>
+</head>
+<body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.min.js"></script>
+
+  <div id="receipt-bar">
+    <div id="scores-left"></div>
+    <button id="download-btn">DOWNLOAD RECEIPT</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search)
+
+    const PLAYER = {
+      nostalgia:       parseFloat(params.get('ni')) || 0,
+      anger:           parseFloat(params.get('ai')) || 0,
+      happiness:       parseFloat(params.get('hi')) || 0,
+      anxiety:         parseFloat(params.get('xi')) || 0,
+      nostalgiaPoints: parseFloat(params.get('nr')) || 0,
+      angerPoints:     parseFloat(params.get('ar')) || 0,
+      happinessPoints: parseFloat(params.get('hr')) || 0,
+      anxietyPoints:   parseFloat(params.get('xr')) || 0,
+      totalPoints:     parseFloat(params.get('tp')) || 0,
+    }
+
+    const emotionScores = {
+      nostalgia: PLAYER.nostalgia,
+      anger:     PLAYER.anger,
+      happiness: PLAYER.happiness,
+      anxiety:   PLAYER.anxiety,
+    }
+    const allZero = Object.values(emotionScores).every(v => v === 0)
+    PLAYER.dominant = allZero
+      ? null
+      : Object.keys(emotionScores).reduce((a, b) => emotionScores[a] >= emotionScores[b] ? a : b)
+
+    const EMOTION_COLORS = {
+      nostalgia: '#C9A84C',
+      anger:     '#CC2200',
+      happiness: '#F5CC6A',
+      anxiety:   '#7A8BA0',
+    }
+
+    console.log('[generative-receipt] PLAYER:', PLAYER)
+
+    // Populate bottom bar scores
+    document.getElementById('scores-left').textContent =
+      'NOSTALGIA ' + Math.round(PLAYER.nostalgia) +
+      '  ·  ANGER '     + Math.round(PLAYER.anger) +
+      '  ·  HAPPINESS ' + Math.round(PLAYER.happiness) +
+      '  ·  ANXIETY '   + Math.round(PLAYER.anxiety)
+
+    new p5(function(p) {
+      window._sketch = p
+
+      let revealProgress = 0
+      const MAX_RADIUS = 130
+
+      const PETALS = [
+        { emotion: 'nostalgia', angle: -Math.PI / 2 },
+        { emotion: 'anger',     angle: 0 },
+        { emotion: 'happiness', angle: Math.PI / 2 },
+        { emotion: 'anxiety',   angle: Math.PI },
+      ]
+      const PETAL_RADIUS = 62
+
+      const FUNNELS = [
+        { name: 'Loyalty',    color: '#A0C4A0' },
+        { name: 'Trust',      color: '#B0A0CC' },
+        { name: 'Belonging',  color: '#CC9966' },
+        { name: 'Dependency', color: '#CC8844' },
+        { name: 'Fear',       color: '#886688' },
+      ]
+      const FUNNEL_ANGLES = [0, 1, 2, 3, 4].map(i => (-54 + i * 72) * Math.PI / 180)
+
+      const CONNECTIONS = [
+        { emotion: 'nostalgia', value: 'Loyalty'   },
+        { emotion: 'nostalgia', value: 'Trust'     },
+        { emotion: 'anger',     value: 'Loyalty'   },
+        { emotion: 'happiness', value: 'Belonging' },
+        { emotion: 'happiness', value: 'Trust'     },
+        { emotion: 'anxiety',   value: 'Loyalty'   },
+        { emotion: 'anxiety',   value: 'Belonging' },
+      ]
+
+      const emotions = ['nostalgia', 'anger', 'happiness', 'anxiety']
+      const active = emotions
+        .filter(e => PLAYER[e] > 0)
+        .sort((a, b) => PLAYER[a] - PLAYER[b])
+
+      // Returns the angular distance in [0, π] between two angles
+      function angularDist(a, b) {
+        let d = ((a - b) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2)
+        return d > Math.PI ? Math.PI * 2 - d : d
+      }
+
+      function nearestEmotionColor(angle) {
+        let best = { dist: Infinity, color: '#555555' }
+        PETALS.forEach(pt => {
+          const d = angularDist(angle, pt.angle)
+          if (d < best.dist) { best.dist = d; best.color = EMOTION_COLORS[pt.emotion] }
+        })
+        return best.color
+      }
+
+      function drawPointedPetal(px, py, len, wid, angle, hexColor, alpha) {
+        const fc = p.color(hexColor); fc.setAlpha(alpha)
+        const sc = p.color(hexColor); sc.setAlpha(Math.min(255, alpha + 90))
+        p.push()
+        p.translate(px, py)
+        p.rotate(angle)
+        p.fill(fc)
+        p.stroke(sc)
+        p.strokeWeight(0.4)
+        // Vertical tangents at both ends → fully smooth, rounded petal (no sharp tips)
+        const cw = wid * 1.5
+        p.beginShape()
+        p.vertex(len / 2, 0)
+        p.bezierVertex(len / 2, -cw, -len / 2, -cw, -len / 2, 0)
+        p.bezierVertex(-len / 2, cw, len / 2, cw, len / 2, 0)
+        p.endShape(p.CLOSE)
+        p.pop()
+      }
+
+      p.setup = function() {
+        p.createCanvas(p.windowWidth, p.windowHeight)
+      }
+
+      p.draw = function() {
+        revealProgress = Math.min(1, revealProgress + 1 / 180)
+        const revealR = revealProgress * MAX_RADIUS
+
+        const cx = p.width / 2
+        const cy = p.height / 2
+
+        p.background('#0a0a0a')
+
+        // ── M1: Radial spokes — threshold 5 ──────────────────────────────
+        // 20 hairline lines from just outside the centre to the outer ring.
+        // Drawn first so every other element sits on top.
+        if (revealR > 5) {
+          p.stroke('#1e1e1e')
+          p.strokeWeight(0.3)
+          for (let s = 0; s < 20; s++) {
+            const a = (s / 20) * Math.PI * 2
+            p.line(
+              cx + Math.cos(a) * 13,  cy + Math.sin(a) * 13,
+              cx + Math.cos(a) * 126, cy + Math.sin(a) * 126
+            )
+          }
+        }
+
+        // ── D1: Interstitial latticework — rings + cross-hatch ───────────────
+        ;[24, 28, 32, 36, 44, 56, 72, 88, 104, 118].forEach(r => {
+          if (revealR > r) {
+            p.noFill(); p.stroke('#141414'); p.strokeWeight(0.25)
+            p.circle(cx, cy, r * 2)
+          }
+        })
+        // 40-spoke secondary grid (halves sector width, full radius)
+        if (revealR > 8) {
+          p.stroke('#191919'); p.strokeWeight(0.2)
+          for (let s = 0; s < 40; s++) {
+            const a = (s / 40) * Math.PI * 2
+            p.line(cx + Math.cos(a) * 13, cy + Math.sin(a) * 13,
+                   cx + Math.cos(a) * 126, cy + Math.sin(a) * 126)
+          }
+        }
+        // Dense inner cross-hatch r=13→46: 80 radials, density increases toward center
+        if (revealR > 6) {
+          p.stroke('#161616'); p.strokeWeight(0.15)
+          for (let s = 0; s < 80; s++) {
+            const a = (s / 80) * Math.PI * 2
+            p.line(cx + Math.cos(a) * 13, cy + Math.sin(a) * 13,
+                   cx + Math.cos(a) * 46, cy + Math.sin(a) * 46)
+          }
+        }
+        // Micro-dots at inner lattice intersections
+        if (revealR > 24) {
+          ;[24, 28, 32].forEach(r => {
+            if (revealR > r) {
+              for (let s = 0; s < 40; s++) {
+                const a = (s / 40) * Math.PI * 2
+                if (PETALS.some(pt => angularDist(a, pt.angle) < 0.28)) continue
+                const dc = p.color('#242422'); dc.setAlpha(210)
+                p.noStroke(); p.fill(dc)
+                p.circle(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 1.5)
+              }
+            }
+          })
+        }
+
+        // ── M2: Inner lotus ring — threshold 20 ───────────────────────────
+        // 8 small radial ellipses forming a tight ring just beyond the centre
+        // circle. The centre circle is drawn next and covers their bases.
+        if (revealR > 15) {
+          const domColor = PLAYER.dominant ? EMOTION_COLORS[PLAYER.dominant] : '#555555'
+          const ic = p.color(domColor)
+          ic.setAlpha(90)
+          p.noFill()
+          p.stroke(ic)
+          p.strokeWeight(0.5)
+          for (let s = 0; s < 8; s++) {
+            const a = (s / 8) * Math.PI * 2
+            p.push()
+            p.translate(cx, cy)
+            p.rotate(a)
+            p.translate(17, 0)
+            p.ellipse(0, 0, 12, 4)
+            p.pop()
+          }
+        }
+
+        // ── Centre circle — threshold 0 ───────────────────────────────────
+        if (revealR > 0) {
+          p.noStroke()
+          p.fill(PLAYER.dominant ? EMOTION_COLORS[PLAYER.dominant] : '#666666')
+          p.circle(cx, cy, 26)
+        }
+
+        // ── Concentric rings — threshold = ring radius ────────────────────
+        p.noFill()
+        if (active.length === 0) {
+          if (revealR > 22) {
+            p.stroke('#444444')
+            p.strokeWeight(0.5)
+            p.circle(cx, cy, 22 * 2)
+          }
+        } else {
+          active.forEach((emotion, i) => {
+            const r = 22 + i * 4
+            if (revealR > r) {
+              const sw = p.map(PLAYER[emotion], 1, 100, 0.5, 3.5)
+              p.stroke(EMOTION_COLORS[emotion])
+              p.strokeWeight(sw)
+              p.circle(cx, cy, r * 2)
+            }
+          })
+        }
+
+        // ── D2a: Inner petal ring at r=40 — threshold 37 ────────────────────
+        if (revealR > 37) {
+          for (let i = 0; i < 16; i++) {
+            const a = (i / 16) * Math.PI * 2
+            drawPointedPetal(cx + Math.cos(a) * 40, cy + Math.sin(a) * 40, 8, 2.5, a, nearestEmotionColor(a), 130)
+          }
+        }
+
+        // ── M3: Bead ring — threshold 64 ──────────────────────────────────
+        // 24 tiny dots on a circle at r=64, each colored by the nearest petal.
+        if (revealR > 48) {
+          for (let s = 0; s < 24; s++) {
+            const a = (s / 24) * Math.PI * 2
+            let minDiff = Infinity, beadColor = '#2a2a2a'
+            PETALS.forEach(pt => {
+              const d = angularDist(a, pt.angle)
+              if (d < minDiff) { minDiff = d; beadColor = EMOTION_COLORS[pt.emotion] }
+            })
+            const bc = p.color(beadColor)
+            bc.setAlpha(100)
+            p.noStroke()
+            p.fill(bc)
+            p.circle(cx + Math.cos(a) * 48, cy + Math.sin(a) * 48, 3)
+          }
+        }
+
+        // ── D3: Micro-filigree at grid intersections — threshold 48 ──────────
+        if (revealR > 48) {
+          const filigreeRings = [24, 36, 52]
+          const spokeCount = 20
+          filigreeRings.forEach((r, ri) => {
+            if (revealR > r) {
+              for (let si = 0; si < spokeCount; si++) {
+                const a = (si / spokeCount) * Math.PI * 2
+                if (PETALS.some(pt => angularDist(a, pt.angle) < 0.32)) continue
+                if (FUNNEL_ANGLES.some(fa => angularDist(a, fa) < 0.18)) continue
+                const fx = cx + Math.cos(a) * r
+                const fy = cy + Math.sin(a) * r
+                const type = (si * 3 + ri * 7) % 3
+                if (type === 0) {
+                  const dc = p.color('#C9A84C'); dc.setAlpha(120)
+                  p.noStroke(); p.fill(dc); p.circle(fx, fy, 3)
+                } else if (type === 1) {
+                  const rc = p.color('#222220'); rc.setAlpha(180)
+                  p.noFill(); p.stroke(rc); p.strokeWeight(0.4)
+                  p.circle(fx, fy, 6); p.circle(fx, fy, 3)
+                } else {
+                  const sc = p.color('#1e1e1c'); sc.setAlpha(190)
+                  p.stroke(sc); p.strokeWeight(0.5); p.noFill()
+                  for (let s = 0; s < 3; s++) {
+                    const sa = a + (s / 3) * Math.PI * 2
+                    p.line(fx, fy, fx + Math.cos(sa) * 4, fy + Math.sin(sa) * 4)
+                  }
+                }
+              }
+            }
+          })
+        }
+
+        // ── M4: Mid hairline ring at r=54 — threshold 54 ────────────────────
+        if (revealR > 54) {
+          p.noFill()
+          p.stroke('#1a1a1a')
+          p.strokeWeight(0.3)
+          p.circle(cx, cy, 54 * 2)
+        }
+
+        // World positions depend on cx/cy — computed per frame
+        const petalWorldPos = {}
+        PETALS.forEach(pt => {
+          petalWorldPos[pt.emotion] = {
+            x: cx + Math.cos(pt.angle) * PETAL_RADIUS,
+            y: cy + Math.sin(pt.angle) * PETAL_RADIUS,
+          }
+        })
+        const funnelWorldPos = {}
+        FUNNELS.forEach((f, i) => {
+          const fa = FUNNEL_ANGLES[i]
+          funnelWorldPos[f.name] = {
+            x: cx + Math.cos(fa) * 101,
+            y: cy + Math.sin(fa) * 101,
+          }
+        })
+
+        // ── Connection lines — threshold 108 ─────────────────────────────
+        if (revealR > 108) {
+          CONNECTIONS.forEach(conn => {
+            const pts = PLAYER[conn.emotion + 'Points']
+            if (pts <= 0) return
+            const pp = petalWorldPos[conn.emotion]
+            const fp = funnelWorldPos[conn.value]
+            const lc = p.color(EMOTION_COLORS[conn.emotion])
+            lc.setAlpha(77)
+            p.stroke(lc)
+            p.strokeWeight(0.3)
+            p.noFill()
+            p.line(pp.x, pp.y, fp.x, fp.y)
+          })
+        }
+
+        // ── Funnel wedges — threshold 93 ──────────────────────────────────
+        if (revealR > 93) {
+          FUNNELS.forEach((funnel, i) => {
+            const fc = p.color(funnel.color)
+            fc.setAlpha(153)
+            p.push()
+            p.translate(cx, cy)
+            p.rotate(FUNNEL_ANGLES[i])
+            p.noStroke()
+            p.fill(fc)
+            // Rounded wedge: tip r=93, base r=110, half-width ±7
+            const rnd = 4, eL = Math.sqrt(17*17 + 7*7)
+            const dx = rnd * 17/eL, dy = rnd * 7/eL
+            p.beginShape()
+            p.vertex(93+dx, -dy)
+            p.vertex(110-dx, -7+dy)
+            p.bezierVertex(110,-7, 110,-7, 110,-7+rnd)
+            p.vertex(110, 7-rnd)
+            p.bezierVertex(110,7, 110,7, 110-dx, 7-dy)
+            p.vertex(93+dx, dy)
+            p.bezierVertex(93,0, 93,0, 93+dx, -dy)
+            p.endShape(p.CLOSE)
+            p.pop()
+          })
+        }
+
+        // ── D4: Funnel edge decoration — threshold 95 ────────────────────────
+        if (revealR > 95) {
+          FUNNELS.forEach((funnel, i) => {
+            const fa = FUNNEL_ANGLES[i]
+            const fc = p.color(funnel.color)
+            p.push()
+            p.translate(cx, cy)
+            p.rotate(fa)
+            fc.setAlpha(200)
+            p.noStroke(); p.fill(fc)
+            for (let y = -6; y <= 6; y += 3) {
+              p.circle(110, y, 3)
+            }
+            fc.setAlpha(80)
+            p.stroke(fc); p.strokeWeight(0.5); p.noFill()
+            const edgeLen = Math.sqrt(17 * 17 + 7 * 7)
+            const lpx = (7 / edgeLen) * 2, lpy = (17 / edgeLen) * 2
+            for (let t = 0.2; t <= 0.85; t += 0.2) {
+              const ex = 93 + t * 17, ey = -t * 7
+              p.line(ex - lpx, ey - lpy, ex + lpx, ey + lpy)
+            }
+            const rpx = (-7 / edgeLen) * 2, rpy = (17 / edgeLen) * 2
+            for (let t = 0.2; t <= 0.85; t += 0.2) {
+              const ex = 93 + t * 17, ey = t * 7
+              p.line(ex - rpx, ey - rpy, ex + rpx, ey + rpy)
+            }
+            p.pop()
+          })
+        }
+
+        // ── M5: Outer hairline ring at r=126 — threshold 126 ────────────────
+        // Encloses the whole mandala; drawn after funnels so it sits in front.
+        if (revealR > 126) {
+          p.noFill()
+          p.stroke('#1c1c1c')
+          p.strokeWeight(0.5)
+          p.circle(cx, cy, 126 * 2)
+        }
+
+        // ── D2b: Middle petal ring at r=86 — threshold 83 ───────────────────
+        if (revealR > 83) {
+          for (let i = 0; i < 22; i++) {
+            const a = (i / 22) * Math.PI * 2
+            drawPointedPetal(cx + Math.cos(a) * 86, cy + Math.sin(a) * 86, 8, 2.5, a, nearestEmotionColor(a), 100)
+          }
+        }
+
+        // ── D2c: Outer petal ring at r=118 — threshold 115 ───────────────────
+        if (revealR > 115) {
+          for (let i = 0; i < 30; i++) {
+            const a = (i / 30) * Math.PI * 2
+            drawPointedPetal(cx + Math.cos(a) * 118, cy + Math.sin(a) * 118, 7, 2, a, nearestEmotionColor(a), 85)
+          }
+        }
+
+        // ── Emotion petals — threshold 62 ─────────────────────────────────
+        if (revealR > 62) {
+          PETALS.forEach(petal => {
+            const score  = PLAYER[petal.emotion]
+            const pts    = PLAYER[petal.emotion + 'Points']
+            const petalH = score > 0 ? p.map(score, 0, 100, 14, 34) : 14
+            const a = petalH / 2
+            const b = 9
+
+            p.push()
+            p.translate(cx, cy)
+            p.rotate(petal.angle)
+            p.translate(PETAL_RADIUS, 0)
+
+            p.noFill()
+            p.stroke(EMOTION_COLORS[petal.emotion])
+            p.strokeWeight(1)
+            p.ellipse(0, 0, petalH, 18)
+
+            if (pts > 0) {
+              const dotsPerRow = Math.max(1, Math.sqrt(pts) * 1.5)
+              const gridStep   = (2 * a) / dotsPerRow
+              const dc = p.color(EMOTION_COLORS[petal.emotion])
+              dc.setAlpha(204)
+              p.noStroke()
+              p.fill(dc)
+              for (let lx = -a; lx <= a; lx += gridStep) {
+                for (let ly = -b; ly <= b; ly += gridStep) {
+                  if ((lx / a) ** 2 + (ly / b) ** 2 <= 1) {
+                    p.circle(lx, ly, 3)
+                  }
+                }
+              }
+            }
+
+            p.pop()
+          })
+        }
+
+        // ── M6: Petal-tip accent dots — threshold 62 ─────────────────────
+        // Small filled circles at the outermost tip of each petal ellipse.
+        if (revealR > 62) {
+          PETALS.forEach(petal => {
+            const score  = PLAYER[petal.emotion]
+            const petalH = score > 0 ? p.map(score, 0, 100, 14, 34) : 14
+            const tipR   = PETAL_RADIUS + petalH / 2
+            const tc = p.color(EMOTION_COLORS[petal.emotion])
+            tc.setAlpha(180)
+            p.noStroke()
+            p.fill(tc)
+            p.circle(
+              cx + Math.cos(petal.angle) * tipR,
+              cy + Math.sin(petal.angle) * tipR,
+              4
+            )
+          })
+        }
+
+        if (revealProgress >= 1) p.noLoop()
+      }
+
+      p.windowResized = function() {
+        p.resizeCanvas(p.windowWidth, p.windowHeight)
+        if (revealProgress >= 1) p.redraw()
+      }
+    })
+
+    document.getElementById('download-btn').addEventListener('click', function() {
+      window._sketch.saveCanvas('exchange-receipt', 'png')
+    })
+  </script>
+
+</body>
+</html>

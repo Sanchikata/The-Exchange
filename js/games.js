@@ -110,10 +110,12 @@
 
     Promise.all([savePromise, animPromise]).then(function () {
       if (typeof Exchange !== 'undefined') Exchange.addPoints(nostalgiaPoints);
+      localStorage.setItem('exchange_ni', Math.round(Math.max(0, Math.min(100, nostalgiaPoints / 4))));
+      localStorage.setItem('exchange_ni_raw', Math.max(0, nostalgiaPoints));
       var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
       if (played.indexOf('nostalgia') === -1) played.push('nostalgia');
       localStorage.setItem('exchange_played_games', JSON.stringify(played));
-      window.location.href = 'games2.html';
+      window.location.href = 'games2.html?ret=1';
     });
   }
 
@@ -455,6 +457,19 @@
       console.log('[game2 end] game2Changed:', window.participantData.game2.shakalaka_changed);
       localStorage.setItem('game2SelectionTime', (window.participantData.game2.shakalaka_time_ms / 1000) || 0);
       localStorage.setItem('game2Changed',       window.participantData.game2.switched || false);
+      localStorage.setItem('shakalakaDrawing', imgData);
+      localStorage.setItem('exchangeSession', JSON.stringify({
+        nostalgia:    parseFloat(localStorage.getItem('exchange_ni'))      || 0,
+        nostalgiaRaw: parseFloat(localStorage.getItem('exchange_ni_raw'))  || 0,
+        anger:        parseFloat(localStorage.getItem('exchange_ai'))      || 0,
+        angerRaw:     parseFloat(localStorage.getItem('exchange_ai_raw'))  || 0,
+        happiness:    parseFloat(localStorage.getItem('exchange_hi'))      || 0,
+        happinessRaw: parseFloat(localStorage.getItem('exchange_hi_raw'))  || 0,
+        anxiety:      parseFloat(localStorage.getItem('exchange_xi'))      || 0,
+        anxietyRaw:   parseFloat(localStorage.getItem('exchange_xi_raw'))  || 0,
+        totalPoints:  parseFloat(localStorage.getItem('exchange_total_pts')) || 0,
+        playedGames:  JSON.parse(localStorage.getItem('exchange_played_games') || '[]'),
+      }));
       showCalibrationScreen();
     });
   }

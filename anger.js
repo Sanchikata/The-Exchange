@@ -107,6 +107,8 @@ function updateDebugDisplay(frustration, scratch, total) {
 
 // Persists session to Supabase anger_sessions table.
 async function saveAngerSession(frustration, scratch, total) {
+  localStorage.setItem('exchange_ai', Math.round(Math.max(0, Math.min(100, total))));
+  localStorage.setItem('exchange_ai_raw', Math.max(0, total));
   try {
     const db = window.supabaseClient;
     if (!db) return;
@@ -593,7 +595,7 @@ document.getElementById('resetQuit').addEventListener('click', () => {
   if (played.indexOf('anger') === -1) played.push('anger');
   localStorage.setItem('exchange_played_games', JSON.stringify(played));
 
-  window.location.href = 'games2.html';
+  window.location.href = 'games2.html?ret=1';
 });
 
 // ── Finish / scratch card / calibration ──────────────────────────────────────
@@ -742,7 +744,7 @@ function showCalibration() {
     var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
     if (played.indexOf('anger') === -1) played.push('anger');
     localStorage.setItem('exchange_played_games', JSON.stringify(played));
-    window.location.href = 'games2.html';
+    window.location.href = 'games2.html?ret=1';
   }, 6500);
 }
 

@@ -1045,6 +1045,8 @@ async function saveHappinessSession() {
   const rc = S.tracking.retakeCount;
   const happinessPoints = rc === 0 ? 100 : -30 + (rc - 1) * 20;
   const happinessIndex  = happinessPoints / 70;
+  localStorage.setItem('exchange_hi', Math.round(Math.max(0, Math.min(100, happinessPoints))));
+  localStorage.setItem('exchange_hi_raw', Math.max(0, happinessPoints));
   if (typeof Exchange !== 'undefined') Exchange.addPoints(Math.max(0, happinessPoints));
   console.log('[happiness] happinessPoints:', happinessPoints, '| happinessIndex:', happinessIndex);
 

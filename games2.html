@@ -515,11 +515,41 @@
 
   <script src="js/main.js"></script>
   <script>
-    const el = document.getElementById('points-display');
-    if (el && typeof window.exchangePoints !== 'undefined') {
-      el.textContent = window.exchangePoints + ' emotional points';
-    }
+    (function () {
+      var returningFromGame = new URLSearchParams(window.location.search).get('ret') === '1';
 
+      if (!returningFromGame) {
+        // Fresh open (direct load, refresh, or bail-out) — wipe all session state
+        [
+          'exchange_played_games',
+          'exchange_ni',  'exchange_ni_raw',
+          'exchange_ai',  'exchange_ai_raw',
+          'exchange_hi',  'exchange_hi_raw',
+          'exchange_xi',  'exchange_xi_raw',
+          'nostalgiaIndex', 'totalPoints', 'angerPoints',
+          'exchange_total_pts', 'game1Right', 'game1WrongClicks',
+          'game2SelectionTime', 'game2Changed', 'exchange_trades',
+        ].forEach(function (k) { localStorage.removeItem(k); });
+      } else {
+        // Strip ?ret=1 so that a manual refresh of this URL counts as a fresh session
+        history.replaceState(null, '', window.location.pathname);
+      }
+
+      var el = document.getElementById('points-display');
+      if (el && typeof window.exchangePoints !== 'undefined') {
+        el.textContent = window.exchangePoints + ' emotional points';
+      }
+
+      // Apply played tags for games completed this session
+      var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+      played.forEach(function (game) {
+        var card = document.querySelector('.game-card[data-game="' + game + '"]');
+        if (card) card.classList.add('played');
+      });
+      if (played.length > 0) {
+        document.getElementById('returnTradeBtn').classList.add('active');
+      }
+    })();
 
     function returnToTrade() {
       var pts = window.exchangePoints || 0;

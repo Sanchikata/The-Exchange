@@ -633,7 +633,7 @@
 
         <div class="results-actions">
           <button class="action-btn" onclick="location.href='market.html'">Return to Market &#x2192;</button>
-          <button class="action-btn" onclick="location.href='games2.html'">Back to Games</button>
+          <button class="action-btn" onclick="location.href='games2.html?ret=1'">Back to Games</button>
         </div>
       </div>
     </div>
@@ -674,6 +674,8 @@
         // plus trick score (+50 correct / -10 wrong already in mathScore, -10 skip is not).
         const fearPoints = metrics.mathScore + (metrics.trickSkipped ? -10 : 0);
         const fearIndex  = fearPoints / 120;
+        localStorage.setItem('exchange_xi', Math.round(Math.max(0, Math.min(100, fearPoints / 3.5))));
+        localStorage.setItem('exchange_xi_raw', Math.max(0, fearPoints));
 
         const { error } = await db.from('fear_sessions').insert({
           confidence_rating:             metrics.confidenceRating,
