@@ -88,6 +88,13 @@
       anxiety:   '#7A8BA0',
     }
 
+    const COMPLEMENT_COLORS = {
+      nostalgia: '#4C6AC9',
+      anger:     '#00CCAA',
+      happiness: '#6A79F5',
+      anxiety:   '#C4905A',
+    }
+
     console.log('[generative-receipt] PLAYER:', PLAYER)
 
     // Populate bottom bar scores
@@ -100,6 +107,7 @@
     new p5(function(p) {
       window._sketch = p
 
+      let revealTime = 0
       let revealProgress = 0
       const MAX_RADIUS = 130
 
@@ -174,13 +182,37 @@
       }
 
       p.draw = function() {
-        revealProgress = Math.min(1, revealProgress + 1 / 180)
+        revealTime = Math.min(1, revealTime + 1 / 200)
+        revealProgress = 1 - Math.pow(1 - revealTime, 3)
         const revealR = revealProgress * MAX_RADIUS
 
         const cx = p.width / 2
         const cy = p.height / 2
 
         p.background('#0a0a0a')
+
+        // ── Zone background fills — each concentric zone gets its own colour ──
+        // Drawn before everything else so all pattern elements sit on top.
+        // Alpha 0.50–0.65: high enough to show real colour on #0a0a0a.
+        ;[
+          { rO: 126, rI: 104, hex: '#4A6EAA', a: 0.50 },  // outer — cobalt (anxiety)
+          { rO: 104, rI: 88,  hex: '#C9A84C', a: 0.52 },  // amber (nostalgia)
+          { rO: 88,  rI: 72,  hex: '#E8C040', a: 0.54 },  // warm gold (happiness)
+          { rO: 72,  rI: 56,  hex: '#CC2200', a: 0.56 },  // crimson (anger)
+          { rO: 56,  rI: 36,  hex: '#3A5E9A', a: 0.58 },  // deep blue (anxiety)
+          { rO: 36,  rI: 13,  hex: PLAYER.dominant ? EMOTION_COLORS[PLAYER.dominant] : '#AA8833', a: 0.65 },
+        ].forEach(({ rO, rI, hex, a }) => {
+          if (revealR <= rI) return
+          const r = Math.min(rO, revealR)
+          const n = parseInt(hex.slice(1), 16)
+          p.drawingContext.save()
+          p.drawingContext.fillStyle = `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`
+          p.drawingContext.beginPath()
+          p.drawingContext.arc(cx, cy, r,  0, Math.PI * 2, false)
+          p.drawingContext.arc(cx, cy, rI, 0, Math.PI * 2, true)
+          p.drawingContext.fill()
+          p.drawingContext.restore()
+        })
 
         // ── M1: Radial spokes — threshold 5 ──────────────────────────────
         // 20 hairline lines from just outside the centre to the outer ring.
@@ -192,7 +224,7 @@
             const a = (s / 20) * Math.PI * 2
             p.line(
               cx + Math.cos(a) * 13,  cy + Math.sin(a) * 13,
-              cx + Math.cos(a) * 126, cy + Math.sin(a) * 126
+              cx + Math.cos(a) * 103, cy + Math.sin(a) * 103
             )
           }
         }
@@ -210,7 +242,7 @@
           for (let s = 0; s < 40; s++) {
             const a = (s / 40) * Math.PI * 2
             p.line(cx + Math.cos(a) * 13, cy + Math.sin(a) * 13,
-                   cx + Math.cos(a) * 126, cy + Math.sin(a) * 126)
+                   cx + Math.cos(a) * 103, cy + Math.sin(a) * 103)
           }
         }
         // Dense inner cross-hatch r=13→46: 80 radials, density increases toward center
@@ -269,19 +301,16 @@
         p.noFill()
         if (active.length === 0) {
           if (revealR > 22) {
-            p.stroke('#444444')
-            p.strokeWeight(0.5)
+            p.stroke('#444444'); p.strokeWeight(0.5)
             p.circle(cx, cy, 22 * 2)
           }
         } else {
           active.forEach((emotion, i) => {
             const r = 22 + i * 4
-            if (revealR > r) {
-              const sw = p.map(PLAYER[emotion], 1, 100, 0.5, 3.5)
-              p.stroke(EMOTION_COLORS[emotion])
-              p.strokeWeight(sw)
-              p.circle(cx, cy, r * 2)
-            }
+            if (revealR <= r) return
+            const sw = p.map(PLAYER[emotion], 1, 100, 0.5, 3.5)
+            p.stroke(EMOTION_COLORS[emotion]); p.strokeWeight(sw)
+            p.circle(cx, cy, r * 2)
           })
         }
 
@@ -522,6 +551,29 @@
               4
             )
           })
+        }
+
+        // Gold sweep ring at the reveal front — fades as it reaches the edge
+        if (revealProgress < 1 && revealR > 5) {
+          const sweepAlpha = Math.floor(60 * Math.pow(1 - revealProgress, 0.5))
+          const pc = p.color('#c4a45a'); pc.setAlpha(sweepAlpha)
+          p.noFill(); p.stroke(pc); p.strokeWeight(0.8)
+          p.circle(cx, cy, revealR * 2)
+          pc.setAlpha(Math.floor(sweepAlpha * 0.35))
+          p.stroke(pc); p.strokeWeight(0.4)
+          p.circle(cx, cy, Math.max(0, revealR - 8) * 2)
+        }
+
+        // Radial feathering mask — soft circular clip that expands from centre
+        if (revealProgress < 1) {
+          const grd = p.drawingContext.createRadialGradient(
+            cx, cy, Math.max(0, revealR - 32),
+            cx, cy, revealR + 12
+          )
+          grd.addColorStop(0, 'rgba(10,10,10,0)')
+          grd.addColorStop(1, 'rgba(10,10,10,1)')
+          p.drawingContext.fillStyle = grd
+          p.drawingContext.fillRect(0, 0, p.width, p.height)
         }
 
         if (revealProgress >= 1) p.noLoop()
