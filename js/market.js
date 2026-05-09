@@ -52,6 +52,13 @@ function refreshPoints() {
   const pts = parseInt(new URLSearchParams(window.location.search).get('pts'), 10) || 0;
   window.exchangePoints = pts;
   refreshPoints();
+  if (pts > 0) {
+    ['headerPortfolioBtn', 'genPortfolioBtn', 'genPortfolioMiniBtn'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = id === 'genPortfolioBtn' ? 'flex' : 'inline-block';
+    });
+    history.replaceState(null, '', location.pathname);
+  }
 })();
 
 // ════════════════════════════════════════
@@ -485,17 +492,8 @@ function goToPortfolio() {
 }
 
 function refreshPortfolioBtn() {
-  var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
-  var storedPts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
-  var hasPlayed = played.length > 0 || (window.exchangePoints || 0) > 0 || storedPts > 0;
-  var btn = document.getElementById('genPortfolioBtn');
-  var miniBtn = document.getElementById('genPortfolioMiniBtn');
-  var headerBtn = document.getElementById('headerPortfolioBtn');
-  if (btn) btn.style.display = hasPlayed ? 'flex' : 'none';
-  if (miniBtn) miniBtn.style.display = hasPlayed ? 'inline-block' : 'none';
-  if (headerBtn) headerBtn.style.display = hasPlayed ? 'inline-block' : 'none';
+  // no-op: button visibility is set once on load when ?pts arrives from a game
 }
-refreshPortfolioBtn();
 
 // ════════════════════════════════════════
 //  VALUE DELTA — apply session market impact

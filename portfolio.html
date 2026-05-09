@@ -45,11 +45,11 @@
                     <tr><td>SIGNAL_TYPE:</td><td>VISUAL + MEMORY</td></tr>
                     <tr><td>CURSOR_DRIFT_TO_VINTAGE_OBJECT:</td><td>DETECTED</td></tr>
                     <tr><td>RECOGNITION_LATENCY:</td><td>LOW</td></tr>
-                    <tr><td>CHOICE_REVERSAL:</td><td>2x DETECTED</td></tr>
-                    <tr><td>TIME_TO_DECISION:</td><td>4.2s</td></tr>
-                    <tr><td>NOSTALGIA_SIGNAL:</td><td>STRONG</td></tr>
+                    <tr><td>CHOICE_REVERSAL:</td><td id="card-choice-reversal">——</td></tr>
+                    <tr><td>TIME_TO_DECISION:</td><td id="card-dvd-time">——</td></tr>
+                    <tr><td>NOSTALGIA_SIGNAL:</td><td id="card-nostalgia-signal">——</td></tr>
                   </table>
-                  <p class="card-note">NOTE: REVERSAL INDICATES<br>COMPETING_MEMORY_NODES.</p>
+                  <p class="card-reveal" id="card-reveal-1"></p>
                 </div>
               </div>
 
@@ -65,14 +65,12 @@
                   <div class="card-divider"></div>
                   <table class="card-table">
                     <tr><td>SIGNAL_TYPE:</td><td>FRUSTRATION_MAPPING</td></tr>
-                    <tr><td>CAPTCHA_FAILURES:</td><td>3</td></tr>
-                    <tr><td>POPUP_DISMISSALS:</td><td>5</td></tr>
-                    <tr><td>TIME_BEFORE_COMPLIANCE:</td><td>48s</td></tr>
-                    <tr><td>RETRY_EVENTS:</td><td>4</td></tr>
-                    <tr><td>RAGE_QUIT_DETECTED:</td><td>NO</td></tr>
-                    <tr><td>LOYALTY_SIGNAL:</td><td>HIGH</td></tr>
+                    <tr><td>CAPTCHA_FAILURES:</td><td id="card-captcha-failures">——</td></tr>
+                    <tr><td>RETRY_EVENTS:</td><td id="card-retry-events">——</td></tr>
+                    <tr><td>RAGE_QUIT_DETECTED:</td><td id="card-rage-quit">——</td></tr>
+                    <tr><td>LOYALTY_SIGNAL:</td><td id="card-loyalty-signal">——</td></tr>
                   </table>
-                  <p class="card-note">NOTE: PARTICIPANT COMPLETED<br>TASK DESPITE OBSTRUCTION.</p>
+                  <p class="card-reveal" id="card-reveal-2"></p>
                 </div>
               </div>
 
@@ -88,14 +86,14 @@
                   <div class="card-divider"></div>
                   <table class="card-table">
                     <tr><td>SIGNAL_TYPE:</td><td>SURVEILLANCE_RESPONSE</td></tr>
-                    <tr><td>CONFIDENCE_RATED:</td><td>7 / 10</td></tr>
-                    <tr><td>PERFORMANCE_SCORE:</td><td>4 / 10</td></tr>
-                    <tr><td>CONFIDENCE_GAP:</td><td>+3 (OVERCONFIDENT)</td></tr>
-                    <tr><td>QUESTIONS_SKIPPED:</td><td>1</td></tr>
-                    <tr><td>ANONYMITY_RESPONSE:</td><td>CONTINUED</td></tr>
-                    <tr><td>COMPLIANCE_INDEX:</td><td>HIGH</td></tr>
+                    <tr><td>CONFIDENCE_RATED:</td><td id="card-confidence-rated">——</td></tr>
+                    <tr><td>PERFORMANCE_SCORE:</td><td id="card-performance-score">——</td></tr>
+                    <tr><td>CONFIDENCE_GAP:</td><td id="card-confidence-gap">——</td></tr>
+                    <tr><td>QUESTIONS_SKIPPED:</td><td id="card-questions-skipped">——</td></tr>
+                    <tr><td>ANONYMITY_RESPONSE:</td><td id="card-anonymity-response">——</td></tr>
+                    <tr><td>COMPLIANCE_INDEX:</td><td id="card-compliance-index">——</td></tr>
                   </table>
-                  <p class="card-note">NOTE: PARTICIPANT PERFORMED<br>UNDER SURVEILLANCE. DATA RETAINED.</p>
+                  <p class="card-reveal" id="card-reveal-3"></p>
                 </div>
               </div>
 
@@ -111,14 +109,12 @@
                   <div class="card-divider"></div>
                   <table class="card-table">
                     <tr><td>SIGNAL_TYPE:</td><td>DOPAMINE_TRACKING</td></tr>
-                    <tr><td>SCROLL_DISTANCE:</td><td>1.2km</td></tr>
-                    <tr><td>SESSION_DURATION:</td><td>9m 40s</td></tr>
-                    <tr><td>PAUSE_EVENTS:</td><td>14</td></tr>
-                    <tr><td>REWARDS_COLLECTED:</td><td>9</td></tr>
-                    <tr><td>SCROLL_ACCELERATION:</td><td>INCREASING</td></tr>
-                    <tr><td>JOY_INDEX:</td><td>MODERATE_HIGH</td></tr>
+                    <tr><td>RETAKE_COUNT:</td><td id="card-retake-count">——</td></tr>
+                    <tr><td>QUIZ_TOPIC:</td><td id="card-quiz-topic">——</td></tr>
+                    <tr><td>MATCHED_PERSONA:</td><td id="card-matched-persona">——</td></tr>
+                    <tr><td>JOY_INDEX:</td><td id="card-joy-index">——</td></tr>
                   </table>
-                  <p class="card-note">NOTE: ENGAGEMENT SUSTAINED<br>WITHOUT AWARENESS OF EXTRACTION.</p>
+                  <p class="card-reveal" id="card-reveal-4"></p>
                 </div>
               </div>
 
@@ -133,23 +129,18 @@
                   <p class="card-title">EXTRACTION_SUMMARY</p>
                   <div class="card-divider"></div>
                   <table class="card-table">
-                    <tr><td>NOSTALGIA_INDEX:</td><td>74.3 / 100</td></tr>
-                    <tr><td>ANGER_INDEX:</td><td>68.0 / 100</td></tr>
-                    <tr><td>FEAR_INDEX:</td><td>61.0 / 100</td></tr>
-                    <tr><td>HAPPINESS_INDEX:</td><td>72.5 / 100</td></tr>
-                  </table>
-                  <div class="card-divider"></div>
-                  <p class="card-section-label">VALUES_PRODUCED:</p>
-                  <table class="card-table card-bars">
-                    <tr><td>LOYALTY</td><td><span class="bar-fill">████████░░</span> 82%</td></tr>
-                    <tr><td>BELONGING</td><td><span class="bar-fill">███████░░░</span> 71%</td></tr>
-                    <tr><td>TRUST</td><td><span class="bar-fill">██████░░░░</span> 63%</td></tr>
+                    <tr><td>NOSTALGIA_INDEX:</td><td id="card-sum-ni">—— / 100</td></tr>
+                    <tr><td>ANGER_INDEX:</td><td id="card-sum-ai">—— / 100</td></tr>
+                    <tr><td>FEAR_INDEX:</td><td id="card-sum-xi">—— / 100</td></tr>
+                    <tr><td>HAPPINESS_INDEX:</td><td id="card-sum-hi">—— / 100</td></tr>
                   </table>
                   <div class="card-divider"></div>
                   <table class="card-table">
-                    <tr><td>OVERALL_SIGNAL:</td><td>STRONG</td></tr>
-                    <tr><td>CLASSIFICATION:</td><td>HIGH_VALUE_PARTICIPANT</td></tr>
+                    <tr><td>OVERALL_SIGNAL:</td><td id="card-sum-signal">——</td></tr>
+                    <tr><td>CLASSIFICATION:</td><td id="card-sum-class">——</td></tr>
                   </table>
+                  <div class="card-divider" style="margin-top:8px"></div>
+                  <p class="card-reveal" id="card-reveal-5"></p>
                 </div>
               </div>
 
@@ -263,17 +254,16 @@
           <div class="dos-divider"></div>
           <div class="dos-q-body">
             <table class="dos-table">
-              <tr><td>NOSTALGIA_INDEX:</td><td id="dos-ni-val">74.3 / 100</td><td><span class="dos-bar" id="dos-ni-bar">████████░░</span></td></tr>
-              <tr><td>ANGER_INDEX:</td><td id="dos-ai-val">68.0 / 100</td><td><span class="dos-bar" id="dos-ai-bar">███████░░░</span></td></tr>
-              <tr><td>FEAR_INDEX:</td><td id="dos-xi-val">61.0 / 100</td><td><span class="dos-bar" id="dos-xi-bar">██████░░░░</span></td></tr>
-              <tr><td>HAPPINESS_INDEX:</td><td id="dos-hi-val">72.5 / 100</td><td><span class="dos-bar" id="dos-hi-bar">███████░░░</span></td></tr>
+              <tr><td>NOSTALGIA_INDEX:</td><td id="dos-ni-val">—— / 100</td><td><span class="dos-bar" id="dos-ni-bar">░░░░░░░░░░</span></td></tr>
+              <tr><td>ANGER_INDEX:</td><td id="dos-ai-val">—— / 100</td><td><span class="dos-bar" id="dos-ai-bar">░░░░░░░░░░</span></td></tr>
+              <tr><td>FEAR_INDEX:</td><td id="dos-xi-val">—— / 100</td><td><span class="dos-bar" id="dos-xi-bar">░░░░░░░░░░</span></td></tr>
+              <tr><td>HAPPINESS_INDEX:</td><td id="dos-hi-val">—— / 100</td><td><span class="dos-bar" id="dos-hi-bar">░░░░░░░░░░</span></td></tr>
             </table>
             <div class="dos-divider"></div>
             <table class="dos-table">
-              <tr><td>OVERALL_SIGNAL:</td><td id="dos-signal-val">STRONG</td></tr>
-              <tr><td>CLASSIFICATION:</td><td>HIGH_VALUE_PARTICIPANT</td></tr>
+              <tr><td>OVERALL_SIGNAL:</td><td id="dos-signal-val">——</td></tr>
+              <tr><td>CLASSIFICATION:</td><td id="dos-class-val">——</td></tr>
             </table>
-            <div class="dos-reveal" id="reveal-tl"></div>
           </div>
         </div>
 
@@ -334,7 +324,6 @@
               <div class="dos-live-bar" id="liveBar"></div>
             </div>
             <p class="dos-note">NOTE: VALUE FLUCTUATES WITH OTHER<br>PARTICIPANTS' EMOTIONAL DATA.<br>YOUR YIELD DEPENDS ON THEIR EXTRACTION.</p>
-            <div class="dos-reveal" id="reveal-bl"></div>
           </div>
         </div>
 
@@ -349,15 +338,15 @@
           <div class="dos-divider"></div>
           <div class="dos-q-body">
             <div class="dos-log">
-              <div class="dos-log-entry"><span class="dos-log-ts">[14:02:11]</span><span>NOSTALGIA EXTRACTED → LOYALTY</span></div>
+              <div class="dos-log-entry"><span class="dos-log-ts">[14:02:11]</span><span>NOSTALGIA EXTRACTED &#8594; LOYALTY</span></div>
               <div class="dos-log-entry"><span class="dos-log-ts">[14:01:45]</span><span>AMUL [AMUL] PURCHASED  +284.50</span></div>
               <div class="dos-log-entry"><span class="dos-log-ts">[14:01:22]</span><span>BELONGING SIGNAL DETECTED</span></div>
               <div class="dos-log-entry"><span class="dos-log-ts">[13:58:02]</span><span>CAMPA [RJC] PURCHASED  +412.80</span></div>
-              <div class="dos-log-entry"><span class="dos-log-ts">[13:55:01]</span><span>NOSTALGIA → TRUST CONVERSION</span></div>
-              <div class="dos-log-entry"><span class="dos-log-ts">[13:50:33]</span><span>ANGER HARVESTED → LOYALTY +0.8</span></div>
+              <div class="dos-log-entry"><span class="dos-log-ts">[13:55:01]</span><span>NOSTALGIA &#8594; TRUST CONVERSION</span></div>
+              <div class="dos-log-entry"><span class="dos-log-ts">[13:50:33]</span><span>ANGER HARVESTED &#8594; LOYALTY +0.8</span></div>
               <div class="dos-log-entry"><span class="dos-log-ts">[13:48:17]</span><span>FEAR COMPLIANCE LOGGED</span></div>
-              <div class="dos-log-entry"><span class="dos-log-ts">[13:45:09]</span><span>HAPPINESS EXTRACTED → TRUST</span></div>
-              <div class="dos-log-entry dos-log-final"><span class="dos-log-ts">[14:22:12]</span><span>DOSSIER_ASSEMBLY_COMPLETE ◉</span></div>
+              <div class="dos-log-entry"><span class="dos-log-ts">[13:45:09]</span><span>HAPPINESS EXTRACTED &#8594; TRUST</span></div>
+              <div class="dos-log-entry dos-log-final"><span class="dos-log-ts">[14:22:12]</span><span>DOSSIER_ASSEMBLY_COMPLETE &#9679;</span></div>
             </div>
             <div class="dos-reveal" id="reveal-br"></div>
           </div>
@@ -390,27 +379,51 @@
 
   </div><!-- /.dossier-overlay -->
 
+  <!-- ===== EMPTY PORTFOLIO OVERLAY ===== -->
+  <div class="empty-portfolio-overlay" id="emptyPortfolioOverlay">
+    <div class="empty-portfolio-panel">
+      <span class="dos-bracket dos-bracket-tl"></span>
+      <span class="dos-bracket dos-bracket-tr"></span>
+      <span class="dos-bracket dos-bracket-bl"></span>
+      <span class="dos-bracket dos-bracket-br"></span>
+      <header class="empty-portfolio-header">
+        <span class="dos-brand">THE_EXCHANGE//SYSTEM_v4.2</span>
+        <span class="dos-auth">AUTH_LEVEL: ADMIN</span>
+      </header>
+      <div class="empty-portfolio-body">
+        <div class="empty-portfolio-system">
+          <p class="ep-label">PARTICIPANT_VALUE: NULL</p>
+          <p class="ep-label">EMOTIONAL_SIGNAL: INSUFFICIENT</p>
+          <p class="ep-label">PORTFOLIO_STATUS: EMPTY</p>
+        </div>
+        <p class="ep-text" id="emptyPortfolioText"></p>
+        <button class="ep-receipt-btn" disabled>GENERATE RECEIPT</button>
+      </div>
+    </div>
+  </div><!-- /.empty-portfolio-overlay -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="supabase.js"></script>
   <script src="js/main.js"></script>
   <script src="js/portfolio.js"></script>
   <script>
     (function () {
-      var navItems = document.querySelectorAll('[data-tab]');
-      var panes = document.querySelectorAll('.tab-pane');
-      var navLeft = document.getElementById('nav-left');
+      /* ── Reveal state ── */
+      var g_revealTexts  = null; // array of 5 strings indexed by card
+      var g_revealedCards = {};
+      var g_currentCard  = 0;
+
+      var panes    = document.querySelectorAll('.tab-pane');
+      var navLeft   = document.getElementById('nav-left');
       var navCenter = document.getElementById('nav-center');
-      var navRight = document.getElementById('nav-right');
+      var navRight  = document.getElementById('nav-right');
 
       function setTab(tabId, triggerEl) {
         panes.forEach(function (p) { p.classList.remove('active'); });
         var target = document.getElementById('tab-' + tabId);
         if (target) target.classList.add('active');
-
         [navLeft, navRight].forEach(function (b) { b.classList.remove('nav-item--alt-active'); });
-        if (triggerEl && triggerEl !== navCenter) {
-          triggerEl.classList.add('nav-item--alt-active');
-        }
+        if (triggerEl && triggerEl !== navCenter) triggerEl.classList.add('nav-item--alt-active');
       }
 
       /* ── Carousel ── */
@@ -421,13 +434,15 @@
           cards[current].classList.remove('active');
           current = (idx + cards.length) % cards.length;
           cards[current].classList.add('active');
+          g_currentCard = current;
+          maybeRevealActiveCard(current);
         }
         document.querySelector('.carousel-prev').addEventListener('click', function () { show(current - 1); });
         document.querySelector('.carousel-next').addEventListener('click', function () { show(current + 1); });
       })();
 
-      navLeft.addEventListener('click', function () { setTab('metrics', navLeft); });
-      navRight.addEventListener('click', function () { setTab('yield', navRight); });
+      navLeft.addEventListener('click',   function () { setTab('metrics', navLeft); });
+      navRight.addEventListener('click',  function () { setTab('yield',   navRight); });
       navCenter.addEventListener('click', function () { setTab('metrics', null); });
 
       document.getElementById('receiptBtn').addEventListener('click', openDossier);
@@ -445,11 +460,12 @@
         window.location.href = 'generative-receipt.html?ni=' + ni + '&ai=' + ai + '&hi=' + hi + '&xi=' + xi + '&nr=' + nr + '&ar=' + ar + '&hr=' + hr + '&xr=' + xr;
       });
 
+      /* ── Dossier data helpers ── */
+
       function populateDossierFromTrades() {
         var trades = JSON.parse(localStorage.getItem('exchange_trades') || '[]');
         var buys   = trades.filter(function(t) { return t.type === 'buy'; });
 
-        // HOLDINGS_DATA quadrant
         var holdingsBody = document.querySelector('#dq-tr .dos-q-body');
         if (holdingsBody) {
           var html = '';
@@ -462,7 +478,7 @@
                   '<span class="dos-holding-num">' + String(i + 1).padStart(2, '0') + '</span>' +
                   '<div class="dos-holding-info">' +
                     '<div class="dos-holding-name">' + t.name.toUpperCase() + ' <span class="dos-ticker">[' + t.ticker + ']</span></div>' +
-                    '<div class="dos-holding-row"><span>HELD_TYPE: ' + (t.emotion || 'EQUITY').toUpperCase() + '</span><span class="dos-pts">\u20B9' + t.price.toFixed(2) + '</span></div>' +
+                    '<div class="dos-holding-row"><span>HELD_TYPE: ' + (t.emotion || 'EQUITY').toUpperCase() + '</span><span class="dos-pts">&#8377;' + t.price.toFixed(2) + '</span></div>' +
                     '<div>EMOTION_COST: ' + (t.emotion || 'UNKNOWN').toUpperCase() + '</div>' +
                   '</div>' +
                 '</div>';
@@ -474,27 +490,25 @@
               '<tr><td>TOTAL_POSITIONS:</td><td>' + buys.length + '</td></tr>' +
               '<tr><td>EMOTIONAL_COST:</td><td>' + (buys.length * 10) + ' pts</td></tr>' +
               '<tr><td>PRIMARY_ASSET:</td><td>EMOTIONAL_EQUITY</td></tr>' +
-            '</table>' +
-            '<div class="dos-reveal" id="reveal-tr"></div>';
+            '</table>';
           holdingsBody.innerHTML = html;
         }
 
-        // TRANSACTION_LOG quadrant
         var logBody = document.querySelector('#dq-br .dos-q-body');
         if (logBody) {
           var logHtml = '<div class="dos-log">';
           if (trades.length === 0) {
-            logHtml += '<div class="dos-log-entry"><span class="dos-log-ts">[——:——:——]</span><span>NO_TRANSACTIONS_RECORDED</span></div>';
+            logHtml += '<div class="dos-log-entry"><span class="dos-log-ts">[&#8212;&#8212;:&#8212;&#8212;:&#8212;&#8212;]</span><span>NO_TRANSACTIONS_RECORDED</span></div>';
           } else {
             trades.forEach(function(t) {
-              var d   = new Date(t.ts);
-              var hh  = d.getHours().toString().padStart(2, '0');
-              var mm  = d.getMinutes().toString().padStart(2, '0');
-              var ss  = d.getSeconds().toString().padStart(2, '0');
-              var ts  = '[' + hh + ':' + mm + ':' + ss + ']';
+              var d  = new Date(t.ts);
+              var hh = d.getHours().toString().padStart(2, '0');
+              var mm = d.getMinutes().toString().padStart(2, '0');
+              var ss = d.getSeconds().toString().padStart(2, '0');
+              var ts = '[' + hh + ':' + mm + ':' + ss + ']';
               var act = t.type === 'buy'
-                ? t.ticker + ' PURCHASED  +\u20B9' + t.price.toFixed(2)
-                : t.ticker + ' SOLD  -\u20B9' + t.price.toFixed(2);
+                ? t.ticker + ' PURCHASED  +&#8377;' + t.price.toFixed(2)
+                : t.ticker + ' SOLD  -&#8377;' + t.price.toFixed(2);
               logHtml += '<div class="dos-log-entry"><span class="dos-log-ts">' + ts + '</span><span>' + act + '</span></div>';
             });
           }
@@ -504,7 +518,6 @@
           var ns = now.getSeconds().toString().padStart(2,'0');
           logHtml += '<div class="dos-log-entry dos-log-final"><span class="dos-log-ts">[' + nh + ':' + nm + ':' + ns + ']</span><span>DOSSIER_ASSEMBLY_COMPLETE &#9679;</span></div>';
           logHtml += '</div>';
-          logHtml += '<div class="dos-reveal" id="reveal-br"></div>';
           logBody.innerHTML = logHtml;
         }
       }
@@ -530,72 +543,314 @@
         document.getElementById('dos-hi-bar').textContent = makeBar(hi);
 
         var avg = Math.round((ni + ai + hi + xi) / 4);
-        document.getElementById('dos-signal-val').textContent =
-          avg >= 70 ? 'STRONG' : avg >= 45 ? 'MODERATE' : 'LOW';
+        var signal = avg >= 70 ? 'STRONG' : avg >= 45 ? 'MODERATE' : 'LOW';
+        document.getElementById('dos-signal-val').textContent = signal;
+        document.getElementById('dos-class-val').textContent =
+          avg >= 70 ? 'HIGH_VALUE_PARTICIPANT' : avg >= 45 ? 'STANDARD_PARTICIPANT' : 'LOW_VALUE_PARTICIPANT';
       }
 
-      function openDossier() {
+      /* ── Per-card reveal trigger ── */
+
+      var CARD_GAME_NAMES = ['nostalgia', 'anger', 'fear', 'happiness', null]; // null = summary
+
+      function maybeRevealActiveCard(idx) {
+        if (!g_revealTexts || g_revealedCards[idx]) return;
+        var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+        var gameName = CARD_GAME_NAMES[idx];
+        if (gameName !== null && played.indexOf(gameName) === -1) return;
+        if (gameName === null && played.length < 4) return; // summary: only if all 4 played
+        g_revealedCards[idx] = true;
+        typeReveal('card-reveal-' + (idx + 1), g_revealTexts[idx], null);
+      }
+
+      /* ── Supabase-driven sentence builder ── */
+
+      async function buildDynamicRevealTexts() {
+        var db = window.supabaseClient;
+        var nostalgiaRow = null, angerRow = null, fearRow = null, happinessRow = null;
+
+        try {
+          var results = await Promise.all([
+            db.from('sessions').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+            db.from('anger_sessions').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+            db.from('fear_sessions').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+            db.from('happiness_sessions').select('*').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+          ]);
+          nostalgiaRow = results[0].data;
+          angerRow     = results[1].data;
+          fearRow      = results[2].data;
+          happinessRow = results[3].data;
+        } catch (e) {
+          console.warn('[portfolio] Supabase fetch failed:', e);
+        }
+
+        /* Normalized indices — localStorage is authoritative; Supabase as fallback */
+        var nostalgiaIndex = parseInt(localStorage.getItem('exchange_ni')) ||
+          (nostalgiaRow ? Math.round(Math.max(0, Math.min(100, (nostalgiaRow.nostalgia_index || 0) * 12.5))) : 0);
+        var angerIndex = parseInt(localStorage.getItem('exchange_ai')) ||
+          (angerRow ? Math.round(Math.max(0, Math.min(100, (angerRow.anger_index || 0) * 50))) : 0);
+        var fearIndex = parseInt(localStorage.getItem('exchange_xi')) ||
+          (fearRow ? Math.round(Math.max(0, Math.min(100, (fearRow.fear_index || 0) * 34))) : 0);
+        var happinessIndex = parseInt(localStorage.getItem('exchange_hi')) ||
+          (happinessRow ? Math.round(Math.max(0, Math.min(100, (happinessRow.happiness_index || 0) * 70))) : 0);
+
+        /* Nostalgia: dvd_attempts = wrong_clicks + 1 correct; reversals = wrong clicks */
+        var choiceReversal = nostalgiaRow
+          ? Math.max(0, (nostalgiaRow.dvd_attempts || 1) - 1)
+          : 0;
+
+        /* Anger: captcha always fails first attempt by game design; proxy via quit_checkpoint */
+        var captchaFailures = (angerRow &&
+          (angerRow.quit_checkpoint === 'after_2' || angerRow.quit_checkpoint === 'completed')) ? 1 : 0;
+        var retryEvents = (angerRow &&
+          (angerRow.frustration_points > 0 || angerRow.quit_checkpoint === 'completed')) ? 1 : 0;
+
+        /* Fear: math_score is raw 0-300; scale to /10 for display */
+        var confidenceRating = fearRow ? (fearRow.confidence_rating || 5) : 5;
+        var mathScore        = fearRow ? Math.round(((fearRow.math_score || 0) / 300) * 10) : 5;
+        /* confidence_vs_performance_gap = confidence_rating minus (math_score scaled to /10) */
+        var confidenceGap    = fearRow ? (fearRow.confidence_vs_performance_gap || 0) : 0;
+        var questionsSkipped = fearRow ? (fearRow.questions_skipped || 0) : 0;
+
+        /* Happiness */
+        var retakeCount   = happinessRow ? (happinessRow.retake_count || 0) : 0;
+        var answerChanges = 0; /* not currently tracked in DB */
+
+        /* Session overview */
+        var playedGames    = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+        var gamesCompleted = playedGames.length;
+        var overallIndex   = Math.round((nostalgiaIndex + angerIndex + fearIndex + happinessIndex) / 4);
+
+        /* Populate carousel card data fields */
+        populateCarouselCards({
+          nostalgiaRow: nostalgiaRow, angerRow: angerRow,
+          fearRow: fearRow, happinessRow: happinessRow,
+          choiceReversal: choiceReversal, captchaFailures: captchaFailures,
+          retryEvents: retryEvents, confidenceRating: confidenceRating,
+          mathScore: mathScore, confidenceGap: confidenceGap,
+          questionsSkipped: questionsSkipped, retakeCount: retakeCount,
+          nostalgiaIndex: nostalgiaIndex, angerIndex: angerIndex,
+          fearIndex: fearIndex, happinessIndex: happinessIndex,
+          overallIndex: overallIndex, gamesCompleted: gamesCompleted
+        });
+
+        /* ── EMPTY PORTFOLIO check ── */
+        var lowValueText = '';
+        var showEmptyPortfolio = false;
+
+        if (gamesCompleted === 0) {
+          lowValueText = "You didn't play. The system has nothing on you today. Come back when you're willing to give something.";
+          showEmptyPortfolio = true;
+        } else if (gamesCompleted === 1) {
+          lowValueText = 'You gave very little. One game, minimal data. Your emotional profile is incomplete. In this market, incomplete profiles have no trading value. You leave with nothing.';
+          showEmptyPortfolio = true;
+        } else if (overallIndex < 30) {
+          lowValueText = 'Your indices are low across the board. The system struggled to read you. Low engagement, low signal, low value. You participated but gave nothing the market could use. Your portfolio is empty.';
+          showEmptyPortfolio = true;
+        }
+
+        /* ── NOSTALGIA sentences ── */
+        var nostalgiaText1, nostalgiaText2;
+        if (choiceReversal >= 2) {
+          nostalgiaText1 = 'You changed your answer ' + choiceReversal + ' times. The system read each reversal as a stronger memory signal than a confident first choice. Your hesitation was more valuable than your answer.';
+        } else if (choiceReversal === 1) {
+          nostalgiaText1 = "You second-guessed yourself once. That moment of doubt pointed to a competing memory — the system logged both.";
+        } else {
+          nostalgiaText1 = "You chose quickly and didn't look back. Confidence reads as familiarity. The system noted the depth of that recognition.";
+        }
+
+        if (nostalgiaIndex >= 70) {
+          nostalgiaText2 = 'Your nostalgia index is high. You were easy to reach through memory. Brands already know this about you.';
+        } else if (nostalgiaIndex >= 40) {
+          nostalgiaText2 = 'Your nostalgia signal was moderate. You engaged but kept some distance. The system will try again with a different touchpoint.';
+        } else {
+          nostalgiaText2 = "Your nostalgia index is low. Either you don't look back, or the right memory hasn't been found yet. It will be.";
+        }
+
+        /* ── ANGER sentences ── */
+        var angerText1, angerText2;
+        if (captchaFailures >= 3 && retryEvents >= 3) {
+          angerText1 = 'You failed ' + captchaFailures + ' times and tried again ' + retryEvents + ' times. Every retry was logged as loyalty. You were frustrated. You stayed anyway. That gap is what brands pay for.';
+        } else if (retryEvents >= 1) {
+          angerText1 = 'You hit a wall and came back. Once is enough. The system knows you can be retained through friction.';
+        } else {
+          angerText1 = "You moved through the obstacles without much resistance. Low frustration reads as high compliance. That's also valuable.";
+        }
+
+        if (angerIndex >= 65) {
+          angerText2 = 'Your anger index is high. You felt it. You stayed anyway. That combination is the most profitable emotional profile in the market.';
+        } else if (angerIndex >= 35) {
+          angerText2 = 'Moderate frustration was detected. You were irritated but not enough to leave. The threshold has been recorded for next time.';
+        } else {
+          angerText2 = "Low anger signal. Either the obstacles didn't reach you, or you've learned not to react. Both are useful data points.";
+        }
+
+        /* ── FEAR sentences ── */
+        var fearText1, fearText2;
+        if (confidenceGap >= 3) {
+          fearText1 = 'You rated your confidence at ' + confidenceRating + '/10. You scored ' + mathScore + '/10. That gap of ' + confidenceGap + ' points is the most precise thing the system extracted today. You believed in yourself more than the situation allowed.';
+        } else if (confidenceGap <= -2) {
+          fearText1 = 'You underestimated yourself by ' + Math.abs(confidenceGap) + ' points. Anxiety made you smaller than you are. The system noted that surveillance affects your performance even when you try to resist it.';
+        } else {
+          fearText1 = 'Your confidence matched your performance closely. You know yourself under pressure. That self-awareness was also logged.';
+        }
+
+        if (questionsSkipped === 0) {
+          fearText2 = "You answered every question after being told your responses were not anonymous. Your compliance index is high. The system didn't need to force anything.";
+        } else {
+          fearText2 = 'You skipped ' + questionsSkipped + ' question(s) after the anonymity warning. Partial resistance was noted. The questions you avoided were the most valuable ones.';
+        }
+
+        /* ── HAPPINESS sentences ── */
+        var happinessText1, happinessText2;
+        if (retakeCount >= 2) {
+          happinessText1 = 'You retook the quiz ' + retakeCount + " times. Each retake is a signal that the result didn't reflect who you believe you are. That gap between the result and your self-image — that's what was harvested.";
+        } else if (retakeCount === 1) {
+          happinessText1 = 'You retook the quiz once. One retake is enough. The need to see yourself reflected differently is the most quietly powerful data point in this entire experience.';
+        } else {
+          happinessText1 = "You accepted your result without retaking. Either it was accurate, or you didn't care enough to try again. Both readings are in the system.";
+        }
+
+        if (answerChanges >= 3) {
+          happinessText2 = 'You changed your answers ' + answerChanges + ' times. You were performing an identity, not just answering questions. The performance itself was the data.';
+        } else if (answerChanges >= 1) {
+          happinessText2 = 'You reconsidered ' + answerChanges + ' answer(s). Small adjustments to how you present yourself. The system noticed.';
+        } else {
+          happinessText2 = "You answered without changing anything. Either you're certain of who you are, or you didn't invest in the result. The system recorded which.";
+        }
+
+        /* ── SUMMARY sentence ── */
+        var summaryText = 'You moved through ' + gamesCompleted + ' of 4 games. The system extracted nostalgia, anger, fear, and happiness — in that order. Each emotion produced a tradeable value. You paid in feeling. The receipt below is proof.';
+
+        return {
+          showEmptyPortfolio: showEmptyPortfolio,
+          lowValueText: lowValueText,
+          cardTexts: [
+            nostalgiaText1 + '\n\n' + nostalgiaText2,
+            angerText1 + '\n\n' + angerText2,
+            fearText1 + '\n\n' + fearText2,
+            happinessText1 + '\n\n' + happinessText2,
+            summaryText,
+          ]
+        };
+      }
+
+      /* ── Populate carousel card data fields from Supabase rows ── */
+
+      function populateCarouselCards(d) {
+        var set = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+
+        /* Card 1: NOSTALGIA */
+        set('card-choice-reversal', d.choiceReversal > 0 ? d.choiceReversal + 'x DETECTED' : 'NOT DETECTED');
+        set('card-dvd-time', d.nostalgiaRow ? ((d.nostalgiaRow.dvd_time_ms || 0) / 1000).toFixed(1) + 's' : '——');
+        set('card-nostalgia-signal', d.nostalgiaIndex >= 70 ? 'STRONG' : d.nostalgiaIndex >= 40 ? 'MODERATE' : 'LOW');
+
+        /* Card 2: ANGER */
+        set('card-captcha-failures', d.captchaFailures > 0 ? d.captchaFailures : '0');
+        set('card-retry-events', d.retryEvents > 0 ? d.retryEvents : '0');
+        set('card-rage-quit', d.angerRow && d.angerRow.quit_checkpoint !== 'completed' ? 'YES' : 'NO');
+        set('card-loyalty-signal', d.angerIndex >= 65 ? 'HIGH' : d.angerIndex >= 35 ? 'MODERATE' : 'LOW');
+
+        /* Card 3: FEAR */
+        set('card-confidence-rated', d.confidenceRating + ' / 10');
+        set('card-performance-score', d.mathScore + ' / 10');
+        var gapLabel = d.confidenceGap > 0 ? '+' + d.confidenceGap + ' (OVERCONFIDENT)' : d.confidenceGap < 0 ? d.confidenceGap + ' (UNDERCONFIDENT)' : '0 (CALIBRATED)';
+        set('card-confidence-gap', gapLabel);
+        set('card-questions-skipped', d.questionsSkipped);
+        set('card-anonymity-response', d.questionsSkipped === 0 ? 'CONTINUED' : 'PARTIAL_SKIP');
+        set('card-compliance-index', d.fearIndex >= 60 ? 'HIGH' : d.fearIndex >= 35 ? 'MODERATE' : 'LOW');
+
+        /* Card 4: HAPPINESS */
+        set('card-retake-count', d.retakeCount);
+        set('card-quiz-topic', d.happinessRow ? (d.happinessRow.quiz_topic || '——').toUpperCase() : '——');
+        set('card-matched-persona', d.happinessRow ? (d.happinessRow.matched_persona || '——').toUpperCase() : '——');
+        set('card-joy-index', d.happinessIndex >= 70 ? 'HIGH' : d.happinessIndex >= 40 ? 'MODERATE' : 'LOW');
+
+        /* Card 5: SUMMARY */
+        set('card-sum-ni', d.nostalgiaIndex + ' / 100');
+        set('card-sum-ai', d.angerIndex + ' / 100');
+        set('card-sum-xi', d.fearIndex + ' / 100');
+        set('card-sum-hi', d.happinessIndex + ' / 100');
+        set('card-sum-signal', d.overallIndex >= 70 ? 'STRONG' : d.overallIndex >= 45 ? 'MODERATE' : 'LOW');
+        set('card-sum-class', d.overallIndex >= 70 ? 'HIGH_VALUE_PARTICIPANT' : d.overallIndex >= 45 ? 'STANDARD_PARTICIPANT' : 'LOW_VALUE_PARTICIPANT');
+      }
+
+      /* ── Empty portfolio screen ── */
+
+      function showEmptyPortfolioScreen(text) {
+        document.getElementById('emptyPortfolioText').textContent = text;
+        document.getElementById('emptyPortfolioOverlay').style.display = 'flex';
+      }
+
+      /* ── Main dossier open (async — fetches Supabase during scene fade) ── */
+
+      async function openDossier() {
         populateDossierFromTrades();
         populateDossierMetrics();
+
+        var revealDataPromise = buildDynamicRevealTexts();
+
         var scene = document.querySelector('.p-scene');
         scene.style.transition = 'opacity 0.4s ease';
         scene.style.opacity = '0';
 
-        setTimeout(function () {
-          scene.style.display = 'none';
-          var overlay = document.getElementById('dossierOverlay');
-          overlay.style.display = 'flex';
+        var revealData = await Promise.all([
+          revealDataPromise,
+          new Promise(function(resolve) { setTimeout(resolve, 400); })
+        ]).then(function(r) { return r[0]; });
 
-          var pid = 'EX-' + Math.random().toString(16).slice(2, 8).toUpperCase();
-          document.getElementById('dosParticipantId').textContent = 'ID: ' + pid;
+        scene.style.display = 'none';
 
-          var quadIds = ['dq-tl', 'dq-tr', 'dq-bl', 'dq-br'];
-          quadIds.forEach(function (id, i) {
-            setTimeout(function () {
-              document.getElementById(id).classList.add('visible');
-              if (id === 'dq-bl') {
-                setTimeout(function () {
-                  document.getElementById('liveBar').classList.add('animate');
-                }, 300);
-              }
-            }, i * 300);
-          });
+        if (revealData.showEmptyPortfolio) {
+          showEmptyPortfolioScreen(revealData.lowValueText);
+          return;
+        }
 
-          var REVEALS = [
-            { id: 'reveal-tl', text: 'REVEAL: You engaged longest with nostalgia. Your hesitation was noted. \nYour compliance was noted.\nYour joy was measured. All of it\nhas been logged.' },
-            { id: 'reveal-tr', text: 'REVEAL: These were not just trades. Each purchase was made using\nextracted feeling as currency. You paid in memory.' },
-            { id: 'reveal-bl', text: 'REVEAL: The more others feel, the more\nyour holdings are worth. You are now\ninvested in their emotional labor.' },
-            { id: 'reveal-br', text: 'REVEAL: Every emotion you felt became a\ntransaction. This is the receipt of your\ninner life.' }
-          ];
+        var overlay = document.getElementById('dossierOverlay');
+        overlay.style.display = 'flex';
 
-          function runReveal(index) {
-            if (index >= REVEALS.length) {
-              setTimeout(function () {
-                var btn = document.getElementById('dossierReceiptBtn');
-                btn.classList.add('pulsing');
-                btn.addEventListener('animationend', function () { btn.classList.remove('pulsing'); }, { once: true });
-              }, 300);
-              return;
+        var pid = 'EX-' + Math.random().toString(16).slice(2, 8).toUpperCase();
+        document.getElementById('dosParticipantId').textContent = 'ID: ' + pid;
+
+        var quadIds = ['dq-tl', 'dq-tr', 'dq-bl', 'dq-br'];
+        quadIds.forEach(function (id, i) {
+          setTimeout(function () {
+            document.getElementById(id).classList.add('visible');
+            if (id === 'dq-bl') {
+              setTimeout(function () { document.getElementById('liveBar').classList.add('animate'); }, 300);
             }
-            typeReveal(REVEALS[index].id, REVEALS[index].text, function () {
-              setTimeout(function () { runReveal(index + 1); }, 500);
-            });
-          }
+          }, i * 300);
+        });
 
-          setTimeout(function () { runReveal(0); }, quadIds.length * 300 + 500);
-        }, 400);
+        setTimeout(function () {
+          var btn = document.getElementById('dossierReceiptBtn');
+          btn.classList.add('pulsing');
+          btn.addEventListener('animationend', function () { btn.classList.remove('pulsing'); }, { once: true });
+        }, quadIds.length * 300 + 300);
       }
 
       function typeReveal(id, text, callback) {
         var el = document.getElementById(id);
+        if (!el) { if (callback) callback(); return; }
         el.textContent = '';
         var i = 0;
         var iv = setInterval(function () {
           el.textContent = text.slice(0, i);
           i++;
           if (i > text.length) { clearInterval(iv); if (callback) callback(); }
-        }, 28);
+        }, 22);
       }
+
+      /* ── Populate carousel and arm card reveals on load ── */
+      window.addEventListener('DOMContentLoaded', function () {
+        buildDynamicRevealTexts().then(function (data) {
+          g_revealTexts = data.cardTexts;
+          maybeRevealActiveCard(g_currentCard);
+        }).catch(function (e) {
+          console.warn('[portfolio] carousel prefill failed:', e);
+        });
+      });
+
     })();
   </script>
 </body>

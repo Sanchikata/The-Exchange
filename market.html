@@ -8,21 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
-    /* ===== RESET & BASE ===== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       background: #0a0a0a;
-      color: #e8e8e0;
+      color: #e0e0e0;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
-    }
-
-    /* ===== PAGE WRAP ===== */
-    .page-wrap {
-      max-width: 1220px;
-      margin: 0 auto;
+      line-height: 1.6;
     }
 
     /* ===== HEADER ===== */
@@ -34,12 +28,13 @@
       justify-content: space-between;
       padding: 0 clamp(20px, 4vw, 59px);
       height: clamp(56px, 10vw, 130px);
+      position: relative;
+      z-index: 10;
     }
     .header-brand {
       display: flex;
       align-items: center;
       gap: clamp(6px, 1vw, 14px);
-      padding: 0;
     }
     .header-dot {
       width: clamp(4px, 0.5vw, 7px);
@@ -54,7 +49,7 @@
       font-weight: 500;
       font-size: clamp(14px, 2.2vw, 30px);
       color: #fff;
-      letter-spacing: clamp(2px, 0.4vw, 6px);
+      letter-spacing: 0.15em;
       line-height: 1.4;
       white-space: nowrap;
     }
@@ -92,7 +87,7 @@
       color: #5a9c6a;
       font-family: 'JetBrains Mono', monospace;
       font-size: clamp(9px, 1vw, 13px);
-      letter-spacing: 0.1em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       padding: clamp(8px, 1vw, 14px) clamp(14px, 2vw, 28px);
       cursor: pointer;
@@ -105,9 +100,30 @@
       box-shadow: 0 0 16px rgba(90,156,106,0.2);
     }
 
-    /* ===== HERO CARD ===== */
+    /* ===== MAIN TWO-COLUMN LAYOUT ===== */
+    .main-layout {
+      display: flex;
+      gap: 3%;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: flex-start;
+      padding: 0 24px;
+    }
+    .main-col {
+      flex: 0 0 65%;
+      min-width: 0;
+    }
+    .sidebar-col {
+      flex: 0 0 32%;
+      min-width: 0;
+      position: sticky;
+      top: 20px;
+      padding-top: 24px;
+    }
+
+    /* ===== HERO SECTION ===== */
     .hero-section {
-      padding: 48px 72px;
+      padding: 24px 0;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -116,74 +132,123 @@
     }
     .hero-card {
       background: #111;
-      border: 13px solid rgba(255,190,2,0.21);
+      border: 1px solid rgba(255,190,2,0.21);
       border-radius: 14px;
       overflow: hidden;
-      position: relative;
-      padding: 46px 56px 48px;
-      width: 1137px;
-      min-height: 533px;
-      margin: 0 auto;
+      padding: 40px;
+      width: 100%;
       box-sizing: border-box;
+    }
+    #heroCardFear      { border-color: rgba(255,127,80,0.35); }
+    #heroCardAnger     { border-color: rgba(199,166,255,0.35); }
+    #heroCardHappiness { border-color: rgba(127,212,254,0.35); }
+
+    .hero-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .hero-meta-company {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+    }
+    .hero-meta-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border: 0.5px solid;
+      border-radius: 2px;
+    }
+    .pill-nostalgia { color: #6a8f0c; border-color: rgba(106,143,12,0.5); background: rgba(106,143,12,0.08); }
+    .pill-fear      { color: #FF7F50; border-color: rgba(255,127,80,0.5);  background: rgba(255,127,80,0.08); }
+    .pill-anger     { color: #C7A6FF; border-color: rgba(199,166,255,0.5); background: rgba(199,166,255,0.08); }
+    .pill-happiness { color: #7FD4FE; border-color: rgba(127,212,254,0.5); background: rgba(127,212,254,0.08); }
+
+    .hero-card-body {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .hero-card-left {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
     }
     .hero-headline {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: 500;
-      font-size: 38px;
+      font-weight: 600;
+      font-size: 32px;
       line-height: 1.35;
       color: #fff;
-      max-width: 486px;
     }
     .nostalgia-word { color: #6a8f0c; }
-    .hero-stat {
-      position: absolute;
-      left: 53px;
-      top: 276px;
-      width: 420px;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: 700;
-      line-height: 1.1;
+
+    .hero-stat-row {
+      margin-top: 32px;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 6px;
     }
     .hero-stat-pct {
-      font-size: 75px;
+      font-size: 56px;
+      font-weight: 700;
       color: #ffbe02;
-      vertical-align: baseline;
+      line-height: 1;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
-    .hero-stat-loyalty {
-      font-size: 38px;
+    .hero-stat-label {
+      font-size: 24px;
+      font-weight: 500;
       color: #ffbe02;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     }
     .hero-stat-desc {
-      font-size: 38px;
+      font-size: 18px;
+      font-weight: 400;
       color: #f2f2f2;
-      font-weight: 500;
-    }
-    .hero-trade-btn {
-      position: absolute;
-      left: 53px;
-      top: 427px;
-      width: 119px;
-      height: 34px;
-      background: #757674;
-      border: none;
-      color: #000;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: 700;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: not-allowed;
-      border-radius: 0;
-      display: flex;
+    }
+    .stat-pct-fear      { color: #FF7F50; }
+    .stat-label-fear    { color: #FF7F50; }
+    .stat-pct-anger     { color: #C7A6FF; }
+    .stat-label-anger   { color: #C7A6FF; }
+    .stat-pct-happiness { color: #7FD4FE; }
+    .stat-label-happiness { color: #7FD4FE; }
+
+    .hero-trade-btn {
+      margin-top: 24px;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      background: transparent;
+      border: 1px solid rgba(255,190,2,0.6);
+      color: #ffbe02;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      cursor: not-allowed;
+      border-radius: 2px;
+      align-self: flex-start;
     }
+    .hero-trade-btn.btn-fear      { border-color: rgba(255,127,80,0.6);   color: #FF7F50; }
+    .hero-trade-btn.btn-anger     { border-color: rgba(199,166,255,0.6);  color: #C7A6FF; }
+    .hero-trade-btn.btn-happiness { border-color: rgba(127,212,254,0.6);  color: #7FD4FE; }
+
     .hero-chart-area {
-      position: absolute;
-      left: 614px;
-      top: 395px;
-      width: 497px;
-      height: 145px;
+      width: 45%;
+      height: 120px;
+      flex-shrink: 0;
       overflow: hidden;
     }
     .hero-chart-area svg {
@@ -191,93 +256,34 @@
       height: 100%;
       display: block;
     }
-    .hero-divider {
-      position: absolute;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 5px;
-      align-items: center;
-    }
-    .divider-seg {
-      width: 13px;
-      height: 1.2px;
-      border-radius: 1px;
-      background: rgba(255,255,255,0.15);
-    }
-    .divider-seg.active {
-      background: rgba(255,190,2,0.21);
-    }
 
-    /* ===== HERO CARD META ROW ===== */
-    .hero-card-meta {
+    .hero-dots {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-    .hero-meta-company {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.38);
-    }
-    .hero-meta-pill {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border: 0.5px solid;
-      border-radius: 2px;
-    }
-    .pill-nostalgia { color: #6a8f0c; border-color: rgba(106,143,12,0.5); background: rgba(106,143,12,0.08); }
-    .pill-fear      { color: #FF7F50; border-color: rgba(255,127,80,0.5); background: rgba(255,127,80,0.08); }
-    .pill-anger     { color: #C7A6FF; border-color: rgba(199,166,255,0.5); background: rgba(199,166,255,0.08); }
-    .pill-happiness { color: #7FD4FE; border-color: rgba(127,212,254,0.5); background: rgba(127,212,254,0.08); }
-
-    /* Hero card border variants */
-    #heroCardFear      { border-color: rgba(255,127,80,0.35); }
-    #heroCardAnger     { border-color: rgba(199,166,255,0.35); }
-    #heroCardHappiness { border-color: rgba(127,212,254,0.35); }
-
-    /* Outlined hero trade button for variant cards */
-    .hero-trade-btn-outlined {
-      position: absolute;
-      left: 53px;
-      top: 427px;
-      width: 119px;
-      height: 34px;
-      background: transparent;
-      border: 1.5px solid;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: 700;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: not-allowed;
-      border-radius: 0;
-      display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: 24px;
     }
-    .btn-fear      { border-color: #FF7F50; color: #FF7F50; }
-    .btn-anger     { border-color: #C7A6FF; color: #C7A6FF; }
-    .btn-happiness { border-color: #7FD4FE; color: #7FD4FE; }
+    .hero-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      display: inline-block;
+    }
+    .hero-dot.active          { background: #ffbe02; }
+    .hero-dot.active-fear     { background: #FF7F50; }
+    .hero-dot.active-anger    { background: #C7A6FF; }
+    .hero-dot.active-happiness{ background: #7FD4FE; }
 
-    /* ===== POINTS BANNER (full-width, vw-relative) ===== */
-    .page-wrap {
-      position: relative;
-      z-index: 2;
-    }
+    /* ===== POINTS BANNER ===== */
+    .page-wrap { position: relative; z-index: 2; }
     .points-banner {
       position: sticky;
       top: 0;
       z-index: 3;
       background: #19191c;
-      padding: clamp(32px, 4vw, 64px) clamp(24px, 5vw, 80px);
+      padding: 32px clamp(24px, 5vw, 80px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -290,9 +296,16 @@
       border-bottom: 1px solid transparent;
     }
     .points-banner.banner-sticky {
-      clip-path: inset(0 0 324px 0); /* 400 - 76 = 324 */
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 76px;
+      clip-path: inset(0);
       background: #111111;
       border-bottom-color: rgba(218,254,127,0.2);
+      z-index: 10;
     }
     .banner-full {
       display: flex;
@@ -302,10 +315,7 @@
       transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
       pointer-events: auto;
     }
-    .banner-sticky .banner-full {
-      opacity: 0;
-      pointer-events: none;
-    }
+    .banner-sticky .banner-full { opacity: 0; pointer-events: none; }
     .banner-mini {
       position: absolute;
       top: 0; left: 0; right: 0;
@@ -318,15 +328,12 @@
       pointer-events: none;
       transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1) 300ms;
     }
-    .banner-sticky .banner-mini {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .banner-sticky .banner-mini { opacity: 1; pointer-events: auto; }
     .banner-mini-text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       color: rgba(255,255,255,0.65);
-      letter-spacing: 0.03em;
+      letter-spacing: 0.05em;
     }
     .banner-mini-btn {
       background: #ffb205;
@@ -335,14 +342,18 @@
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-weight: 700;
       font-size: 12px;
-      letter-spacing: 0.11em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       padding: 10px 24px;
       cursor: pointer;
       border-radius: 2px;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .banner-mini-btn:hover {
+      background: #ffc933;
+      box-shadow: 0 0 16px rgba(255,178,5,0.4), 0 0 4px rgba(255,178,5,0.2);
     }
     .points-inner {
-      padding: 0 clamp(16px, 3vw, 16px);
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -353,7 +364,7 @@
       font-size: 24px;
       color: #fff;
       letter-spacing: -0.02em;
-      line-height: 1.4;
+      line-height: 1.6;
       margin-bottom: 14px;
     }
     .points-copy .hl { color: #ffb205; font-weight: 700; }
@@ -363,39 +374,38 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: clamp(12px, 2vw, 16px);
       color: #ffb205;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
     .progress-dots {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      max-height: 28px; /* 2 rows: 10px + 8px gap + 10px */
+      flex-wrap: nowrap;
+      gap: 4px;
       overflow: hidden;
+      max-height: 6px;
     }
     .pdot {
-      width: 10px;
-      height: 10px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: rgba(255,255,255,0.15);
       flex-shrink: 0;
     }
     .pdot.on { background: #ffb205; }
     .earn-btn {
-      display: block;
       will-change: opacity;
       background: rgba(162,113,3,0.46);
       border: 0.5px solid rgba(218,254,127,0.35);
       color: #fff;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-weight: 700;
-      font-size: clamp(13px, 1.6vw, 22px);
-      letter-spacing: 0.11em;
+      font-size: 13px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       text-align: center;
       width: calc(100% - clamp(40px, 6vw, 98px));
       margin: 0 auto;
-      height: 55px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -406,50 +416,80 @@
     }
     @keyframes earnPulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+      50%       { opacity: 0.7; }
     }
     .earn-btn:hover {
       animation: none;
       background: rgba(162,113,3,0.72);
-
       box-shadow: 0 0 24px rgba(218,254,127,0.2), 0 0 6px rgba(218,254,127,0.1);
       opacity: 1;
-      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
-    .earn-row {
+    .earn-row { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+    .gen-portfolio-btn { background: rgba(90,156,106,0.35); border-color: rgba(90,156,106,0.45); animation: none; }
+    .gen-portfolio-btn:hover { background: rgba(90,156,106,0.65); box-shadow: 0 0 24px rgba(90,156,106,0.25); }
+    .banner-mini-btns { display: flex; gap: 10px; align-items: center; }
+    .gen-portfolio-mini-btn { background: rgba(90,156,106,0.85); }
+    .gen-portfolio-mini-btn:hover { background: rgba(90,156,106,1); box-shadow: 0 0 16px rgba(90,156,106,0.4); }
+
+    /* ===== RIGHT SIDEBAR ===== */
+    .sidebar-trending { margin-bottom: 24px; }
+    .sidebar-section-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888888;
+      margin-bottom: 4px;
+    }
+    .trending-row {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 6px 4px;
+    }
+    .trending-row:last-child { border-bottom: none; }
+    .trending-name-wrap {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      width: 100%;
+      gap: 2px;
     }
-    .gen-portfolio-btn {
-      background: rgba(90,156,106,0.35);
-      border-color: rgba(90,156,106,0.45);
-      animation: none;
+    .trending-value {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      color: #e0e0e0;
+      font-weight: 500;
+      text-transform: capitalize;
     }
-    .gen-portfolio-btn:hover {
-      background: rgba(90,156,106,0.65);
-      box-shadow: 0 0 24px rgba(90,156,106,0.25), 0 0 6px rgba(90,156,106,0.15);
+    .trending-company {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #555555;
+      letter-spacing: 0.04em;
     }
-    .banner-mini-btns {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+    .trending-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.05em;
     }
-    .gen-portfolio-mini-btn {
-      background: rgba(90,156,106,0.85);
+    .sidebar-pulse { display: flex; flex-direction: column; gap: 8px; }
+    .pulse-card { background: #141414; padding: 16px; border-radius: 4px; }
+    .pulse-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888888;
+      margin-bottom: 6px;
     }
-    .gen-portfolio-mini-btn:hover {
-      background: rgba(90,156,106,1);
-      box-shadow: 0 0 16px rgba(90,156,106,0.4), 0 0 4px rgba(90,156,106,0.2);
+    .pulse-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 4px;
     }
-    .banner-mini-btn {
-      transition: background 0.2s, box-shadow 0.2s;
-    }
-    .banner-mini-btn:hover {
-      background: #ffc933;
-      box-shadow: 0 0 16px rgba(255,178,5,0.4), 0 0 4px rgba(255,178,5,0.2);
-    }
+    .pulse-change { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.05em; }
 
     /* ===== VALUES BAR CHART ===== */
     .values-section {
@@ -459,72 +499,55 @@
     .values-section-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      letter-spacing: 2.8px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: rgba(218,254,127,0.6);
       margin-bottom: 48px;
     }
-    .chart-wrap {
-      display: flex;
-      gap: 32px;
-      align-items: stretch;
-    }
+    .chart-wrap { display: flex; gap: 32px; align-items: stretch; }
     .chart-y-labels {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding-bottom: 32px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: rgba(255,255,255,0.3);
-      letter-spacing: 1px;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: #888888;
       width: 28px;
       text-align: right;
       flex-shrink: 0;
     }
-    .chart-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
+    .chart-area { flex: 1; display: flex; flex-direction: column; }
     .chart-bars-row {
       flex: 1;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      gap: 24px;
-      border-bottom: 0.5px solid rgba(255,255,255,0.12);
+      gap: 32px;
       padding: 0 20px;
       position: relative;
-      max-height: 300px;
+      height: 280px;
+      max-height: 280px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
-    /* subtle horizontal gridlines */
     .chart-bars-row::before {
       content: '';
       position: absolute;
       left: 0; right: 0; top: 0; bottom: 0;
       background: repeating-linear-gradient(
         to bottom,
-        rgba(255,255,255,0.04) 0px,
-        rgba(255,255,255,0.04) 0.5px,
-        transparent 0.5px,
+        rgba(255,255,255,0.10) 0px,
+        rgba(255,255,255,0.10) 1px,
+        transparent 1px,
         transparent 25%
       );
       pointer-events: none;
     }
-    .chart-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-    .chart-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 6px;
-    }
+    .chart-group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .chart-bars { display: flex; align-items: flex-end; gap: 16px; }
     .chart-bar {
-      width: 32px;
+      width: 28px;
       border-radius: 3px 3px 0 0;
       transform-origin: bottom;
       transform: scaleY(0);
@@ -534,39 +557,26 @@
     .chart-company-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      letter-spacing: 1.5px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #888888;
       white-space: nowrap;
     }
-    .chart-legend {
-      display: flex;
-      gap: 28px;
-      margin-top: 28px;
-      flex-wrap: wrap;
-    }
+    .chart-legend { display: flex; gap: 24px; margin-top: 28px; flex-wrap: wrap; }
     .legend-item {
       display: flex;
       align-items: center;
       gap: 8px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 1.5px;
+      font-size: 11px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
+      color: #888888;
     }
-    .legend-swatch {
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
+    .legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
     /* ===== CARD GRID ===== */
-    .card-section {
-      background: #0a0a0a;
-      padding: 48px 0;
-    }
+    .card-section { background: #0a0a0a; padding: 48px 0; }
     .card-section-header {
       display: flex;
       align-items: flex-end;
@@ -576,9 +586,9 @@
     .csection-meta {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      letter-spacing: 2.8px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #555;
+      color: #555555;
       margin-bottom: 8px;
     }
     .csection-title {
@@ -590,17 +600,13 @@
       line-height: 42px;
     }
     .csection-title span { color: #dafe7f; }
-    .csection-controls {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
+    .csection-controls { display: flex; align-items: center; gap: 18px; }
     .ctrl-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      letter-spacing: 2.2px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #888;
+      color: #888888;
     }
     .ctrl-btn {
       border: 0.5px solid rgba(255,255,255,0.06);
@@ -608,9 +614,9 @@
       padding: 10px 15px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      letter-spacing: 2.2px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: #888;
+      color: #888888;
       background: none;
       cursor: pointer;
       display: flex;
@@ -620,7 +626,7 @@
     .card-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
+      gap: 16px;
       padding: 0 40px 80px;
     }
     .market-card {
@@ -635,23 +641,20 @@
       transform: translateY(24px);
       transition: opacity 0.3s ease-out, transform 0.3s ease-out;
     }
-    .market-card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .market-card.visible { opacity: 1; transform: translateY(0); }
     .card-top-row {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .emotion-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      letter-spacing: 2.6px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 6px 10px;
-      border-radius: 2px;
+      padding: 6px 12px;
+      border-radius: 4px;
       border: 0.5px solid;
       white-space: nowrap;
     }
@@ -662,25 +665,25 @@
     .card-vol {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10.5px;
-      letter-spacing: 1.47px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: #555;
+      color: #555555;
     }
     .card-company {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
-      letter-spacing: 2.64px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: #ddd;
-      margin-bottom: 14px;
+      color: #888888;
+      margin-bottom: 12px;
     }
     .card-question {
       font-family: 'Liberation Serif', Georgia, 'Times New Roman', serif;
       font-weight: 400;
       font-size: 15px;
       color: #fff;
-      line-height: 1.5;
-      margin-bottom: 14px;
+      line-height: 1.55;
+      margin-bottom: 20px;
     }
     .card-body {
       flex: 1;
@@ -691,64 +694,42 @@
       gap: 36px;
       padding: 16px 0 0;
     }
-    .card-stat {
-      display: flex;
-      align-items: flex-end;
-      gap: 6px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .stat-num {
-      font-size: 48px;
-      letter-spacing: -0.5px;
-      line-height: 1;
-    }
+    .card-stat { display: flex; align-items: flex-end; gap: 6px; font-family: 'JetBrains Mono', monospace; }
+    .stat-num { font-size: 44px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
     .stat-num.c-nst  { color: #dafe7f; }
     .stat-num.c-fear { color: #c64a4a; }
     .stat-num.c-ang  { color: #ff4444; }
     .stat-num.c-hap  { color: #4caf50; }
-    .stat-arrow {
-      font-size: 23px;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .stat-tag {
-      font-size: 16px;
-      letter-spacing: 3.2px;
-      text-transform: uppercase;
-      color: #555;
-      line-height: 1;
-      margin-bottom: 2px;
-    }
-    .card-actions {
-      display: flex;
-      gap: 14px;
-      width: 100%;
-    }
+    .stat-arrow { font-size: 16px; line-height: 1; margin-bottom: 6px; }
+    .stat-tag { font-size: 16px; letter-spacing: 0.05em; text-transform: uppercase; color: #555555; line-height: 1; margin-bottom: 2px; }
+    .card-actions { display: flex; gap: 14px; width: 100%; }
     .btn-buy {
       flex: 1;
-      height: 48px;
+      height: 44px;
       background: rgba(218,254,127,0.37);
       border: 0.5px solid rgba(218,254,127,0.35);
       color: #fff;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       cursor: pointer;
-      border-radius: 0;
+      border-radius: 4px;
     }
     .btn-sell {
       flex: 1;
-      height: 48px;
+      height: 44px;
       background: rgba(198,74,74,0.52);
       border: 0.5px solid rgba(255,68,68,0.3);
       color: #fff;
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       cursor: pointer;
-      border-radius: 2px;
+      border-radius: 4px;
     }
 
     /* ===== FOOTER ===== */
@@ -758,7 +739,7 @@
       grid-template-columns: 1.4fr 1fr 1fr 1fr;
       gap: 48px;
       padding: 49px 40px 36px;
-      background:#0a0a0a;
+      background: #0a0a0a;
     }
     .footer-brand {
       font-family: 'Cormorant Garamond', serif;
@@ -769,42 +750,25 @@
       line-height: 36px;
       margin-bottom: 15px;
     }
-    .footer-tagline {
-      font-size: 12px;
-      color: #888;
-      line-height: 18.6px;
-      max-width: 320px;
-      margin-bottom: 15px;
-    }
+    .footer-tagline { font-size: 12px; color: #888888; line-height: 1.6; max-width: 320px; margin-bottom: 15px; }
     .footer-disclaimer {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      color: #555;
-      letter-spacing: 1.6px;
+      color: #555555;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       line-height: 18px;
     }
     .footer-col-head {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      letter-spacing: 2.8px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #555;
+      color: #555555;
       margin-bottom: 18px;
     }
-    .footer-links {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .footer-link {
-      font-size: 12px;
-      color: #888;
-      line-height: 18px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-link { font-size: 12px; color: #888888; line-height: 18px; text-decoration: none; cursor: pointer; transition: color 0.2s; }
     .footer-link:hover { color: #f2f2f2; }
   </style>
 </head>
@@ -816,7 +780,7 @@
       <div class="header-dot"></div>
       <span class="header-title">THE EXCHANGE</span>
     </div>
-    <button class="header-portfolio-btn" id="headerPortfolioBtn" onclick="goToPortfolio()">Generate Portfolio</button>
+    <button class="header-portfolio-btn" id="headerPortfolioBtn" onclick="goToPortfolio()" style="display:none">Generate Portfolio</button>
     <div class="header-points">
       <div class="header-pts-inner">
         <span class="header-pts-num" id="ptsCount">0</span><span class="header-pts-label">pts</span>
@@ -824,554 +788,522 @@
     </div>
   </header>
 
-  <!-- ===== HERO CARD ===== -->
-  <section class="hero-section">
-    <div class="hero-card" id="heroCardNostalgia">
+  <!-- ===== MAIN TWO-COLUMN LAYOUT ===== -->
+  <div class="main-layout">
 
-      <!-- Meta row -->
-      <div class="hero-card-meta">
-        <span class="hero-meta-company">AMUL · DAIRY</span>
-        <span class="hero-meta-pill pill-nostalgia">NOSTALGIA</span>
-      </div>
+    <!-- ===== LEFT COLUMN ===== -->
+    <div class="main-col">
 
-      <!-- Headline -->
-      <div class="hero-headline">
-        Amul's trust held steady through FDA friction.
-        <span class="nostalgia-word">Nostalgia</span> absorbed the damage
-      </div>
+      <!-- ===== HERO SECTION ===== -->
+      <section class="hero-section">
 
-      <!-- Stats (absolutely positioned to match Figma y=276) -->
-      <div class="hero-stat">
-        <span class="hero-stat-pct" id="heroStatPct">41%</span><span class="hero-stat-loyalty"> loyalty</span><span class="hero-stat-desc"> rise, want to buy in?</span>
-      </div>
-
-      <!-- Trade button (absolutely positioned to match Figma y=427) -->
-      <button class="hero-trade-btn" disabled>TRADE</button>
-
-      <!-- Area chart -->
-      <div class="hero-chart-area">
-        <svg id="heroChart" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
-          <defs>
-            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#ffbe02" stop-opacity="0.50"/>
-              <stop offset="55%" stop-color="#8a6400" stop-opacity="0.28"/>
-              <stop offset="100%" stop-color="#3a2800" stop-opacity="0.10"/>
-            </linearGradient>
-          </defs>
-
-          <!-- Y-axis horizontal gridlines -->
-          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-
-          <!-- Y-axis value labels -->
-          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">75</text>
-          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">60</text>
-          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">45</text>
-          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.32)" letter-spacing="0.3">30</text>
-
-          <!-- X-axis tick marks -->
-          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-
-          <!-- X-axis month labels -->
-          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
-          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
-          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
-          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
-          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
-          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
-
-          <!-- fill area -->
-          <path d="M0 145 L0 118 C 50 112, 90 105, 130 92 C 170 79, 195 55, 235 38 C 265 25, 290 22, 315 28 C 340 35, 358 52, 385 68 C 410 82, 440 95, 470 90 C 480 88, 490 86, 497 84 L497 145 Z" fill="url(#areaGrad)"/>
-          <!-- curve line -->
-          <path d="M0 118 C 50 112, 90 105, 130 92 C 170 79, 195 55, 235 38 C 265 25, 290 22, 315 28 C 340 35, 358 52, 385 68 C 410 82, 440 95, 470 90 C 480 88, 490 86, 497 84" fill="none" stroke="#ffbe02" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-          <!-- dot on curve -->
-          <circle id="chartDot" cx="0" cy="0" r="4" fill="#ffbe02" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
-
-          <!-- interactive Y value marker on left -->
-          <g id="chartYAxisLabel" display="none" pointer-events="none">
-            <rect id="chartYAxisBg" x="0" y="0" width="24" height="13" rx="1" fill="rgba(255,190,2,0.15)" stroke="rgba(255,190,2,0.45)" stroke-width="0.5"/>
-            <text id="chartYAxisText" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#ffbe02" text-anchor="middle" letter-spacing="0.3">74</text>
-          </g>
-
-          <!-- floating NST tooltip near dot -->
-          <g id="chartLabelGroup" display="none" pointer-events="none">
-            <rect id="chartLabelBg" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(255,190,2,0.45)" stroke-width="0.5"/>
-            <text id="chartLabelText" x="0" y="0" fill="#ffbe02" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">74.6 NST</text>
-          </g>
-
-          <!-- custom scrubber: needle + top handle + bottom month pill -->
-          <g id="chartScrubber" display="none" pointer-events="none">
-            <line id="scrubLine" x1="0" y1="12" x2="0" y2="118" stroke="rgba(255,190,2,0.55)" stroke-width="1"/>
-            <circle id="scrubCapOuter" cx="0" cy="6" r="5.5" fill="#111" stroke="#ffbe02" stroke-width="1.5"/>
-            <circle id="scrubCapInner" cx="0" cy="6" r="2" fill="#ffbe02"/>
-            <line id="scrubTick" x1="0" y1="118" x2="0" y2="126" stroke="rgba(255,190,2,0.7)" stroke-width="1.5"/>
-            <rect id="scrubPillBg" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#ffbe02" stroke-width="1"/>
-            <text id="scrubPillText" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#ffbe02" text-anchor="middle" letter-spacing="0.5">MAR</text>
-          </g>
-
-          <!-- full-area hit target (on top) -->
-          <rect id="chartHitArea" x="0" y="0" width="497" height="145" fill="transparent"/>
-        </svg>
-      </div>
-
-      <!-- Bottom pagination -->
-      <div class="hero-divider">
-        <div class="divider-seg active"></div>
-        <div class="divider-seg"></div>
-        <div class="divider-seg"></div>
-        <div class="divider-seg"></div>
-      </div>
-    </div>
-
-    <!-- ===== CARD 2: FEAR / BYJU'S ===== -->
-    <div class="hero-card" id="heroCardFear" style="display:none">
-
-      <div class="hero-card-meta">
-        <span class="hero-meta-company">BYJU'S · EDTECH</span>
-        <span class="hero-meta-pill pill-fear">FEAR</span>
-      </div>
-
-      <div class="hero-headline">
-        BYJU's collapsed. The <span style="color:#FF7F50">anxiety</span> that built it didn't.
-      </div>
-
-      <div class="hero-stat" style="left:53px;top:276px;position:absolute;width:420px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;line-height:1.1;">
-        <span style="font-size:75px;color:#FF7F50;vertical-align:baseline" id="heroStatPctFear">82%</span><span style="font-size:38px;color:#FF7F50"> fear index</span><span style="font-size:26px;color:#f2f2f2;font-weight:500"> rising, is fear still a sound investment?</span>
-      </div>
-
-      <button class="hero-trade-btn-outlined btn-fear" disabled>TRADE</button>
-
-      <div class="hero-chart-area">
-        <svg id="heroChartFear" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
-          <defs>
-            <linearGradient id="areaGradFear" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FF7F50" stop-opacity="0.45"/>
-              <stop offset="55%" stop-color="#8a3a1a" stop-opacity="0.22"/>
-              <stop offset="100%" stop-color="#3a1a0a" stop-opacity="0.08"/>
-            </linearGradient>
-          </defs>
-          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">75</text>
-          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">60</text>
-          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">45</text>
-          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.32)" letter-spacing="0.3">30</text>
-          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
-          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
-          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
-          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
-          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
-          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
-          <path d="M0 145 L0 55 C 40 52, 70 50, 100 62 C 130 74, 155 92, 185 110 C 205 120, 222 125, 248 116 C 272 107, 292 90, 322 72 C 348 56, 372 44, 402 38 C 427 33, 458 31, 497 32 L497 145 Z" fill="url(#areaGradFear)"/>
-          <path d="M0 55 C 40 52, 70 50, 100 62 C 130 74, 155 92, 185 110 C 205 120, 222 125, 248 116 C 272 107, 292 90, 322 72 C 348 56, 372 44, 402 38 C 427 33, 458 31, 497 32" fill="none" stroke="#FF7F50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle id="chartDotFear" cx="0" cy="0" r="4" fill="#FF7F50" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
-          <g id="chartYAxisLabelFear" display="none" pointer-events="none">
-            <rect id="chartYAxisBgFear" x="0" y="0" width="24" height="13" rx="1" fill="rgba(255,127,80,0.15)" stroke="rgba(255,127,80,0.45)" stroke-width="0.5"/>
-            <text id="chartYAxisTextFear" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#FF7F50" text-anchor="middle" letter-spacing="0.3">60</text>
-          </g>
-          <g id="chartLabelGroupFear" display="none" pointer-events="none">
-            <rect id="chartLabelBgFear" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(255,127,80,0.45)" stroke-width="0.5"/>
-            <text id="chartLabelTextFear" x="0" y="0" fill="#FF7F50" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">60.0 FEA</text>
-          </g>
-          <g id="chartScrubberFear" display="none" pointer-events="none">
-            <line id="scrubLineFear" x1="0" y1="12" x2="0" y2="118" stroke="rgba(255,127,80,0.55)" stroke-width="1"/>
-            <circle id="scrubCapOuterFear" cx="0" cy="6" r="5.5" fill="#111" stroke="#FF7F50" stroke-width="1.5"/>
-            <circle id="scrubCapInnerFear" cx="0" cy="6" r="2" fill="#FF7F50"/>
-            <line id="scrubTickFear" x1="0" y1="118" x2="0" y2="126" stroke="rgba(255,127,80,0.7)" stroke-width="1.5"/>
-            <rect id="scrubPillBgFear" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#FF7F50" stroke-width="1"/>
-            <text id="scrubPillTextFear" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#FF7F50" text-anchor="middle" letter-spacing="0.5">MAR</text>
-          </g>
-          <rect id="chartHitAreaFear" x="0" y="0" width="497" height="145" fill="transparent"/>
-        </svg>
-      </div>
-
-      <div class="hero-divider">
-        <div class="divider-seg"></div>
-        <div class="divider-seg active" style="background:rgba(255,127,80,0.4)"></div>
-        <div class="divider-seg"></div>
-        <div class="divider-seg"></div>
-      </div>
-    </div>
-
-    <!-- ===== CARD 3: ANGER / ZOMATO ===== -->
-    <div class="hero-card" id="heroCardAnger" style="display:none">
-
-      <div class="hero-card-meta">
-        <span class="hero-meta-company">ZOMATO · FOOD</span>
-        <span class="hero-meta-pill pill-anger">ANGER</span>
-      </div>
-
-      <div class="hero-headline">
-        Zomato's <span style="color:#C7A6FF">controversies</span> kept coming. Engagement never dropped.
-      </div>
-
-      <div class="hero-stat" style="left:53px;top:276px;position:absolute;width:420px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;line-height:1.1;">
-        <span style="font-size:75px;color:#C7A6FF;vertical-align:baseline" id="heroStatPctAnger">71%</span><span style="font-size:38px;color:#C7A6FF"> anger index</span><span style="font-size:26px;color:#f2f2f2;font-weight:500"> active, do you profit from the outrage?</span>
-      </div>
-
-      <button class="hero-trade-btn-outlined btn-anger" disabled>TRADE</button>
-
-      <div class="hero-chart-area">
-        <svg id="heroChartAnger" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
-          <defs>
-            <linearGradient id="areaGradAnger" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#C7A6FF" stop-opacity="0.40"/>
-              <stop offset="55%" stop-color="#5a3a8a" stop-opacity="0.20"/>
-              <stop offset="100%" stop-color="#1a0a3a" stop-opacity="0.06"/>
-            </linearGradient>
-          </defs>
-          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">75</text>
-          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">60</text>
-          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">45</text>
-          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.32)" letter-spacing="0.3">30</text>
-          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
-          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
-          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
-          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
-          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
-          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
-          <path d="M0 145 L0 88 C 25 80, 45 55, 70 62 C 90 68, 100 90, 125 82 C 148 74, 162 48, 192 56 C 212 62, 228 80, 255 68 C 275 58, 292 36, 320 46 C 340 54, 358 72, 385 60 C 406 50, 435 36, 465 44 C 478 48, 490 50, 497 48 L497 145 Z" fill="url(#areaGradAnger)"/>
-          <path d="M0 88 C 25 80, 45 55, 70 62 C 90 68, 100 90, 125 82 C 148 74, 162 48, 192 56 C 212 62, 228 80, 255 68 C 275 58, 292 36, 320 46 C 340 54, 358 72, 385 60 C 406 50, 435 36, 465 44 C 478 48, 490 50, 497 48" fill="none" stroke="#C7A6FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle id="chartDotAnger" cx="0" cy="0" r="4" fill="#C7A6FF" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
-          <g id="chartYAxisLabelAnger" display="none" pointer-events="none">
-            <rect id="chartYAxisBgAnger" x="0" y="0" width="24" height="13" rx="1" fill="rgba(199,166,255,0.15)" stroke="rgba(199,166,255,0.45)" stroke-width="0.5"/>
-            <text id="chartYAxisTextAnger" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#C7A6FF" text-anchor="middle" letter-spacing="0.3">55</text>
-          </g>
-          <g id="chartLabelGroupAnger" display="none" pointer-events="none">
-            <rect id="chartLabelBgAnger" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(199,166,255,0.45)" stroke-width="0.5"/>
-            <text id="chartLabelTextAnger" x="0" y="0" fill="#C7A6FF" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">55.0 ANG</text>
-          </g>
-          <g id="chartScrubberAnger" display="none" pointer-events="none">
-            <line id="scrubLineAnger" x1="0" y1="12" x2="0" y2="118" stroke="rgba(199,166,255,0.55)" stroke-width="1"/>
-            <circle id="scrubCapOuterAnger" cx="0" cy="6" r="5.5" fill="#111" stroke="#C7A6FF" stroke-width="1.5"/>
-            <circle id="scrubCapInnerAnger" cx="0" cy="6" r="2" fill="#C7A6FF"/>
-            <line id="scrubTickAnger" x1="0" y1="118" x2="0" y2="126" stroke="rgba(199,166,255,0.7)" stroke-width="1.5"/>
-            <rect id="scrubPillBgAnger" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#C7A6FF" stroke-width="1"/>
-            <text id="scrubPillTextAnger" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#C7A6FF" text-anchor="middle" letter-spacing="0.5">MAR</text>
-          </g>
-          <rect id="chartHitAreaAnger" x="0" y="0" width="497" height="145" fill="transparent"/>
-        </svg>
-      </div>
-
-      <div class="hero-divider">
-        <div class="divider-seg"></div>
-        <div class="divider-seg"></div>
-        <div class="divider-seg active" style="background:rgba(199,166,255,0.4)"></div>
-        <div class="divider-seg"></div>
-      </div>
-    </div>
-
-    <!-- ===== CARD 4: HAPPINESS / NETFLIX ===== -->
-    <div class="hero-card" id="heroCardHappiness" style="display:none">
-
-      <div class="hero-card-meta">
-        <span class="hero-meta-company">NETFLIX · OTT</span>
-        <span class="hero-meta-pill pill-happiness">HAPPINESS</span>
-      </div>
-
-      <div class="hero-headline">
-        Netflix turned rest into a ritual. <span style="color:#7FD4FE">Happiness</span> is the most renewable resource in the market.
-      </div>
-
-      <div class="hero-stat" style="left:53px;top:276px;position:absolute;width:420px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;line-height:1.1;">
-        <span style="font-size:75px;color:#7FD4FE;vertical-align:baseline" id="heroStatPctHappiness">86%</span><span style="font-size:38px;color:#7FD4FE"> happiness index</span><span style="font-size:26px;color:#f2f2f2;font-weight:500"> stable, do you invest in the loop?</span>
-      </div>
-
-      <button class="hero-trade-btn-outlined btn-happiness" disabled>TRADE</button>
-
-      <div class="hero-chart-area">
-        <svg id="heroChartHappiness" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
-          <defs>
-            <linearGradient id="areaGradHappiness" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#7FD4FE" stop-opacity="0.40"/>
-              <stop offset="55%" stop-color="#1a5a8a" stop-opacity="0.20"/>
-              <stop offset="100%" stop-color="#0a1a2a" stop-opacity="0.06"/>
-            </linearGradient>
-          </defs>
-          <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
-          <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">75</text>
-          <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">60</text>
-          <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">45</text>
-          <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.32)" letter-spacing="0.3">30</text>
-          <line x1="0"   y1="118" x2="0"   y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="99"  y1="118" x2="99"  y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="199" y1="118" x2="199" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="298" y1="118" x2="298" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="398" y1="118" x2="398" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <line x1="497" y1="118" x2="497" y2="122" stroke="rgba(255,255,255,0.18)" stroke-width="0.5"/>
-          <text x="0"   y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JAN</text>
-          <text x="87"  y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">FEB</text>
-          <text x="187" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAR</text>
-          <text x="286" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">APR</text>
-          <text x="386" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">MAY</text>
-          <text x="469" y="132" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.22)" letter-spacing="0.3">JUN</text>
-          <path d="M0 145 L0 118 C 35 110, 70 102, 105 90 C 138 79, 168 67, 200 57 C 228 48, 256 41, 288 34 C 316 28, 348 23, 378 20 C 403 18, 435 18, 465 18 C 478 18, 490 19, 497 19 L497 145 Z" fill="url(#areaGradHappiness)"/>
-          <path d="M0 118 C 35 110, 70 102, 105 90 C 138 79, 168 67, 200 57 C 228 48, 256 41, 288 34 C 316 28, 348 23, 378 20 C 403 18, 435 18, 465 18 C 478 18, 490 19, 497 19" fill="none" stroke="#7FD4FE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle id="chartDotHappiness" cx="0" cy="0" r="4" fill="#7FD4FE" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
-          <g id="chartYAxisLabelHappiness" display="none" pointer-events="none">
-            <rect id="chartYAxisBgHappiness" x="0" y="0" width="24" height="13" rx="1" fill="rgba(127,212,254,0.15)" stroke="rgba(127,212,254,0.45)" stroke-width="0.5"/>
-            <text id="chartYAxisTextHappiness" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7FD4FE" text-anchor="middle" letter-spacing="0.3">65</text>
-          </g>
-          <g id="chartLabelGroupHappiness" display="none" pointer-events="none">
-            <rect id="chartLabelBgHappiness" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(127,212,254,0.45)" stroke-width="0.5"/>
-            <text id="chartLabelTextHappiness" x="0" y="0" fill="#7FD4FE" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">65.0 HAP</text>
-          </g>
-          <g id="chartScrubberHappiness" display="none" pointer-events="none">
-            <line id="scrubLineHappiness" x1="0" y1="12" x2="0" y2="118" stroke="rgba(127,212,254,0.55)" stroke-width="1"/>
-            <circle id="scrubCapOuterHappiness" cx="0" cy="6" r="5.5" fill="#111" stroke="#7FD4FE" stroke-width="1.5"/>
-            <circle id="scrubCapInnerHappiness" cx="0" cy="6" r="2" fill="#7FD4FE"/>
-            <line id="scrubTickHappiness" x1="0" y1="118" x2="0" y2="126" stroke="rgba(127,212,254,0.7)" stroke-width="1.5"/>
-            <rect id="scrubPillBgHappiness" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#7FD4FE" stroke-width="1"/>
-            <text id="scrubPillTextHappiness" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7FD4FE" text-anchor="middle" letter-spacing="0.5">MAR</text>
-          </g>
-          <rect id="chartHitAreaHappiness" x="0" y="0" width="497" height="145" fill="transparent"/>
-        </svg>
-      </div>
-
-      <div class="hero-divider">
-        <div class="divider-seg"></div>
-        <div class="divider-seg"></div>
-        <div class="divider-seg"></div>
-        <div class="divider-seg active" style="background:rgba(127,212,254,0.4)"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== POINTS BANNER (full-width) ===== -->
-  <div id="bannerSentinel" style="height:1px;pointer-events:none;"></div>
-  <section class="points-banner" id="pointsBanner">
-    <div class="banner-full">
-      <div class="points-inner">
-        <p class="points-copy">You need at least <span class="hl">800 points</span> to keep up in the trade. The way to earn them is simple - play!</p>
-        <div class="points-stats-row">
-          <span>REQUIRED: 800</span>
-          <span id="balanceText">BALANCE: 0</span>
-        </div>
-        <div class="progress-dots" id="progressDots"></div>
-      </div>
-      <div class="earn-row">
-        <button class="earn-btn" onclick="location.href='games2.html'">EARN POINTS</button>
-        <button class="earn-btn gen-portfolio-btn" id="genPortfolioBtn" style="display:none" onclick="goToPortfolio()">GENERATE PORTFOLIO</button>
-      </div>
-    </div>
-    <div class="banner-mini">
-      <span class="banner-mini-text">You need 800 points to trade.</span>
-      <div class="banner-mini-btns">
-        <button class="banner-mini-btn" onclick="location.href='games2.html'">EARN POINTS</button>
-        <button class="banner-mini-btn gen-portfolio-mini-btn" id="genPortfolioMiniBtn" style="display:none" onclick="goToPortfolio()">GENERATE PORTFOLIO</button>
-      </div>
-    </div>
-  </section>
-
-  <div class="page-wrap">
-
-  <!-- ===== VALUES BAR CHART ===== -->
-  <section class="values-section" id="valuesSection">
-    <div class="values-section-label">ALL VALUES · LIVE MARKET</div>
-    <div class="chart-wrap">
-      <div class="chart-y-labels">
-        <span>100</span>
-        <span>75</span>
-        <span>50</span>
-        <span>25</span>
-        <span>0</span>
-      </div>
-      <div class="chart-area">
-        <div class="chart-bars-row" id="chartBarsRow" style="height:300px;">
-
-          <!-- AMUL: Trust 74, Loyalty 41, Belonging 68 -->
-          <div class="chart-group">
-            <div class="chart-bars">
-              <div class="chart-bar" style="background:#dafe7f; height:222px;" data-idx="0"></div>
-              <div class="chart-bar" style="background:#c8922a; height:123px;" data-idx="1"></div>
-              <div class="chart-bar" style="background:#7b9fff; height:204px;" data-idx="2"></div>
+        <!-- CARD 1: NOSTALGIA / AMUL -->
+        <div class="hero-card" id="heroCardNostalgia">
+          <div class="hero-card-meta">
+            <span class="hero-meta-company">AMUL · DAIRY</span>
+            <span class="hero-meta-pill pill-nostalgia">NOSTALGIA</span>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-card-left">
+              <div class="hero-headline">
+                Amul's trust held steady through FDA friction.
+                <span class="nostalgia-word">Nostalgia</span> absorbed the damage
+              </div>
+              <div class="hero-stat-row">
+                <span class="hero-stat-pct" id="heroStatPct">41%</span><span class="hero-stat-label"> loyalty</span><span class="hero-stat-desc"> rise, want to buy in?</span>
+              </div>
+              <button class="hero-trade-btn" disabled>TRADE</button>
             </div>
-            <div class="chart-company-label">AMUL</div>
-          </div>
-
-          <!-- CAMPA: Trust 61, Loyalty 55, Belonging 40 -->
-          <div class="chart-group">
-            <div class="chart-bars">
-              <div class="chart-bar" style="background:#dafe7f; height:183px;" data-idx="3"></div>
-              <div class="chart-bar" style="background:#c8922a; height:165px;" data-idx="4"></div>
-              <div class="chart-bar" style="background:#7b9fff; height:120px;" data-idx="5"></div>
+            <div class="hero-chart-area">
+              <svg id="heroChart" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+                <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.40)" letter-spacing="0.3">75</text>
+                <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.40)" letter-spacing="0.3">60</text>
+                <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.40)" letter-spacing="0.3">45</text>
+                <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,190,2,0.40)" letter-spacing="0.3">30</text>
+                <path d="M0 118 C 50 112, 90 105, 130 92 C 170 79, 195 55, 235 38 C 265 25, 290 22, 315 28 C 340 35, 358 52, 385 68 C 410 82, 440 95, 470 90 C 480 88, 490 86, 497 84" fill="none" stroke="#ffbe02" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle id="chartDot" cx="0" cy="0" r="4" fill="#ffbe02" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+                <g id="chartYAxisLabel" display="none" pointer-events="none">
+                  <rect id="chartYAxisBg" x="0" y="0" width="24" height="13" rx="1" fill="rgba(255,190,2,0.15)" stroke="rgba(255,190,2,0.45)" stroke-width="0.5"/>
+                  <text id="chartYAxisText" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#ffbe02" text-anchor="middle" letter-spacing="0.3">74</text>
+                </g>
+                <g id="chartLabelGroup" display="none" pointer-events="none">
+                  <rect id="chartLabelBg" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(255,190,2,0.45)" stroke-width="0.5"/>
+                  <text id="chartLabelText" x="0" y="0" fill="#ffbe02" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">74.6 NST</text>
+                </g>
+                <g id="chartScrubber" display="none" pointer-events="none">
+                  <line id="scrubLine" x1="0" y1="12" x2="0" y2="118" stroke="rgba(255,190,2,0.55)" stroke-width="1"/>
+                  <circle id="scrubCapOuter" cx="0" cy="6" r="5.5" fill="#111" stroke="#ffbe02" stroke-width="1.5"/>
+                  <circle id="scrubCapInner" cx="0" cy="6" r="2" fill="#ffbe02"/>
+                  <line id="scrubTick" x1="0" y1="118" x2="0" y2="126" stroke="rgba(255,190,2,0.7)" stroke-width="1.5"/>
+                  <rect id="scrubPillBg" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#ffbe02" stroke-width="1"/>
+                  <text id="scrubPillText" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#ffbe02" text-anchor="middle" letter-spacing="0.5">MAR</text>
+                </g>
+                <rect id="chartHitArea" x="0" y="0" width="497" height="145" fill="transparent"/>
+              </svg>
             </div>
-            <div class="chart-company-label">CAMPA</div>
           </div>
+          <div class="hero-dots">
+            <span class="hero-dot active"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+          </div>
+        </div>
 
-          <!-- BYJU'S: Fear 82, Loyalty 29, Belonging 18 -->
-          <div class="chart-group">
-            <div class="chart-bars">
-              <div class="chart-bar" style="background:#ff4444; height:246px;" data-idx="6"></div>
-              <div class="chart-bar" style="background:#c8922a; height:87px;"  data-idx="7"></div>
-              <div class="chart-bar" style="background:#7b9fff; height:54px;"  data-idx="8"></div>
+        <!-- CARD 2: FEAR / BYJU'S -->
+        <div class="hero-card" id="heroCardFear" style="display:none">
+          <div class="hero-card-meta">
+            <span class="hero-meta-company">BYJU'S · EDTECH</span>
+            <span class="hero-meta-pill pill-fear">FEAR</span>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-card-left">
+              <div class="hero-headline">
+                BYJU's collapsed. The <span style="color:#FF7F50">anxiety</span> that built it didn't.
+              </div>
+              <div class="hero-stat-row">
+                <span class="hero-stat-pct stat-pct-fear" id="heroStatPctFear">82%</span><span class="hero-stat-label stat-label-fear"> fear index</span><span class="hero-stat-desc"> rising, is fear still a sound investment?</span>
+              </div>
+              <button class="hero-trade-btn btn-fear" disabled>TRADE</button>
             </div>
-            <div class="chart-company-label">BYJU'S</div>
-          </div>
-
-          <!-- ZOMATO: Anger 71, Loyalty 63, Belonging 44 -->
-          <div class="chart-group">
-            <div class="chart-bars">
-              <div class="chart-bar" style="background:#ff4444; height:213px;" data-idx="9"></div>
-              <div class="chart-bar" style="background:#c8922a; height:189px;" data-idx="10"></div>
-              <div class="chart-bar" style="background:#7b9fff; height:132px;" data-idx="11"></div>
+            <div class="hero-chart-area">
+              <svg id="heroChartFear" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+                <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.40)" letter-spacing="0.3">75</text>
+                <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.40)" letter-spacing="0.3">60</text>
+                <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.40)" letter-spacing="0.3">45</text>
+                <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(255,127,80,0.40)" letter-spacing="0.3">30</text>
+                <path d="M0 55 C 40 52, 70 50, 100 62 C 130 74, 155 92, 185 110 C 205 120, 222 125, 248 116 C 272 107, 292 90, 322 72 C 348 56, 372 44, 402 38 C 427 33, 458 31, 497 32" fill="none" stroke="#FF7F50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle id="chartDotFear" cx="0" cy="0" r="4" fill="#FF7F50" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+                <g id="chartYAxisLabelFear" display="none" pointer-events="none">
+                  <rect id="chartYAxisBgFear" x="0" y="0" width="24" height="13" rx="1" fill="rgba(255,127,80,0.15)" stroke="rgba(255,127,80,0.45)" stroke-width="0.5"/>
+                  <text id="chartYAxisTextFear" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#FF7F50" text-anchor="middle" letter-spacing="0.3">60</text>
+                </g>
+                <g id="chartLabelGroupFear" display="none" pointer-events="none">
+                  <rect id="chartLabelBgFear" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(255,127,80,0.45)" stroke-width="0.5"/>
+                  <text id="chartLabelTextFear" x="0" y="0" fill="#FF7F50" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">60.0 FEA</text>
+                </g>
+                <g id="chartScrubberFear" display="none" pointer-events="none">
+                  <line id="scrubLineFear" x1="0" y1="12" x2="0" y2="118" stroke="rgba(255,127,80,0.55)" stroke-width="1"/>
+                  <circle id="scrubCapOuterFear" cx="0" cy="6" r="5.5" fill="#111" stroke="#FF7F50" stroke-width="1.5"/>
+                  <circle id="scrubCapInnerFear" cx="0" cy="6" r="2" fill="#FF7F50"/>
+                  <line id="scrubTickFear" x1="0" y1="118" x2="0" y2="126" stroke="rgba(255,127,80,0.7)" stroke-width="1.5"/>
+                  <rect id="scrubPillBgFear" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#FF7F50" stroke-width="1"/>
+                  <text id="scrubPillTextFear" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#FF7F50" text-anchor="middle" letter-spacing="0.5">MAR</text>
+                </g>
+                <rect id="chartHitAreaFear" x="0" y="0" width="497" height="145" fill="transparent"/>
+              </svg>
             </div>
-            <div class="chart-company-label">ZOMATO</div>
           </div>
+          <div class="hero-dots">
+            <span class="hero-dot"></span>
+            <span class="hero-dot active active-fear"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+          </div>
+        </div>
 
-          <!-- NETFLIX: Happiness 86, Loyalty 52, Belonging 61 -->
-          <div class="chart-group">
-            <div class="chart-bars">
-              <div class="chart-bar" style="background:#4caf50; height:258px;" data-idx="12"></div>
-              <div class="chart-bar" style="background:#c8922a; height:156px;" data-idx="13"></div>
-              <div class="chart-bar" style="background:#7b9fff; height:183px;" data-idx="14"></div>
+        <!-- CARD 3: ANGER / ZOMATO -->
+        <div class="hero-card" id="heroCardAnger" style="display:none">
+          <div class="hero-card-meta">
+            <span class="hero-meta-company">ZOMATO · FOOD</span>
+            <span class="hero-meta-pill pill-anger">ANGER</span>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-card-left">
+              <div class="hero-headline">
+                Zomato's <span style="color:#C7A6FF">controversies</span> kept coming. Engagement never dropped.
+              </div>
+              <div class="hero-stat-row">
+                <span class="hero-stat-pct stat-pct-anger" id="heroStatPctAnger">71%</span><span class="hero-stat-label stat-label-anger"> anger index</span><span class="hero-stat-desc"> active, do you profit from the outrage?</span>
+              </div>
+              <button class="hero-trade-btn btn-anger" disabled>TRADE</button>
             </div>
-            <div class="chart-company-label">NETFLIX</div>
+            <div class="hero-chart-area">
+              <svg id="heroChartAnger" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+                <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.40)" letter-spacing="0.3">75</text>
+                <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.40)" letter-spacing="0.3">60</text>
+                <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.40)" letter-spacing="0.3">45</text>
+                <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(199,166,255,0.40)" letter-spacing="0.3">30</text>
+                <path d="M0 88 C 25 80, 45 55, 70 62 C 90 68, 100 90, 125 82 C 148 74, 162 48, 192 56 C 212 62, 228 80, 255 68 C 275 58, 292 36, 320 46 C 340 54, 358 72, 385 60 C 406 50, 435 36, 465 44 C 478 48, 490 50, 497 48" fill="none" stroke="#C7A6FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle id="chartDotAnger" cx="0" cy="0" r="4" fill="#C7A6FF" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+                <g id="chartYAxisLabelAnger" display="none" pointer-events="none">
+                  <rect id="chartYAxisBgAnger" x="0" y="0" width="24" height="13" rx="1" fill="rgba(199,166,255,0.15)" stroke="rgba(199,166,255,0.45)" stroke-width="0.5"/>
+                  <text id="chartYAxisTextAnger" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#C7A6FF" text-anchor="middle" letter-spacing="0.3">55</text>
+                </g>
+                <g id="chartLabelGroupAnger" display="none" pointer-events="none">
+                  <rect id="chartLabelBgAnger" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(199,166,255,0.45)" stroke-width="0.5"/>
+                  <text id="chartLabelTextAnger" x="0" y="0" fill="#C7A6FF" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">55.0 ANG</text>
+                </g>
+                <g id="chartScrubberAnger" display="none" pointer-events="none">
+                  <line id="scrubLineAnger" x1="0" y1="12" x2="0" y2="118" stroke="rgba(199,166,255,0.55)" stroke-width="1"/>
+                  <circle id="scrubCapOuterAnger" cx="0" cy="6" r="5.5" fill="#111" stroke="#C7A6FF" stroke-width="1.5"/>
+                  <circle id="scrubCapInnerAnger" cx="0" cy="6" r="2" fill="#C7A6FF"/>
+                  <line id="scrubTickAnger" x1="0" y1="118" x2="0" y2="126" stroke="rgba(199,166,255,0.7)" stroke-width="1.5"/>
+                  <rect id="scrubPillBgAnger" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#C7A6FF" stroke-width="1"/>
+                  <text id="scrubPillTextAnger" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#C7A6FF" text-anchor="middle" letter-spacing="0.5">MAR</text>
+                </g>
+                <rect id="chartHitAreaAnger" x="0" y="0" width="497" height="145" fill="transparent"/>
+              </svg>
+            </div>
           </div>
-
+          <div class="hero-dots">
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot active active-anger"></span>
+            <span class="hero-dot"></span>
+          </div>
         </div>
-        <!-- Legend -->
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-swatch" style="background:#dafe7f;"></div>TRUST</div>
-          <div class="legend-item"><div class="legend-swatch" style="background:#c8922a;"></div>LOYALTY</div>
-          <div class="legend-item"><div class="legend-swatch" style="background:#7b9fff;"></div>BELONGING</div>
-          <div class="legend-item"><div class="legend-swatch" style="background:#ff4444;"></div>FEAR / ANGER</div>
-          <div class="legend-item"><div class="legend-swatch" style="background:#4caf50;"></div>HAPPINESS</div>
+
+        <!-- CARD 4: HAPPINESS / NETFLIX -->
+        <div class="hero-card" id="heroCardHappiness" style="display:none">
+          <div class="hero-card-meta">
+            <span class="hero-meta-company">NETFLIX · OTT</span>
+            <span class="hero-meta-pill pill-happiness">HAPPINESS</span>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-card-left">
+              <div class="hero-headline">
+                Netflix turned rest into a ritual. <span style="color:#7FD4FE">Happiness</span> is the most renewable resource in the market.
+              </div>
+              <div class="hero-stat-row">
+                <span class="hero-stat-pct stat-pct-happiness" id="heroStatPctHappiness">86%</span><span class="hero-stat-label stat-label-happiness"> happiness index</span><span class="hero-stat-desc"> stable, do you invest in the loop?</span>
+              </div>
+              <button class="hero-trade-btn btn-happiness" disabled>TRADE</button>
+            </div>
+            <div class="hero-chart-area">
+              <svg id="heroChartHappiness" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
+                <line x1="0" y1="22"  x2="497" y2="22"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="54"  x2="497" y2="54"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="86"  x2="497" y2="86"  stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="118" x2="497" y2="118" stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="4,4"/>
+                <text x="4" y="20"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.40)" letter-spacing="0.3">75</text>
+                <text x="4" y="52"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.40)" letter-spacing="0.3">60</text>
+                <text x="4" y="84"  font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.40)" letter-spacing="0.3">45</text>
+                <text x="4" y="116" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="rgba(127,212,254,0.40)" letter-spacing="0.3">30</text>
+                <path d="M0 118 C 35 110, 70 102, 105 90 C 138 79, 168 67, 200 57 C 228 48, 256 41, 288 34 C 316 28, 348 23, 378 20 C 403 18, 435 18, 465 18 C 478 18, 490 19, 497 19" fill="none" stroke="#7FD4FE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle id="chartDotHappiness" cx="0" cy="0" r="4" fill="#7FD4FE" stroke="#111" stroke-width="1.5" display="none" pointer-events="none"/>
+                <g id="chartYAxisLabelHappiness" display="none" pointer-events="none">
+                  <rect id="chartYAxisBgHappiness" x="0" y="0" width="24" height="13" rx="1" fill="rgba(127,212,254,0.15)" stroke="rgba(127,212,254,0.45)" stroke-width="0.5"/>
+                  <text id="chartYAxisTextHappiness" x="12" y="10" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7FD4FE" text-anchor="middle" letter-spacing="0.3">65</text>
+                </g>
+                <g id="chartLabelGroupHappiness" display="none" pointer-events="none">
+                  <rect id="chartLabelBgHappiness" x="0" y="0" width="62" height="19" rx="2" fill="rgba(17,17,17,0.92)" stroke="rgba(127,212,254,0.45)" stroke-width="0.5"/>
+                  <text id="chartLabelTextHappiness" x="0" y="0" fill="#7FD4FE" font-family="'JetBrains Mono',monospace" font-size="9" letter-spacing="0.8">65.0 HAP</text>
+                </g>
+                <g id="chartScrubberHappiness" display="none" pointer-events="none">
+                  <line id="scrubLineHappiness" x1="0" y1="12" x2="0" y2="118" stroke="rgba(127,212,254,0.55)" stroke-width="1"/>
+                  <circle id="scrubCapOuterHappiness" cx="0" cy="6" r="5.5" fill="#111" stroke="#7FD4FE" stroke-width="1.5"/>
+                  <circle id="scrubCapInnerHappiness" cx="0" cy="6" r="2" fill="#7FD4FE"/>
+                  <line id="scrubTickHappiness" x1="0" y1="118" x2="0" y2="126" stroke="rgba(127,212,254,0.7)" stroke-width="1.5"/>
+                  <rect id="scrubPillBgHappiness" x="-15" y="126" width="30" height="14" rx="2" fill="#111" stroke="#7FD4FE" stroke-width="1"/>
+                  <text id="scrubPillTextHappiness" x="0" y="137" font-family="'JetBrains Mono',monospace" font-size="7.5" fill="#7FD4FE" text-anchor="middle" letter-spacing="0.5">MAR</text>
+                </g>
+                <rect id="chartHitAreaHappiness" x="0" y="0" width="497" height="145" fill="transparent"/>
+              </svg>
+            </div>
+          </div>
+          <div class="hero-dots">
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot"></span>
+            <span class="hero-dot active active-happiness"></span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===== POINTS BANNER ===== -->
+      <div id="bannerSentinel" style="height:1px;pointer-events:none;"></div>
+      <section class="points-banner" id="pointsBanner">
+        <div class="banner-full">
+          <div class="points-inner">
+            <p class="points-copy">You need at least <span class="hl">800 points</span> to keep up in the trade. The way to earn them is simple - play!</p>
+            <div class="points-stats-row">
+              <span>REQUIRED: 800</span>
+              <span id="balanceText">BALANCE: 0</span>
+            </div>
+            <div class="progress-dots" id="progressDots"></div>
+          </div>
+          <div class="earn-row">
+            <button class="earn-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+            <button class="earn-btn gen-portfolio-btn" id="genPortfolioBtn" style="display:none" onclick="goToPortfolio()">GENERATE PORTFOLIO</button>
+          </div>
+        </div>
+        <div class="banner-mini">
+          <span class="banner-mini-text">You need 800 points to trade.</span>
+          <div class="banner-mini-btns">
+            <button class="banner-mini-btn" onclick="location.href='games2.html'">EARN POINTS</button>
+            <button class="banner-mini-btn gen-portfolio-mini-btn" id="genPortfolioMiniBtn" style="display:none" onclick="goToPortfolio()">GENERATE PORTFOLIO</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="page-wrap">
+
+        <!-- ===== VALUES BAR CHART ===== -->
+        <section class="values-section" id="valuesSection">
+          <div class="values-section-label">ALL VALUES · LIVE MARKET</div>
+          <div class="chart-wrap">
+            <div class="chart-y-labels">
+              <span>100</span>
+              <span>75</span>
+              <span>50</span>
+              <span>25</span>
+              <span>0</span>
+            </div>
+            <div class="chart-area">
+              <div class="chart-bars-row" id="chartBarsRow">
+                <div class="chart-group">
+                  <div class="chart-bars">
+                    <div class="chart-bar" style="background:#dafe7f; height:222px;" data-idx="0"></div>
+                    <div class="chart-bar" style="background:#c8922a; height:123px;" data-idx="1"></div>
+                    <div class="chart-bar" style="background:#7b9fff; height:204px;" data-idx="2"></div>
+                  </div>
+                  <div class="chart-company-label">AMUL</div>
+                </div>
+                <div class="chart-group">
+                  <div class="chart-bars">
+                    <div class="chart-bar" style="background:#dafe7f; height:183px;" data-idx="3"></div>
+                    <div class="chart-bar" style="background:#c8922a; height:165px;" data-idx="4"></div>
+                    <div class="chart-bar" style="background:#7b9fff; height:120px;" data-idx="5"></div>
+                  </div>
+                  <div class="chart-company-label">CAMPA</div>
+                </div>
+                <div class="chart-group">
+                  <div class="chart-bars">
+                    <div class="chart-bar" style="background:#ff4444; height:246px;" data-idx="6"></div>
+                    <div class="chart-bar" style="background:#c8922a; height:87px;"  data-idx="7"></div>
+                    <div class="chart-bar" style="background:#7b9fff; height:54px;"  data-idx="8"></div>
+                  </div>
+                  <div class="chart-company-label">BYJU'S</div>
+                </div>
+                <div class="chart-group">
+                  <div class="chart-bars">
+                    <div class="chart-bar" style="background:#ff4444; height:213px;" data-idx="9"></div>
+                    <div class="chart-bar" style="background:#c8922a; height:189px;" data-idx="10"></div>
+                    <div class="chart-bar" style="background:#7b9fff; height:132px;" data-idx="11"></div>
+                  </div>
+                  <div class="chart-company-label">ZOMATO</div>
+                </div>
+                <div class="chart-group">
+                  <div class="chart-bars">
+                    <div class="chart-bar" style="background:#4caf50; height:258px;" data-idx="12"></div>
+                    <div class="chart-bar" style="background:#c8922a; height:156px;" data-idx="13"></div>
+                    <div class="chart-bar" style="background:#7b9fff; height:183px;" data-idx="14"></div>
+                  </div>
+                  <div class="chart-company-label">NETFLIX</div>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item"><div class="legend-swatch" style="background:#dafe7f;"></div>TRUST</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#c8922a;"></div>LOYALTY</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#7b9fff;"></div>BELONGING</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#ff4444;"></div>FEAR / ANGER</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#4caf50;"></div>HAPPINESS</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== CARD GRID ===== -->
+        <section class="card-section">
+          <div class="card-section-header">
+            <div>
+              <div class="csection-meta">● ACTIVE MARKETS · 1,284</div>
+              <div class="csection-title">All markets, priced by <span>values</span>.</div>
+            </div>
+            <div class="csection-controls">
+              <span class="ctrl-label">SORT</span>
+              <button class="ctrl-btn">24H VOLUME <span style="opacity:0.5;">▾</span></button>
+              <button class="ctrl-btn">GRID <span style="opacity:0.5;">▾</span></button>
+            </div>
+          </div>
+          <div class="card-grid">
+
+            <div class="market-card" data-card-idx="0">
+              <div class="card-top-row">
+                <span class="emotion-tag tag-nostalgia">● NOSTALGIA</span>
+                <span class="card-vol">VOL $ 2.4M</span>
+              </div>
+              <div class="card-company">AMUL · DAIRY</div>
+              <div class="card-question">Amul's trust held steady through FDA friction. Nostalgia absorbed the damage</div>
+              <div class="card-body">
+                <div class="card-stat">
+                  <span class="stat-num c-nst">74.6</span>
+                  <span class="stat-arrow" style="color:#dafe7f;">▲</span>
+                  <span class="stat-tag">NST</span>
+                </div>
+                <div class="card-actions">
+                  <button class="btn-buy">BUY</button>
+                  <button class="btn-sell">SELL</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="market-card" data-card-idx="1">
+              <div class="card-top-row">
+                <span class="emotion-tag tag-fear">● FEAR</span>
+                <span class="card-vol">VOL $ 1.1M</span>
+              </div>
+              <div class="card-company">BYJU'S · EDTECH</div>
+              <div class="card-question">BYJU's collapsed. The anxiety that built it didn't. Is fear still a sound investment?</div>
+              <div class="card-body">
+                <div class="card-stat">
+                  <span class="stat-num c-fear">61.9</span>
+                  <span class="stat-arrow" style="color:#c64a4a;">▼</span>
+                  <span class="stat-tag">FEAR</span>
+                </div>
+                <div class="card-actions">
+                  <button class="btn-buy">BUY</button>
+                  <button class="btn-sell">SELL</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="market-card" data-card-idx="2">
+              <div class="card-top-row">
+                <span class="emotion-tag tag-anger">● ANGER</span>
+                <span class="card-vol">VOL $ 1.8M</span>
+              </div>
+              <div class="card-company">ZOMATO · FOOD</div>
+              <div class="card-question">Zomato's controversies kept coming. Engagement never dropped. Do you profit from the outrage?</div>
+              <div class="card-body">
+                <div class="card-stat">
+                  <span class="stat-num c-ang">57.3</span>
+                  <span class="stat-arrow" style="color:#ff4444;">▼</span>
+                  <span class="stat-tag">ANG</span>
+                </div>
+                <div class="card-actions">
+                  <button class="btn-buy">BUY</button>
+                  <button class="btn-sell">SELL</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="market-card" data-card-idx="3">
+              <div class="card-top-row">
+                <span class="emotion-tag tag-happiness">● HAPPINESS</span>
+                <span class="card-vol">VOL $ 3.2M</span>
+              </div>
+              <div class="card-company">NETFLIX · OTT</div>
+              <div class="card-question">Netflix turned rest into a ritual. Happiness is the most renewable resource in the market. Do you invest in the loop?</div>
+              <div class="card-body">
+                <div class="card-stat">
+                  <span class="stat-num c-hap">82.1</span>
+                  <span class="stat-arrow" style="color:#4caf50;">▲</span>
+                  <span class="stat-tag">HAP</span>
+                </div>
+                <div class="card-actions">
+                  <button class="btn-buy">BUY</button>
+                  <button class="btn-sell">SELL</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div><!-- /.page-wrap -->
+
+    </div><!-- /.main-col -->
+
+    <!-- ===== RIGHT SIDEBAR ===== -->
+    <aside class="sidebar-col">
+
+      <div class="sidebar-trending">
+        <div class="sidebar-section-head">TRENDING ›</div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#c4a45a;">Nostalgia</span>
+            <span class="trending-company">Amul</span>
+          </div>
+          <span class="trending-pct" style="color:#5a9c6a;">▲ 74%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#e8855a;">Ambition</span>
+            <span class="trending-company">BYJU's</span>
+          </div>
+          <span class="trending-pct" style="color:#5a9c6a;">▲ 82%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#c4a45a;">Belonging</span>
+            <span class="trending-company">Zomato</span>
+          </div>
+          <span class="trending-pct" style="color:#c45a5a;">▼ 71%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#7a5ac4;">Escapism</span>
+            <span class="trending-company">Netflix</span>
+          </div>
+          <span class="trending-pct" style="color:#5a9c6a;">▲ 86%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#378add;">Security</span>
+            <span class="trending-company">LIC</span>
+          </div>
+          <span class="trending-pct" style="color:#5a9c6a;">▲ 68%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#e8855a;">Pride</span>
+            <span class="trending-company">Air India</span>
+          </div>
+          <span class="trending-pct" style="color:#c45a5a;">▼ 43%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#c47a7a;">Desire</span>
+            <span class="trending-company">Myntra</span>
+          </div>
+          <span class="trending-pct" style="color:#5a9c6a;">▲ 77%</span>
+        </div>
+        <div class="trending-row">
+          <div class="trending-name-wrap">
+            <span class="trending-value" style="color:#5a9c6a;">Joy</span>
+            <span class="trending-company">Campa Cola</span>
+          </div>
+          <span class="trending-pct" style="color:#5a9c6a;">▲ 61%</span>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ===== CARD GRID ===== -->
-  <section class="card-section">
-    <div class="card-section-header">
-      <div>
-        <div class="csection-meta">● ACTIVE MARKETS · 1,284</div>
-        <div class="csection-title">All markets, priced by <span>values</span>.</div>
-      </div>
-      <div class="csection-controls">
-        <span class="ctrl-label">SORT</span>
-        <button class="ctrl-btn">24H VOLUME <span style="opacity:0.5;">▾</span></button>
-        <button class="ctrl-btn">GRID <span style="opacity:0.5;">▾</span></button>
-      </div>
-    </div>
-    <div class="card-grid">
-
-      <!-- Card 1: NOSTALGIA / AMUL -->
-      <div class="market-card" data-card-idx="0">
-        <div class="card-top-row">
-          <span class="emotion-tag tag-nostalgia">● NOSTALGIA</span>
-          <span class="card-vol">VOL $ 2.4M</span>
+      <div class="sidebar-section-head" style="margin-bottom:8px;">MARKET PULSE</div>
+      <div class="sidebar-pulse">
+        <div class="pulse-card">
+          <div class="pulse-label">NOSTALGIA INDEX</div>
+          <div class="pulse-value" style="color:#DAFE7F;">74.2</div>
+          <div class="pulse-change" style="color:#DAFE7F;">▲ +2.4 today</div>
         </div>
-        <div class="card-company">AMUL · DAIRY</div>
-        <div class="card-question">Amul's trust held steady through FDA friction. Nostalgia absorbed the damage</div>
-        <div class="card-body">
-          <div class="card-stat">
-            <span class="stat-num c-nst">74.6</span>
-            <span class="stat-arrow" style="color:#dafe7f;">▲</span>
-            <span class="stat-tag">NST</span>
-          </div>
-          <div class="card-actions">
-            <button class="btn-buy">BUY</button>
-            <button class="btn-sell">SELL</button>
-          </div>
+        <div class="pulse-card">
+          <div class="pulse-label">FEAR INDEX</div>
+          <div class="pulse-value" style="color:#FF7F50;">82.1</div>
+          <div class="pulse-change" style="color:#FF7F50;">▲ +5.1 today</div>
+        </div>
+        <div class="pulse-card">
+          <div class="pulse-label">ANGER INDEX</div>
+          <div class="pulse-value" style="color:#C7A6FF;">71.3</div>
+          <div class="pulse-change" style="color:#C7A6FF;">▼ -1.2 today</div>
         </div>
       </div>
 
-      <!-- Card 2: FEAR / BYJU'S -->
-      <div class="market-card" data-card-idx="1">
-        <div class="card-top-row">
-          <span class="emotion-tag tag-fear">● FEAR</span>
-          <span class="card-vol">VOL $ 1.1M</span>
-        </div>
-        <div class="card-company">BYJU'S · EDTECH</div>
-        <div class="card-question">BYJU's collapsed. The anxiety that built it didn't. Is fear still a sound investment?</div>
-        <div class="card-body">
-          <div class="card-stat">
-            <span class="stat-num c-fear">61.9</span>
-            <span class="stat-arrow" style="color:#c64a4a;">▼</span>
-            <span class="stat-tag">FEAR</span>
-          </div>
-          <div class="card-actions">
-            <button class="btn-buy">BUY</button>
-            <button class="btn-sell">SELL</button>
-          </div>
-        </div>
-      </div>
+    </aside>
 
-      <!-- Card 3: ANGER / ZOMATO -->
-      <div class="market-card" data-card-idx="2">
-        <div class="card-top-row">
-          <span class="emotion-tag tag-anger">● ANGER</span>
-          <span class="card-vol">VOL $ 1.8M</span>
-        </div>
-        <div class="card-company">ZOMATO · FOOD</div>
-        <div class="card-question">Zomato's controversies kept coming. Engagement never dropped. Do you profit from the outrage?</div>
-        <div class="card-body">
-          <div class="card-stat">
-            <span class="stat-num c-ang">57.3</span>
-            <span class="stat-arrow" style="color:#ff4444;">▼</span>
-            <span class="stat-tag">ANG</span>
-          </div>
-          <div class="card-actions">
-            <button class="btn-buy">BUY</button>
-            <button class="btn-sell">SELL</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4: HAPPINESS / NETFLIX -->
-      <div class="market-card" data-card-idx="3">
-        <div class="card-top-row">
-          <span class="emotion-tag tag-happiness">● HAPPINESS</span>
-          <span class="card-vol">VOL $ 3.2M</span>
-        </div>
-        <div class="card-company">NETFLIX · OTT</div>
-        <div class="card-question">Netflix turned rest into a ritual. Happiness is the most renewable resource in the market. Do you invest in the loop?</div>
-        <div class="card-body">
-          <div class="card-stat">
-            <span class="stat-num c-hap">82.1</span>
-            <span class="stat-arrow" style="color:#4caf50;">▲</span>
-            <span class="stat-tag">HAP</span>
-          </div>
-          <div class="card-actions">
-            <button class="btn-buy">BUY</button>
-            <button class="btn-sell">SELL</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
+  </div><!-- /.main-layout -->
 
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
@@ -1408,8 +1340,6 @@
       </div>
     </div>
   </footer>
-
-  </div><!-- /.page-wrap -->
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="supabase.js"></script>
@@ -1508,11 +1438,19 @@
       var obs = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) {
           stickyTimer = setTimeout(function () {
+            if (!document.getElementById('bannerSpacer')) {
+              var sp = document.createElement('div');
+              sp.id = 'bannerSpacer';
+              sp.style.height = banner.offsetHeight + 'px';
+              banner.parentNode.insertBefore(sp, banner);
+            }
             banner.classList.add('banner-sticky');
           }, 500);
         } else {
           clearTimeout(stickyTimer);
           banner.classList.remove('banner-sticky');
+          var sp = document.getElementById('bannerSpacer');
+          if (sp) sp.remove();
         }
       }, { threshold: 0 });
       obs.observe(sentinel);
@@ -1579,29 +1517,24 @@
         var nst = toNST(sy);
         var pct = toPct(nst);
 
-        // ── custom scrubber needle ─────────────────────────────────────────
-        // line + circles share the exact x=sx (no clamping, line looks correct)
         scrubLine.setAttribute('x1', sx); scrubLine.setAttribute('x2', sx);
         scrubCapO.setAttribute('cx', sx);
         scrubCapI.setAttribute('cx', sx);
         scrubTick.setAttribute('x1', sx); scrubTick.setAttribute('x2', sx);
-        // pill/handle: clamp so it never overflows the SVG edges
         var hx = Math.max(15, Math.min(482, sx));
         scrubPillBg.setAttribute('x', hx - 15);
         scrubPillTxt.setAttribute('x', hx);
         scrubPillTxt.textContent = MONTHS[Math.min(5, Math.floor(sx / (497 / 6)))];
         scrubber.removeAttribute('display');
 
-        // ── dot on curve ──────────────────────────────────────────────────
         dot.setAttribute('cx', sx);
         dot.setAttribute('cy', sy);
         dot.removeAttribute('display');
 
-        // ── floating NST tooltip (flips near right edge) ──────────────────
         var LW = 62, LH = 19, pad = 6;
         var lx = sx + pad, ly = sy - LH - pad;
         if (lx + LW > 492) lx = sx - LW - pad;
-        if (ly < 14)        ly = sy + pad;   /* stay below top handle */
+        if (ly < 14)        ly = sy + pad;
         labelBg.setAttribute('x', lx);
         labelBg.setAttribute('y', ly);
         labelText.setAttribute('x', lx + 6);
@@ -1609,14 +1542,12 @@
         labelText.textContent = nst.toFixed(1) + ' NST';
         labelGroup.removeAttribute('display');
 
-        // ── Y-axis pill (left edge, follows curve height) ─────────────────
         var ym = Math.max(0, Math.min(132, sy - 6.5));
         yAxisBg.setAttribute('y', ym);
         yAxisText.setAttribute('y', ym + 10);
         yAxisText.textContent = Math.round(nst);
         yAxisLabel.removeAttribute('display');
 
-        // ── big stat number ───────────────────────────────────────────────
         if (statPct) statPct.textContent = pct + '%';
       });
 
@@ -1764,8 +1695,6 @@
           db.from('happiness_sessions').select('happiness_index, created_at').order('created_at', { ascending: false }).limit(1).maybeSingle(),
         ]);
 
-        // Normalise each index to 0-1 using its known maximum
-        // nostalgia max = 350/50 = 7 | fear max = 120/120 = 1 | anger max = 280/280 = 1 | happiness max = 100/70 ≈ 1.43
         var entries = [
           { name: 'Nostalgia', ts: results[0].data ? results[0].data.created_at : null, norm: results[0].data ? Math.max(0, results[0].data.nostalgia_index / 7.0)   : null },
           { name: 'Fear',      ts: results[1].data ? results[1].data.created_at : null, norm: results[1].data ? Math.max(0, results[1].data.fear_index      / 1.0)   : null },
@@ -1777,10 +1706,8 @@
 
         var winner = 'Nostalgia';
         if (played.length === 1) {
-          // Only one game played — show it regardless of score
           winner = played[0].name;
         } else if (played.length > 1) {
-          // Multiple games played — show the one with the highest normalised index
           played.forEach(function (e) {
             var current = entries.find(function (x) { return x.name === winner; });
             var currentNorm = current && current.norm !== null ? current.norm : -1;
@@ -1798,25 +1725,22 @@
     })();
 
     // ── Generate Portfolio button visibility ───────────────────────────────
+    (function () {
+      var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
+      if (played.length > 0) {
+        ['headerPortfolioBtn', 'genPortfolioBtn', 'genPortfolioMiniBtn'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.style.display = id === 'genPortfolioBtn' ? 'flex' : 'inline-block';
+        });
+      }
+    })();
+
     function goToPortfolio() {
       var pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
       localStorage.setItem('exchange_total_pts', pts);
       window.location.href = 'portfolio.html?pts=' + pts;
     }
 
-    (function () {
-      var played    = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
-      var storedPts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
-      var hasPlayed = played.length > 0 || storedPts > 0;
-      var ids = ['headerPortfolioBtn', 'genPortfolioBtn', 'genPortfolioMiniBtn'];
-      ids.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.style.display = hasPlayed
-          ? (id === 'genPortfolioBtn' ? 'flex' : 'inline-block')
-          : 'none';
-      });
-    })();
   </script>
 </body>
 </html>
