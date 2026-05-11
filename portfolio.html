@@ -355,6 +355,12 @@
       </div><!-- /.dos-grid -->
     </div><!-- /.dossier-panel -->
 
+    <!-- ===== TRADES SUMMARY SECTION ===== -->
+    <div id="tradesSection" style="margin:0 20px;padding:18px 0 14px;border-top:1px solid rgba(255,255,255,0.10);flex-shrink:0;overflow-y:auto;max-height:280px;">
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-variant:small-caps;letter-spacing:0.15em;color:#888888;margin:0 0 14px 0;text-transform:uppercase;">Your Trades</p>
+      <div id="tradesContent" style="font-family:'IBM Plex Mono',monospace;"></div>
+    </div>
+
     <nav class="dos-nav">
       <div class="dos-nav-items">
         <button class="dos-nav-btn">
@@ -851,6 +857,110 @@
         });
       });
 
+    })();
+  </script>
+
+  <script>
+    // ── Trades summary section ─────────────────────────────────────────────
+
+    var TRADE_EMOTION_STYLE = {
+      NOSTALGIA: { color: '#6a8f0c', bg: 'rgba(106,143,12,0.12)' },
+      FEAR:      { color: '#FF7F50', bg: 'rgba(255,127,80,0.12)' },
+      ANGER:     { color: '#C7A6FF', bg: 'rgba(199,166,255,0.12)' },
+      HAPPINESS: { color: '#7FD4FE', bg: 'rgba(127,212,254,0.12)' }
+    };
+
+    (async function loadTrades() {
+      var container = document.getElementById('tradesContent');
+      if (!container) return;
+
+      var db = window.supabaseClient;
+      if (!db) {
+        container.innerHTML = '<p style="font-size:13px;color:#555555;text-align:center;margin:0;">Trade data unavailable.</p>';
+        return;
+      }
+
+      try {
+        // Get most-recent session ID
+        var sessionRes = await db.from('sessions').select('id').order('created_at', { ascending: false }).limit(1).maybeSingle();
+        var sessionId  = sessionRes.data ? sessionRes.data.id : null;
+
+        if (!sessionId) {
+          container.innerHTML = '<p style="font-size:13px;color:#555555;text-align:center;margin:0;">No trades recorded this session.</p>';
+          return;
+        }
+
+        var tradesRes = await db.from('trades').select('*').eq('session_id', sessionId);
+        if (tradesRes.error) throw tradesRes.error;
+
+        var rows = tradesRes.data || [];
+
+        if (rows.length === 0) {
+          container.innerHTML = '<p style="font-size:13px;color:#555555;text-align:center;margin:0;">No trades recorded this session.</p>';
+          return;
+        }
+
+        // Build table
+        var tableHTML =
+          '<table style="width:100%;border-collapse:collapse;">' +
+            '<thead>' +
+              '<tr style="height:36px;">' +
+                '<th style="font-size:11px;font-weight:400;letter-spacing:0.1em;color:#555555;text-align:left;padding:0 16px;white-space:nowrap;">COMPANY</th>' +
+                '<th style="font-size:11px;font-weight:400;letter-spacing:0.1em;color:#555555;text-align:left;padding:0 16px;white-space:nowrap;">EMOTION</th>' +
+                '<th style="font-size:11px;font-weight:400;letter-spacing:0.1em;color:#555555;text-align:left;padding:0 16px;white-space:nowrap;">ACTION</th>' +
+                '<th style="font-size:11px;font-weight:400;letter-spacing:0.1em;color:#555555;text-align:right;padding:0 16px;white-space:nowrap;">SHARES</th>' +
+                '<th style="font-size:11px;font-weight:400;letter-spacing:0.1em;color:#555555;text-align:right;padding:0 16px;white-space:nowrap;">PRICE/SHARE</th>' +
+                '<th style="font-size:11px;font-weight:400;letter-spacing:0.1em;color:#555555;text-align:right;padding:0 16px;white-space:nowrap;">TOTAL</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>';
+
+        var totalSpent  = 0;
+        var totalEarned = 0;
+
+        rows.forEach(function (row, idx) {
+          var isBuy     = (row.shares_bought || 0) > 0;
+          var shares    = isBuy ? row.shares_bought : row.shares_sold;
+          var total     = isBuy ? row.total_spent   : row.total_earned;
+          var emotion   = (row.emotion || '').toUpperCase();
+          var eStyle    = TRADE_EMOTION_STYLE[emotion] || { color: '#888888', bg: 'rgba(136,136,136,0.1)' };
+          var rowBg     = idx % 2 === 0 ? '#0a0a0a' : '#111111';
+          var actionCol = isBuy ? '#dafe7f' : '#FF4444';
+
+          if (isBuy) totalSpent  += (total || 0);
+          else        totalEarned += (total || 0);
+
+          tableHTML +=
+            '<tr style="height:48px;background:' + rowBg + ';vertical-align:middle;">' +
+              '<td style="font-size:13px;font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;color:#e0e0e0;padding:0 16px;white-space:nowrap;">' + (row.company || '—') + '</td>' +
+              '<td style="padding:0 16px;">' +
+                '<span style="display:inline-block;font-family:\'IBM Plex Mono\',monospace;font-size:10px;letter-spacing:0.1em;padding:2px 7px;border:0.5px solid ' + eStyle.color + ';color:' + eStyle.color + ';background:' + eStyle.bg + ';border-radius:2px;">' + emotion + '</span>' +
+              '</td>' +
+              '<td style="font-size:12px;letter-spacing:0.1em;color:' + actionCol + ';padding:0 16px;white-space:nowrap;">' + (isBuy ? 'BOUGHT' : 'SOLD') + '</td>' +
+              '<td style="font-size:13px;color:#e0e0e0;text-align:right;padding:0 16px;">' + (shares || 0) + '</td>' +
+              '<td style="font-size:13px;color:#e0e0e0;text-align:right;padding:0 16px;">' + (row.price_per_share || 0) + ' pts</td>' +
+              '<td style="font-size:13px;color:#e0e0e0;text-align:right;padding:0 16px;">' + (total || 0) + ' pts</td>' +
+            '</tr>';
+        });
+
+        tableHTML += '</tbody></table>';
+
+        var net      = totalEarned - totalSpent;
+        var netColor = net >= 0 ? '#dafe7f' : '#FF4444';
+        var summaryHTML =
+          '<p style="font-size:13px;font-family:\'IBM Plex Mono\',monospace;color:#888888;margin:12px 0 0 0;padding:0 4px;">' +
+            'Total spent: ' + totalSpent + ' pts &nbsp;&middot;&nbsp; ' +
+            'Total earned: ' + totalEarned + ' pts &nbsp;&middot;&nbsp; ' +
+            'Net: <span style="color:' + netColor + ';">' + (net >= 0 ? '+' : '') + net + ' pts</span>' +
+          '</p>';
+
+        container.innerHTML = tableHTML + summaryHTML;
+
+      } catch (e) {
+        console.warn('[trades] fetch failed:', e);
+        var container2 = document.getElementById('tradesContent');
+        if (container2) container2.innerHTML = '<p style="font-size:13px;color:#555555;text-align:center;margin:0;">Trade data unavailable.</p>';
+      }
     })();
   </script>
 </body>

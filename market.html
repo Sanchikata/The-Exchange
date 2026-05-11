@@ -1742,5 +1742,328 @@
     }
 
   </script>
+
+  <script>
+    // ── Supabase trading backend ───────────────────────────────────────────
+
+    async function calculateLivePrice(emotion, currentIndex) {
+      var db = window.supabaseClient;
+      var tableMap = {
+        nostalgia:  { table: 'sessions',             col: 'nostalgia_index' },
+        fear:       { table: 'fear_sessions',        col: 'fear_index' },
+        anger:      { table: 'anger_sessions',       col: 'anger_index' },
+        happiness:  { table: 'happiness_sessions',   col: 'happiness_index' }
+      };
+      var mapping = tableMap[emotion];
+      if (!mapping || !db) return Math.round(currentIndex);
+
+      try {
+        var { data, error } = await db.from(mapping.table).select(mapping.col);
+        if (error || !data || data.length === 0) return Math.round(currentIndex);
+        var sum = data.reduce(function (acc, row) { return acc + (row[mapping.col] || 0); }, 0);
+        var historicalAverage = sum / data.length;
+        return Math.round((historicalAverage * 0.6) + (currentIndex * 0.4));
+      } catch (e) {
+        return Math.round(currentIndex);
+      }
+    }
+
+    function calculateStartingShares(index) {
+      return Math.max(1, Math.floor(index / 10));
+    }
+
+    // ── Initialise window.livePrices and window.startingShares on page load ──
+    (async function () {
+      try {
+        var db = window.supabaseClient;
+        if (!db) return;
+
+        var results = await Promise.all([
+          db.from('sessions').select('nostalgia_index').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+          db.from('fear_sessions').select('fear_index').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+          db.from('anger_sessions').select('anger_index').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+          db.from('happiness_sessions').select('happiness_index').order('created_at', { ascending: false }).limit(1).maybeSingle()
+        ]);
+
+        var nostalgiaIndex  = (results[0].data && results[0].data.nostalgia_index)  || 0;
+        var fearIndex       = (results[1].data && results[1].data.fear_index)        || 0;
+        var angerIndex      = (results[2].data && results[2].data.anger_index)       || 0;
+        var happinessIndex  = (results[3].data && results[3].data.happiness_index)   || 0;
+
+        var prices = await Promise.all([
+          calculateLivePrice('nostalgia', nostalgiaIndex),
+          calculateLivePrice('fear',      fearIndex),
+          calculateLivePrice('anger',     angerIndex),
+          calculateLivePrice('happiness', happinessIndex)
+        ]);
+
+        window.livePrices = {
+          nostalgia: prices[0],
+          fear:      prices[1],
+          anger:     prices[2],
+          happiness: prices[3]
+        };
+
+        window.startingShares = {
+          amul:    calculateStartingShares(nostalgiaIndex),
+          byjus:   calculateStartingShares(fearIndex),
+          zomato:  calculateStartingShares(angerIndex),
+          netflix: calculateStartingShares(happinessIndex)
+        };
+
+        console.log('livePrices:', window.livePrices);
+        console.log('startingShares:', window.startingShares);
+      } catch (e) {
+        console.error('Failed to initialise livePrices / startingShares:', e);
+      }
+    })();
+  </script>
+
+  <script>
+    // ── Portfolio state & starting-shares popup ────────────────────────────
+
+    window.portfolio = {
+      points: parseInt(localStorage.getItem('exchange_total_pts') || '0', 10),
+      holdings: { amul: 0, byjus: 0, zomato: 0, netflix: 0 }
+    };
+
+    function showPortfolioPopup() {
+      var lp = window.livePrices   || { nostalgia: 0, fear: 0, anger: 0, happiness: 0 };
+      var ss = window.startingShares || { amul: 0, byjus: 0, zomato: 0, netflix: 0 };
+
+      var rows = [
+        { company: 'AMUL',    emotion: 'NOSTALGIA', color: '#6a8f0c', bgColor: 'rgba(106,143,12,0.12)',    shares: ss.amul,    price: lp.nostalgia },
+        { company: 'BYJU\'S', emotion: 'FEAR',      color: '#FF7F50', bgColor: 'rgba(255,127,80,0.12)',    shares: ss.byjus,   price: lp.fear },
+        { company: 'ZOMATO',  emotion: 'ANGER',     color: '#C7A6FF', bgColor: 'rgba(199,166,255,0.12)',   shares: ss.zomato,  price: lp.anger },
+        { company: 'NETFLIX', emotion: 'HAPPINESS', color: '#7FD4FE', bgColor: 'rgba(127,212,254,0.12)',   shares: ss.netflix, price: lp.happiness }
+      ];
+
+      var tableHTML = rows.map(function (r) {
+        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid #1e1e1e;">' +
+          '<span style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:15px;color:#e0e0e0;letter-spacing:0.05em;">' + r.company + '</span>' +
+          '<span style="display:inline-flex;align-items:center;gap:10px;">' +
+            '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.12em;padding:3px 8px;border:0.5px solid ' + r.color + ';color:' + r.color + ';background:' + r.bgColor + ';border-radius:2px;">' + r.emotion + '</span>' +
+            '<span style="font-family:\'JetBrains Mono\',monospace;font-size:14px;color:#dafe7f;">' + r.shares + ' shares</span>' +
+            '<span style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:#888888;">&middot; ' + r.price + ' pts/share</span>' +
+          '</span>' +
+        '</div>';
+      }).join('');
+
+      var overlay = document.createElement('div');
+      overlay.id = 'portfolioPopupOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+      overlay.innerHTML =
+        '<div style="background:#141414;border:1px solid rgba(218,254,127,0.4);border-radius:4px;padding:40px;max-width:520px;width:100%;box-sizing:border-box;">' +
+          '<p style="font-family:\'JetBrains Mono\',monospace;font-size:14px;font-variant:small-caps;letter-spacing:0.12em;color:#888888;margin:0 0 28px 0;text-transform:uppercase;">Your emotional portfolio has been assigned</p>' +
+          '<div>' + tableHTML + '</div>' +
+          '<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:13px;color:#888888;margin:24px 0 28px 0;line-height:1.6;">These shares were assigned based on your emotional responses. You may buy more or sell what you have.</p>' +
+          '<button id="portfolioPopupClose" style="width:100%;padding:14px;background:transparent;border:1px solid #dafe7f;color:#dafe7f;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border-radius:2px;">RETURN TO MARKET &#x2192;</button>' +
+        '</div>';
+
+      document.body.appendChild(overlay);
+
+      document.getElementById('portfolioPopupClose').addEventListener('click', function () {
+        overlay.remove();
+      });
+    }
+
+    // Wait for both window.startingShares and window.livePrices, then act
+    (function pollForData() {
+      if (!window.startingShares || !window.livePrices) {
+        return setTimeout(pollForData, 60);
+      }
+
+      window.portfolio.holdings.amul    = window.startingShares.amul;
+      window.portfolio.holdings.byjus   = window.startingShares.byjus;
+      window.portfolio.holdings.zomato  = window.startingShares.zomato;
+      window.portfolio.holdings.netflix = window.startingShares.netflix;
+
+      console.log('portfolio:', window.portfolio);
+
+      if (window.portfolio.points >= 800) {
+        showPortfolioPopup();
+      }
+    })();
+  </script>
+
+  <script>
+    // ── Buy / Sell popup mechanics ─────────────────────────────────────────
+
+    var CARD_META = [
+      { company: 'AMUL',    emotion: 'NOSTALGIA', holdingKey: 'amul',    priceKey: 'nostalgia', color: '#6a8f0c', bgColor: 'rgba(106,143,12,0.12)' },
+      { company: "BYJU'S",  emotion: 'FEAR',      holdingKey: 'byjus',   priceKey: 'fear',      color: '#FF7F50', bgColor: 'rgba(255,127,80,0.12)' },
+      { company: 'ZOMATO',  emotion: 'ANGER',     holdingKey: 'zomato',  priceKey: 'anger',     color: '#C7A6FF', bgColor: 'rgba(199,166,255,0.12)' },
+      { company: 'NETFLIX', emotion: 'HAPPINESS', holdingKey: 'netflix', priceKey: 'happiness', color: '#7FD4FE', bgColor: 'rgba(127,212,254,0.12)' }
+    ];
+
+    var _cachedSessionId = null;
+
+    async function getSessionId() {
+      if (_cachedSessionId) return _cachedSessionId;
+      try {
+        var db = window.supabaseClient;
+        var { data } = await db.from('sessions').select('id').order('created_at', { ascending: false }).limit(1).maybeSingle();
+        _cachedSessionId = data ? data.id : null;
+      } catch (e) { _cachedSessionId = null; }
+      return _cachedSessionId;
+    }
+
+    function updatePointsDisplay() {
+      var pts = window.portfolio.points;
+      var el = document.getElementById('ptsCount');
+      if (el) el.textContent = pts;
+      var bal = document.getElementById('balanceText');
+      if (bal) bal.textContent = 'BALANCE: ' + pts;
+      localStorage.setItem('exchange_total_pts', pts);
+    }
+
+    function showToast(msg, color) {
+      var t = document.createElement('div');
+      t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:9999;background:#141414;border:1px solid ' + color + ';color:#e0e0e0;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.08em;padding:14px 20px;border-radius:3px;max-width:320px;line-height:1.5;pointer-events:none;opacity:1;transition:opacity 0.4s;';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { t.style.opacity = '0'; }, 2100);
+      setTimeout(function () { t.remove(); }, 2500);
+    }
+
+    function makeOverlay(meta, mode) {
+      var lp     = window.livePrices  || {};
+      var price  = lp[meta.priceKey] || 0;
+      var color  = meta.color;
+
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+      var isBuy  = mode === 'buy';
+      var maxVal = isBuy
+        ? Math.floor(window.portfolio.points / (price || 1))
+        : window.portfolio.holdings[meta.holdingKey];
+
+      var sharesCount = maxVal > 0 ? 1 : 0;
+
+      function pillHTML() {
+        return '<span style="display:inline-block;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.12em;padding:3px 8px;border:0.5px solid ' + color + ';color:' + color + ';background:' + meta.bgColor + ';border-radius:2px;vertical-align:middle;margin-left:8px;">' + meta.emotion + '</span>';
+      }
+
+      var insufficientMsg = isBuy ? 'Insufficient points' : 'You have no shares to sell';
+      var hasStock = maxVal > 0;
+
+      var inner = document.createElement('div');
+      inner.style.cssText = 'background:#141414;border:1px solid rgba(218,254,127,0.4);border-radius:4px;padding:40px;max-width:520px;width:100%;box-sizing:border-box;';
+
+      inner.innerHTML =
+        '<p style="font-family:\'JetBrains Mono\',monospace;font-size:13px;font-variant:small-caps;letter-spacing:0.12em;color:#888888;margin:0 0 6px 0;">' +
+          meta.company + pillHTML() +
+        '</p>' +
+        '<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:20px;color:#e0e0e0;margin:0 0 24px 0;">' +
+          (isBuy ? 'How many shares do you want to buy?' : 'How many shares do you want to sell?') +
+        '</p>' +
+        '<p style="font-family:\'JetBrains Mono\',monospace;font-size:14px;color:#dafe7f;margin:0 0 6px 0;">Price per share: ' + price + ' pts</p>' +
+        (isBuy
+          ? '<p style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:#888888;margin:0 0 24px 0;">Your balance: ' + window.portfolio.points + ' pts</p>'
+          : '<p style="font-family:\'JetBrains Mono\',monospace;font-size:14px;color:#dafe7f;margin:0 0 24px 0;">You own: ' + window.portfolio.holdings[meta.holdingKey] + ' shares</p>') +
+        (hasStock
+          ? '<div style="display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:20px;">' +
+              '<button id="tradeDecBtn" style="width:44px;height:44px;background:transparent;border:1px solid #444;color:#e0e0e0;font-size:22px;cursor:pointer;border-radius:2px;line-height:1;">−</button>' +
+              '<span id="tradeSharesNum" style="font-family:\'JetBrains Mono\',monospace;font-size:48px;color:#dafe7f;min-width:80px;text-align:center;line-height:1;">' + sharesCount + '</span>' +
+              '<button id="tradeIncBtn" style="width:44px;height:44px;background:transparent;border:1px solid #444;color:#e0e0e0;font-size:22px;cursor:pointer;border-radius:2px;line-height:1;">+</button>' +
+            '</div>' +
+            '<p id="tradeTotalLine" style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#e0e0e0;text-align:center;margin:0 0 28px 0;">' +
+              (isBuy ? 'Total: ' + (sharesCount * price) + ' pts' : 'You will receive: ' + (sharesCount * price) + ' pts') +
+            '</p>'
+          : '<p style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#888888;text-align:center;margin:0 0 28px 0;">' + insufficientMsg + '</p>') +
+        '<div style="display:flex;gap:12px;">' +
+          '<button id="tradeCancelBtn" style="flex:1;padding:14px;background:transparent;border:1px solid #888888;color:#888888;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border-radius:2px;">CANCEL</button>' +
+          '<button id="tradeConfirmBtn" ' + (!hasStock ? 'disabled ' : '') + 'style="flex:1;padding:14px;background:' + (hasStock ? (isBuy ? 'rgba(218,254,127,0.37)' : '#c45a5a') : '#333') + ';border:1px solid ' + (hasStock ? (isBuy ? 'rgba(218,254,127,0.37)' : '#c45a5a') : '#333') + ';color:' + (hasStock ? '#fff' : '#555') + ';font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-weight:500;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;cursor:' + (hasStock ? 'pointer' : 'not-allowed') + ';border-radius:2px;">' + (isBuy ? 'CONFIRM BUY' : 'CONFIRM SELL') + '</button>' +
+        '</div>';
+
+      overlay.appendChild(inner);
+
+      // wire up stepper
+      if (hasStock) {
+        var numEl   = inner.querySelector('#tradeSharesNum');
+        var totalEl = inner.querySelector('#tradeTotalLine');
+
+        function updateTotal() {
+          var n = parseInt(numEl.textContent, 10);
+          totalEl.textContent = isBuy
+            ? 'Total: ' + (n * price) + ' pts'
+            : 'You will receive: ' + (n * price) + ' pts';
+        }
+
+        inner.querySelector('#tradeDecBtn').addEventListener('click', function () {
+          var n = parseInt(numEl.textContent, 10);
+          if (n > 1) { numEl.textContent = n - 1; updateTotal(); }
+        });
+        inner.querySelector('#tradeIncBtn').addEventListener('click', function () {
+          var n = parseInt(numEl.textContent, 10);
+          if (n < maxVal) { numEl.textContent = n + 1; updateTotal(); }
+        });
+      }
+
+      inner.querySelector('#tradeCancelBtn').addEventListener('click', function () {
+        overlay.remove();
+      });
+
+      if (hasStock) {
+        inner.querySelector('#tradeConfirmBtn').addEventListener('click', async function () {
+          var shares = parseInt(inner.querySelector('#tradeSharesNum').textContent, 10);
+          var total  = shares * price;
+          var sessionId = await getSessionId();
+
+          if (isBuy) {
+            window.portfolio.points -= total;
+            window.portfolio.holdings[meta.holdingKey] += shares;
+          } else {
+            window.portfolio.points += total;
+            window.portfolio.holdings[meta.holdingKey] -= shares;
+          }
+
+          updatePointsDisplay();
+
+          try {
+            var db = window.supabaseClient;
+            var row = {
+              session_id:      sessionId,
+              company:         meta.company,
+              emotion:         meta.emotion,
+              shares_bought:   isBuy  ? shares : 0,
+              shares_sold:     !isBuy ? shares : 0,
+              price_per_share: price,
+              total_spent:     isBuy  ? total  : 0,
+              total_earned:    !isBuy ? total  : 0
+            };
+            await db.from('trades').insert(row);
+          } catch (e) {
+            console.warn('Trade insert failed:', e);
+          }
+
+          overlay.remove();
+
+          var toastMsg = isBuy
+            ? shares + ' shares of ' + meta.company + ' added to portfolio'
+            : shares + ' shares of ' + meta.company + ' sold';
+          showToast(toastMsg, color);
+        });
+      }
+
+      return overlay;
+    }
+
+    // Attach listeners to all BUY / SELL buttons
+    document.querySelectorAll('.market-card').forEach(function (card) {
+      var idx  = parseInt(card.getAttribute('data-card-idx'), 10);
+      var meta = CARD_META[idx];
+      if (!meta) return;
+
+      card.querySelector('.btn-buy').addEventListener('click', function () {
+        document.body.appendChild(makeOverlay(meta, 'buy'));
+      });
+      card.querySelector('.btn-sell').addEventListener('click', function () {
+        document.body.appendChild(makeOverlay(meta, 'sell'));
+      });
+    });
+  </script>
 </body>
 </html>
