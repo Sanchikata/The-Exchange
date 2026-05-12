@@ -1782,7 +1782,7 @@
       }
     })();
 
-    // ── Generate Portfolio button visibility ───────────────────────────────
+    // ── Generate Portfolio button visibility + session timer ──────────────
     (function () {
       var played = JSON.parse(localStorage.getItem('exchange_played_games') || '[]');
       if (played.length > 0) {
@@ -1790,8 +1790,28 @@
           var el = document.getElementById(id);
           if (el) el.style.display = id === 'genPortfolioBtn' ? 'flex' : 'inline-block';
         });
+        startTradeTimer();
       }
     })();
+
+    function startTradeTimer() {
+      var timerEl = document.getElementById('headerTimer');
+      var display = document.getElementById('timerDisplay');
+      var overlay = document.getElementById('timeoutOverlay');
+      if (!timerEl || !display || !overlay) return;
+      timerEl.style.display = 'flex';
+      var remaining = 180;
+      function tick() {
+        var m = Math.floor(remaining / 60);
+        var s = remaining % 60;
+        display.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        if (remaining <= 30) display.classList.add('urgent');
+        if (remaining <= 0) { overlay.classList.add('visible'); return; }
+        remaining--;
+        setTimeout(tick, 1000);
+      }
+      tick();
+    }
 
     function goToPortfolio() {
       var pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
