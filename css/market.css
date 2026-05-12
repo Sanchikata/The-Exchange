@@ -463,9 +463,16 @@
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s;
 }
-.btn-buy:hover  { background: #102818; }
+.btn-buy:hover {
+  background: #162e1c;
+  color: #a8d4b4;
+  border-color: #6aaf80;
+  box-shadow: 0 0 10px rgba(90,156,106,0.25), inset 0 0 8px rgba(90,156,106,0.06);
+  transform: translateY(-1px);
+}
+.btn-buy:active { transform: translateY(0); box-shadow: none; }
 .btn-sell {
   background: #1f0d0d;
   color: #c47a7a;
@@ -475,9 +482,16 @@
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.12s;
 }
-.btn-sell:hover { background: #2a1010; }
+.btn-sell:hover {
+  background: #321414;
+  color: #e09090;
+  border-color: #b05555;
+  box-shadow: 0 0 10px rgba(196,90,90,0.25), inset 0 0 8px rgba(196,90,90,0.06);
+  transform: translateY(-1px);
+}
+.btn-sell:active { transform: translateY(0); box-shadow: none; }
 .trade-cost {
   font-size: 10px;
   color: #555550;

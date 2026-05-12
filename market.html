@@ -660,7 +660,7 @@
     }
     .tag-nostalgia { color: #dafe7f; background: rgba(218,254,127,0.08); border-color: #dafe7f; }
     .tag-fear      { color: #ff8a3d; background: rgba(255,138,61,0.08);   border-color: #ff8a3d; }
-    .tag-anger     { color: #ff4444; background: rgba(255,68,68,0.08);    border-color: #ff4444; }
+    .tag-anger     { color: #c45a5a; background: rgba(196,90,90,0.08);    border-color: #c45a5a; }
     .tag-happiness { color: #4caf50; background: rgba(76,175,80,0.08);    border-color: #4caf50; }
     .card-vol {
       font-family: 'JetBrains Mono', monospace;
@@ -698,7 +698,7 @@
     .stat-num { font-size: 44px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
     .stat-num.c-nst  { color: #dafe7f; }
     .stat-num.c-fear { color: #c64a4a; }
-    .stat-num.c-ang  { color: #ff4444; }
+    .stat-num.c-ang  { color: #c45a5a; }
     .stat-num.c-hap  { color: #4caf50; }
     .stat-arrow { font-size: 16px; line-height: 1; margin-bottom: 6px; }
     .stat-tag { font-size: 16px; letter-spacing: 0.05em; text-transform: uppercase; color: #555555; line-height: 1; margin-bottom: 2px; }
@@ -716,6 +716,11 @@
       text-transform: uppercase;
       cursor: pointer;
       border-radius: 4px;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .btn-buy:hover {
+      background: rgba(218,254,127,0.55);
+      border-color: rgba(218,254,127,0.7);
     }
     .btn-sell {
       flex: 1;
@@ -730,6 +735,11 @@
       text-transform: uppercase;
       cursor: pointer;
       border-radius: 4px;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .btn-sell:hover {
+      background: rgba(198,74,74,0.72);
+      border-color: rgba(255,68,68,0.55);
     }
 
     /* ===== FOOTER ===== */
@@ -812,7 +822,7 @@
               <div class="hero-stat-row">
                 <span class="hero-stat-pct" id="heroStatPct">41%</span><span class="hero-stat-label"> loyalty</span><span class="hero-stat-desc"> rise, want to buy in?</span>
               </div>
-              <button class="hero-trade-btn" disabled>TRADE</button>
+              <button class="hero-trade-btn" onclick="location.href='trade.html?company=amul'" style="cursor:pointer;">TRADE</button>
             </div>
             <div class="hero-chart-area">
               <svg id="heroChart" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
@@ -868,7 +878,7 @@
               <div class="hero-stat-row">
                 <span class="hero-stat-pct stat-pct-fear" id="heroStatPctFear">82%</span><span class="hero-stat-label stat-label-fear"> fear index</span><span class="hero-stat-desc"> rising, is fear still a sound investment?</span>
               </div>
-              <button class="hero-trade-btn btn-fear" disabled>TRADE</button>
+              <button class="hero-trade-btn btn-fear" onclick="location.href='trade.html?company=byjus'" style="cursor:pointer;">TRADE</button>
             </div>
             <div class="hero-chart-area">
               <svg id="heroChartFear" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
@@ -924,7 +934,7 @@
               <div class="hero-stat-row">
                 <span class="hero-stat-pct stat-pct-anger" id="heroStatPctAnger">71%</span><span class="hero-stat-label stat-label-anger"> anger index</span><span class="hero-stat-desc"> active, do you profit from the outrage?</span>
               </div>
-              <button class="hero-trade-btn btn-anger" disabled>TRADE</button>
+              <button class="hero-trade-btn btn-anger" onclick="location.href='trade.html?company=zomato'" style="cursor:pointer;">TRADE</button>
             </div>
             <div class="hero-chart-area">
               <svg id="heroChartAnger" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
@@ -980,7 +990,7 @@
               <div class="hero-stat-row">
                 <span class="hero-stat-pct stat-pct-happiness" id="heroStatPctHappiness">86%</span><span class="hero-stat-label stat-label-happiness"> happiness index</span><span class="hero-stat-desc"> stable, do you invest in the loop?</span>
               </div>
-              <button class="hero-trade-btn btn-happiness" disabled>TRADE</button>
+              <button class="hero-trade-btn btn-happiness" onclick="location.href='trade.html?company=netflix'" style="cursor:pointer;">TRADE</button>
             </div>
             <div class="hero-chart-area">
               <svg id="heroChartHappiness" viewBox="0 0 497 145" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="cursor:crosshair;display:block;">
@@ -1083,7 +1093,7 @@
                 </div>
                 <div class="chart-group">
                   <div class="chart-bars">
-                    <div class="chart-bar" style="background:#ff4444; height:246px;" data-idx="6"></div>
+                    <div class="chart-bar" style="background:#c45a5a; height:246px;" data-idx="6"></div>
                     <div class="chart-bar" style="background:#c8922a; height:87px;"  data-idx="7"></div>
                     <div class="chart-bar" style="background:#7b9fff; height:54px;"  data-idx="8"></div>
                   </div>
@@ -1091,7 +1101,7 @@
                 </div>
                 <div class="chart-group">
                   <div class="chart-bars">
-                    <div class="chart-bar" style="background:#ff4444; height:213px;" data-idx="9"></div>
+                    <div class="chart-bar" style="background:#c45a5a; height:213px;" data-idx="9"></div>
                     <div class="chart-bar" style="background:#c8922a; height:189px;" data-idx="10"></div>
                     <div class="chart-bar" style="background:#7b9fff; height:132px;" data-idx="11"></div>
                   </div>
@@ -1110,7 +1120,7 @@
                 <div class="legend-item"><div class="legend-swatch" style="background:#dafe7f;"></div>TRUST</div>
                 <div class="legend-item"><div class="legend-swatch" style="background:#c8922a;"></div>LOYALTY</div>
                 <div class="legend-item"><div class="legend-swatch" style="background:#7b9fff;"></div>BELONGING</div>
-                <div class="legend-item"><div class="legend-swatch" style="background:#ff4444;"></div>FEAR / ANGER</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#c45a5a;"></div>FEAR / ANGER</div>
                 <div class="legend-item"><div class="legend-swatch" style="background:#4caf50;"></div>HAPPINESS</div>
               </div>
             </div>
@@ -1182,7 +1192,7 @@
               <div class="card-body">
                 <div class="card-stat">
                   <span class="stat-num c-ang">57.3</span>
-                  <span class="stat-arrow" style="color:#ff4444;">▼</span>
+                  <span class="stat-arrow" style="color:#c45a5a;">▼</span>
                   <span class="stat-tag">ANG</span>
                 </div>
                 <div class="card-actions">

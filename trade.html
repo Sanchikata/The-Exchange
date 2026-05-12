@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Exchange — Trade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #e8e8e0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #0a0a0a;
+      border-bottom: 0.5px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 59px);
+      height: clamp(56px, 10vw, 80px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-dot {
+      width: 6px;
+      height: 6px;
+      background: #dafe7f;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(218,254,127,0.6);
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(14px, 2vw, 24px);
+      color: #fff;
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .back-btn {
+      background: transparent;
+      border: 0.5px solid rgba(255,255,255,0.15);
+      color: #888880;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .back-btn:hover { color: #e8e8e0; border-color: rgba(255,255,255,0.3); }
+    .header-points {
+      background: rgba(61,61,60,0.2);
+      border-radius: 8px;
+      padding: 8px 16px;
+    }
+    .header-pts-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(18px, 2.5vw, 28px);
+      color: #fff;
+      line-height: 1;
+    }
+    .header-pts-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #8c8b8b;
+    }
+
+    /* ── Two-column layout ── */
+    .trade-layout {
+      display: flex;
+      gap: 0;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: calc(100vh - 80px);
+    }
+    .trade-main {
+      flex: 0 0 64%;
+      border-right: 0.5px solid #1a1a1a;
+      padding: 32px 40px 48px;
+      min-width: 0;
+    }
+    .trade-sidebar {
+      flex: 1;
+      padding: 32px 32px 48px;
+      min-width: 0;
+    }
+
+    /* ── Company header ── */
+    .company-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .company-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 400;
+      color: #e8e8e0;
+      letter-spacing: 0.05em;
+    }
+    .emotion-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      padding: 3px 9px;
+      border-radius: 2px;
+      border: 0.5px solid;
+    }
+    .company-tagline {
+      font-size: 13px;
+      color: #888880;
+      margin-bottom: 28px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Chart area ── */
+    .chart-section {
+      background: #0f0f0f;
+      border: 0.5px solid #222222;
+      border-radius: 2px;
+      padding: 24px 24px 16px;
+      margin-bottom: 28px;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .chart-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #555555;
+      text-transform: uppercase;
+    }
+    .chart-live-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      color: #e8e8e0;
+      line-height: 1;
+    }
+    .chart-live-change {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .chart-svg-wrap {
+      width: 100%;
+      height: 180px;
+      position: relative;
+    }
+    .chart-svg-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Bar chart breakdown ── */
+    .bar-section {
+      background: #0f0f0f;
+      border: 0.5px solid #222222;
+      border-radius: 2px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .bar-section-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #555555;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .bar-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #888880;
+      width: 120px;
+      flex-shrink: 0;
+      letter-spacing: 0.06em;
+    }
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      background: #1a1a1a;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 1px;
+      transition: width 0.8s ease;
+    }
+    .bar-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #e8e8e0;
+      width: 36px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── Trade panel ── */
+    .trade-panel {
+      background: #0f0f0f;
+      border: 0.5px solid #222222;
+      border-radius: 2px;
+      padding: 24px;
+    }
+    .trade-panel-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #555555;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .trade-info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .trade-info-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #888880;
+    }
+    .trade-info-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #e8e8e0;
+    }
+    .trade-divider {
+      height: 0.5px;
+      background: #1a1a1a;
+      margin: 16px 0;
+    }
+    .trade-btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .btn-buy {
+      flex: 1;
+      height: 48px;
+      background: rgba(218,254,127,0.37);
+      border: 0.5px solid rgba(218,254,127,0.35);
+      color: #fff;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .btn-buy:hover { background: rgba(218,254,127,0.52); }
+    .btn-sell {
+      flex: 1;
+      height: 48px;
+      background: rgba(198,74,74,0.52);
+      border: 0.5px solid rgba(255,68,68,0.3);
+      color: #fff;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .btn-sell:hover { background: rgba(198,74,74,0.72); }
+
+    /* ── Sidebar ── */
+    .sidebar-section-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: #555555;
+      text-transform: uppercase;
+      border-bottom: 0.5px solid #1a1a1a;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+    .news-card {
+      background: #0f0f0f;
+      border: 0.5px solid #1a1a1a;
+      border-radius: 2px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+    .news-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: #555555;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .news-headline {
+      font-size: 13px;
+      color: #c8c8c0;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    .news-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #555555;
+    }
+    .prediction-block {
+      background: #0f0f0f;
+      border: 0.5px solid #1a1a1a;
+      border-radius: 2px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+    .prediction-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: #555555;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .prediction-text {
+      font-size: 13px;
+      color: #c8c8c0;
+      line-height: 1.55;
+    }
+    .prediction-conf {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .conf-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #555555;
+    }
+    .conf-track {
+      flex: 1;
+      height: 3px;
+      background: #1a1a1a;
+      border-radius: 1px;
+    }
+    .conf-fill {
+      height: 100%;
+      border-radius: 1px;
+    }
+    .conf-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+    }
+    .sidebar-spacer { height: 24px; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-dot"></div>
+      <span class="header-title">THE EXCHANGE</span>
+    </div>
+    <div class="header-right">
+      <button class="back-btn" onclick="history.back()">← MARKET</button>
+      <div class="header-points">
+        <span class="header-pts-num" id="ptsCount">0</span><span class="header-pts-label"> pts</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="trade-layout">
+
+    <!-- ── Main column ── -->
+    <div class="trade-main">
+
+      <div class="company-meta">
+        <span class="company-name" id="companyName">——</span>
+        <span class="emotion-pill" id="emotionPill">——</span>
+      </div>
+      <div class="company-tagline" id="companyTagline"></div>
+
+      <!-- Line chart -->
+      <div class="chart-section">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">EMOTION INDEX · 6-MONTH TREND</div>
+            <div class="chart-live-val" id="chartLiveVal">——</div>
+            <div class="chart-live-change" id="chartLiveChange"></div>
+          </div>
+        </div>
+        <div class="chart-svg-wrap">
+          <svg id="tradeChart" viewBox="0 0 497 160" preserveAspectRatio="none" style="cursor:crosshair;">
+            <line x1="0" y1="20"  x2="497" y2="20"  stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="0" y1="60"  x2="497" y2="60"  stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="0" y1="100" x2="497" y2="100" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="0" y1="140" x2="497" y2="140" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+            <text id="tcy1" x="4" y="18"  font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.2)" letter-spacing="0.3">80</text>
+            <text id="tcy2" x="4" y="58"  font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.2)" letter-spacing="0.3">60</text>
+            <text id="tcy3" x="4" y="98"  font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.2)" letter-spacing="0.3">40</text>
+            <text id="tcy4" x="4" y="138" font-family="'JetBrains Mono',monospace" font-size="7" fill="rgba(255,255,255,0.2)" letter-spacing="0.3">20</text>
+            <path id="chartPath" d="" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path id="chartArea" d="" fill-opacity="0.06" stroke="none"/>
+            <circle id="chartEndDot" cx="0" cy="0" r="4" stroke="#111" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Bar chart breakdown -->
+      <div class="bar-section">
+        <div class="bar-section-title">SIGNAL BREAKDOWN</div>
+        <div id="barRows"></div>
+      </div>
+
+      <!-- Trade panel -->
+      <div class="trade-panel">
+        <div class="trade-panel-title">PLACE ORDER</div>
+        <div class="trade-info-row">
+          <span class="trade-info-label">PRICE PER SHARE</span>
+          <span class="trade-info-val" id="pricePerShare" style="color:#dafe7f;">—— pts</span>
+        </div>
+        <div class="trade-info-row">
+          <span class="trade-info-label">YOUR HOLDINGS</span>
+          <span class="trade-info-val" id="yourHoldings">—— shares</span>
+        </div>
+        <div class="trade-info-row">
+          <span class="trade-info-label">YOUR BALANCE</span>
+          <span class="trade-info-val" id="yourBalance">—— pts</span>
+        </div>
+        <div class="trade-divider"></div>
+        <div class="trade-btn-row">
+          <button class="btn-buy" id="buyBtn">BUY</button>
+          <button class="btn-sell" id="sellBtn">SELL</button>
+        </div>
+      </div>
+
+    </div><!-- /.trade-main -->
+
+    <!-- ── Sidebar ── -->
+    <div class="trade-sidebar">
+
+      <div class="sidebar-section-head">NEWS</div>
+      <div id="newsCards"></div>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-section-head">MARKET PREDICTION</div>
+      <div id="predictionCards"></div>
+
+    </div><!-- /.trade-sidebar -->
+
+  </div><!-- /.trade-layout -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ── Supabase: populate window.livePrices and window.portfolio ─────────
+    (function initTradeData() {
+      var tableMap = {
+        nostalgia: { table: 'sessions',            col: 'nostalgia_index' },
+        fear:      { table: 'fear_sessions',        col: 'fear_index' },
+        anger:     { table: 'anger_sessions',       col: 'anger_index' },
+        happiness: { table: 'happiness_sessions',   col: 'happiness_index' }
+      };
+
+      var LIVE_KEYS   = ['nostalgia', 'fear', 'anger', 'happiness'];
+      var INDEX_VALS  = { nostalgia: 74, fear: 82, anger: 71, happiness: 86 };
+
+      function calcShares(index) { return Math.max(1, Math.floor(index / 10)); }
+
+      async function fetchAvg(emotion) {
+        var m  = tableMap[emotion];
+        var db = window.supabaseClient;
+        try {
+          var { data } = await db.from(m.table).select(m.col);
+          if (!data || !data.length) return INDEX_VALS[emotion];
+          var sum = data.reduce(function (s, r) { return s + (r[m.col] || 0); }, 0);
+          return sum / data.length;
+        } catch (e) { return INDEX_VALS[emotion]; }
+      }
+
+      Promise.all(LIVE_KEYS.map(function (k) { return fetchAvg(k); })).then(function (avgs) {
+        var prices = {};
+        var shares = {};
+        LIVE_KEYS.forEach(function (k, i) {
+          var cur = INDEX_VALS[k];
+          prices[k] = Math.round((avgs[i] * 0.6) + (cur * 0.4));
+          shares[k] = calcShares(cur);
+        });
+        window.livePrices = prices;
+
+        var storedPts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
+        window.portfolio = window.portfolio || {
+          points: storedPts,
+          holdings: {
+            amul:    shares.nostalgia,
+            byjus:   shares.fear,
+            zomato:  shares.anger,
+            netflix: shares.happiness
+          }
+        };
+      });
+    })();
+  </script>
+  <script>
+    // ── Company data ──────────────────────────────────────────────────────
+    var COMPANIES = {
+      amul: {
+        name: 'AMUL · DAIRY',
+        emotion: 'NOSTALGIA',
+        priceKey: 'nostalgia',
+        holdingKey: 'amul',
+        color: '#dafe7f',
+        pillBg: 'rgba(218,254,127,0.08)',
+        tagline: "Amul's trust held steady through FDA friction. Nostalgia absorbed the damage.",
+        liveVal: '74.6',
+        liveChange: { text: '▲ +2.4 today', positive: true },
+        chartPath: 'M0 130 C 50 122, 90 115, 130 100 C 170 85, 195 60, 235 42 C 265 28, 290 24, 315 30 C 340 38, 358 56, 385 74 C 410 88, 440 102, 470 97 C 480 95, 490 93, 497 91',
+        bars: [
+          { label: 'BRAND TRUST',   val: 82 },
+          { label: 'RECALL SCORE',  val: 74 },
+          { label: 'LOYALTY INDEX', val: 69 },
+          { label: 'SENTIMENT',     val: 78 }
+        ],
+        news: [
+          { tag: 'REGULATORY', headline: "FDA clears Amul's butter export — brand nostalgia fuels cross-border demand.", source: 'Economic Times · 3d ago' },
+          { tag: 'MARKET',     headline: "Rural dairy consumption hits 12-year high. Analysts credit emotional brand loyalty.", source: 'Mint · 5d ago' },
+          { tag: 'SENTIMENT',  headline: "Amul's throwback ad campaign breaks social media records — 41% loyalty uplift recorded.", source: 'Business Standard · 1w ago' }
+        ],
+        predictions: [
+          { text: 'Nostalgia signal remains structurally strong. Seasonal uptick expected Q3. Consumer sentiment anchored by childhood memory recall.', conf: 81 },
+          { text: 'Short-term volatility possible if regulatory uncertainty continues. Long-term nostalgia floor provides downside protection.', conf: 67 }
+        ]
+      },
+      byjus: {
+        name: "BYJU'S · EDTECH",
+        emotion: 'FEAR',
+        priceKey: 'fear',
+        holdingKey: 'byjus',
+        color: '#FF7F50',
+        pillBg: 'rgba(255,127,80,0.08)',
+        tagline: "BYJU's collapsed. The anxiety that built it didn't. Fear is still a tradeable asset.",
+        liveVal: '82.1',
+        liveChange: { text: '▲ +5.1 today', positive: true },
+        chartPath: 'M0 60 C 40 56, 70 54, 100 67 C 130 80, 155 100, 185 120 C 205 131, 222 136, 248 126 C 272 116, 292 98, 322 79 C 348 62, 372 48, 402 42 C 427 36, 458 34, 497 35',
+        bars: [
+          { label: 'ANXIETY SIGNAL', val: 82 },
+          { label: 'COMPLIANCE IDX', val: 71 },
+          { label: 'FEAR RETENTION', val: 68 },
+          { label: 'ENGAGEMENT',     val: 74 }
+        ],
+        news: [
+          { tag: 'INSOLVENCY',  headline: "BYJU's creditors push for asset recovery — fear index spikes as proceedings advance.", source: 'The Hindu · 2d ago' },
+          { tag: 'EDTECH',      headline: "India's edtech fear-of-failure economy reaches ₹18,000Cr market cap despite failures.", source: 'Forbes India · 4d ago' },
+          { tag: 'SENTIMENT',   headline: "Parents' anxiety over academic performance remains unchanged post-BYJU's collapse.", source: 'Indian Express · 6d ago' }
+        ],
+        predictions: [
+          { text: "Fear index structurally elevated. Academic anxiety doesn't dissolve with platform failure — it migrates to substitutes. Sustained demand expected.", conf: 78 },
+          { text: 'Regulatory clarity could suppress fear premium short-term. Watch for competitor consolidation as a volatility trigger.', conf: 62 }
+        ]
+      },
+      zomato: {
+        name: 'ZOMATO · FOOD',
+        emotion: 'ANGER',
+        priceKey: 'anger',
+        holdingKey: 'zomato',
+        color: '#C7A6FF',
+        pillBg: 'rgba(199,166,255,0.08)',
+        tagline: "Zomato's controversies kept coming. Engagement never dropped. Outrage is the product.",
+        liveVal: '71.3',
+        liveChange: { text: '▼ -1.2 today', positive: false },
+        chartPath: 'M0 96 C 25 87, 45 60, 70 68 C 90 75, 100 98, 125 89 C 148 81, 162 53, 192 62 C 212 68, 228 88, 255 75 C 275 64, 292 40, 320 51 C 340 60, 358 79, 385 66 C 406 55, 435 40, 465 49 C 478 53, 490 56, 497 56',
+        bars: [
+          { label: 'OUTRAGE SCORE',  val: 71 },
+          { label: 'CONTROVERSY IDX', val: 78 },
+          { label: 'ENGAGEMENT',     val: 85 },
+          { label: 'CHURN SIGNAL',   val: 34 }
+        ],
+        news: [
+          { tag: 'LABOUR',    headline: "Zomato delivery partners protest platform fee hike — anger index jumps 8 points overnight.", source: 'NDTV · 1d ago' },
+          { tag: 'VIRAL',     headline: "Zomato CEO's tweet sparks backlash — platform records highest engagement day of Q2.", source: 'Inc42 · 3d ago' },
+          { tag: 'GROWTH',    headline: "Paradox of outrage: Zomato orders rise 12% in weeks following its biggest controversy.", source: 'Entrackr · 1w ago' }
+        ],
+        predictions: [
+          { text: "Anger-driven engagement remains Zomato's most reliable retention mechanism. Controversy cycles correlate positively with MAU growth.", conf: 74 },
+          { text: 'Labour regulation risk is the primary downside. Suppressed anger in the gig economy could convert to organised resistance — watch Q4.', conf: 58 }
+        ]
+      },
+      netflix: {
+        name: 'NETFLIX · OTT',
+        emotion: 'HAPPINESS',
+        priceKey: 'happiness',
+        holdingKey: 'netflix',
+        color: '#7FD4FE',
+        pillBg: 'rgba(127,212,254,0.08)',
+        tagline: 'Netflix turned rest into a ritual. Happiness is the most renewable resource in the market.',
+        liveVal: '86.0',
+        liveChange: { text: '▲ +3.7 today', positive: true },
+        chartPath: 'M0 130 C 35 121, 70 113, 105 100 C 138 87, 168 74, 200 63 C 228 53, 256 46, 288 38 C 316 32, 348 26, 378 22 C 403 20, 435 20, 465 20 C 478 20, 490 21, 497 21',
+        bars: [
+          { label: 'HAPPINESS IDX', val: 86 },
+          { label: 'ESCAPISM SCORE', val: 79 },
+          { label: 'RETENTION',      val: 88 },
+          { label: 'MOOD SIGNAL',    val: 82 }
+        ],
+        news: [
+          { tag: 'CONTENT',   headline: "Netflix India original tops 40M views in 7 days — happiness signal surges across demographics.", source: 'Variety · 2d ago' },
+          { tag: 'MARKET',    headline: "OTT happiness economy valued at $2.1B — Netflix commands 62% of emotional premium.", source: 'Bloomberg · 4d ago' },
+          { tag: 'BEHAVIOUR', headline: "Study: binge-watching rituals linked to measurable dopamine loops. Netflix architected the habit.", source: 'Economic Times · 5d ago' }
+        ],
+        predictions: [
+          { text: 'Happiness index stable to rising. Content pipeline strong through H2. Ritual viewing behaviour provides consistent floor — low volatility expected.', conf: 85 },
+          { text: 'Competition from Disney+ Hotstar could compress the happiness premium. Monitor subscriber churn as early signal of sentiment shift.', conf: 61 }
+        ]
+      }
+    };
+
+    // ── Read query param ──────────────────────────────────────────────────
+    var params  = new URLSearchParams(window.location.search);
+    var compKey = (params.get('company') || 'amul').toLowerCase();
+    var co      = COMPANIES[compKey] || COMPANIES.amul;
+
+    // ── Points display ────────────────────────────────────────────────────
+    var _pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
+    document.getElementById('ptsCount').textContent = _pts;
+
+    // ── Populate static UI ────────────────────────────────────────────────
+    document.title = 'The Exchange — ' + co.name;
+
+    document.getElementById('companyName').textContent    = co.name;
+    document.getElementById('companyTagline').textContent = co.tagline;
+
+    var pill = document.getElementById('emotionPill');
+    pill.textContent           = co.emotion;
+    pill.style.color           = co.color;
+    pill.style.borderColor     = co.color;
+    pill.style.backgroundColor = co.pillBg;
+
+    var lv = document.getElementById('chartLiveVal');
+    lv.textContent = co.liveVal;
+    lv.style.color = co.color;
+
+    var lc = document.getElementById('chartLiveChange');
+    lc.textContent = co.liveChange.text;
+    lc.style.color = co.liveChange.positive ? '#5a9c6a' : '#c45a5a';
+
+    // ── Chart ─────────────────────────────────────────────────────────────
+    var chartPath    = document.getElementById('chartPath');
+    var chartArea    = document.getElementById('chartArea');
+    var chartEndDot  = document.getElementById('chartEndDot');
+    chartPath.setAttribute('d', co.chartPath);
+    chartPath.setAttribute('stroke', co.color);
+    chartEndDot.setAttribute('fill', co.color);
+
+    // Area fill: close path along bottom
+    var areaD = co.chartPath + ' L497 160 L0 160 Z';
+    chartArea.setAttribute('d', areaD);
+    chartArea.setAttribute('fill', co.color);
+
+    // Position end dot at the last point of the path
+    (function () {
+      var svg  = document.getElementById('tradeChart');
+      var path = chartPath;
+      var len  = path.getTotalLength ? path.getTotalLength() : 0;
+      if (len) {
+        var pt = path.getPointAtLength(len);
+        chartEndDot.setAttribute('cx', pt.x);
+        chartEndDot.setAttribute('cy', pt.y);
+      }
+    })();
+
+    // ── Bar rows ──────────────────────────────────────────────────────────
+    var barContainer = document.getElementById('barRows');
+
+    // Shared tooltip element
+    var barTooltip = document.createElement('div');
+    barTooltip.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;background:#1a1a1a;border:0.5px solid rgba(255,255,255,0.12);color:#e8e8e0;font-family:\'JetBrains Mono\',monospace;font-size:12px;padding:6px 10px;border-radius:2px;opacity:0;transition:opacity 0.15s;white-space:nowrap;';
+    document.body.appendChild(barTooltip);
+
+    co.bars.forEach(function (b) {
+      var row = document.createElement('div');
+      row.className = 'bar-row';
+      row.style.cursor = 'default';
+      row.innerHTML =
+        '<span class="bar-label">' + b.label + '</span>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:0%;background:' + co.color + ';transition:width 0.8s ease,opacity 0.2s;" data-val="' + b.val + '"></div></div>' +
+        '<span class="bar-val">' + b.val + '</span>';
+      barContainer.appendChild(row);
+
+      var fill    = row.querySelector('.bar-fill');
+      var valSpan = row.querySelector('.bar-val');
+
+      row.addEventListener('mouseenter', function (e) {
+        fill.style.opacity    = '1';
+        fill.style.filter     = 'brightness(1.35)';
+        valSpan.style.color   = co.color;
+        barTooltip.textContent = b.label + ' · ' + b.val + ' / 100';
+        barTooltip.style.opacity = '1';
+      });
+      row.addEventListener('mousemove', function (e) {
+        barTooltip.style.left = (e.clientX + 14) + 'px';
+        barTooltip.style.top  = (e.clientY - 28) + 'px';
+      });
+      row.addEventListener('mouseleave', function () {
+        fill.style.filter   = '';
+        valSpan.style.color = '#e8e8e0';
+        barTooltip.style.opacity = '0';
+      });
+    });
+
+    // Animate bars in
+    setTimeout(function () {
+      barContainer.querySelectorAll('.bar-fill').forEach(function (f) {
+        f.style.width = f.getAttribute('data-val') + '%';
+      });
+    }, 80);
+
+    // ── News cards ────────────────────────────────────────────────────────
+    var newsContainer = document.getElementById('newsCards');
+    co.news.forEach(function (n) {
+      var card = document.createElement('div');
+      card.className = 'news-card';
+      card.innerHTML =
+        '<div class="news-tag">' + n.tag + '</div>' +
+        '<div class="news-headline">' + n.headline + '</div>' +
+        '<div class="news-source">' + n.source + '</div>';
+      newsContainer.appendChild(card);
+    });
+
+    // ── Prediction cards ──────────────────────────────────────────────────
+    var predContainer = document.getElementById('predictionCards');
+    co.predictions.forEach(function (p) {
+      var block = document.createElement('div');
+      block.className = 'prediction-block';
+      block.innerHTML =
+        '<div class="prediction-label">SYSTEM ANALYSIS</div>' +
+        '<div class="prediction-text">' + p.text + '</div>' +
+        '<div class="prediction-conf">' +
+          '<span class="conf-label">CONFIDENCE</span>' +
+          '<div class="conf-track"><div class="conf-fill" style="width:' + p.conf + '%;background:' + co.color + ';"></div></div>' +
+          '<span class="conf-pct" style="color:' + co.color + ';">' + p.conf + '%</span>' +
+        '</div>';
+      predContainer.appendChild(block);
+    });
+
+    // ── Trade info ────────────────────────────────────────────────────────
+    function updateTradeInfo() {
+      var lp       = window.livePrices   || {};
+      var port     = window.portfolio    || { points: _pts, holdings: {} };
+      var price    = lp[co.priceKey]    || '——';
+      var holdings = port.holdings[co.holdingKey] !== undefined ? port.holdings[co.holdingKey] : '——';
+      var balance  = port.points !== undefined ? port.points : _pts;
+
+      document.getElementById('pricePerShare').textContent = price + ' pts';
+      document.getElementById('yourHoldings').textContent  = holdings + ' shares';
+      document.getElementById('yourBalance').textContent   = balance + ' pts';
+    }
+
+    // Poll until livePrices & portfolio are available (set by market.html scripts
+    // if navigating forward, or fall back gracefully after a short wait)
+    (function pollTrade() {
+      if (window.livePrices && window.portfolio) {
+        updateTradeInfo();
+      } else {
+        updateTradeInfo(); // show what we have now
+        setTimeout(pollTrade, 100);
+      }
+    })();
+
+    // ── Buy / Sell via Supabase ───────────────────────────────────────────
+    var TRADE_EMOTION_STYLE = {
+      NOSTALGIA: { color: '#6a8f0c', bg: 'rgba(106,143,12,0.12)' },
+      FEAR:      { color: '#FF7F50', bg: 'rgba(255,127,80,0.12)' },
+      ANGER:     { color: '#C7A6FF', bg: 'rgba(199,166,255,0.12)' },
+      HAPPINESS: { color: '#7FD4FE', bg: 'rgba(127,212,254,0.12)' }
+    };
+
+    var _cachedSessionId = null;
+    async function getSessionId() {
+      if (_cachedSessionId) return _cachedSessionId;
+      try {
+        var db = window.supabaseClient;
+        var { data } = await db.from('sessions').select('id').order('created_at', { ascending: false }).limit(1).maybeSingle();
+        _cachedSessionId = data ? data.id : null;
+      } catch (e) { _cachedSessionId = null; }
+      return _cachedSessionId;
+    }
+
+    function showToast(msg, color) {
+      var t = document.createElement('div');
+      t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:9999;background:#141414;border:1px solid ' + color + ';color:#e0e0e0;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.08em;padding:14px 20px;border-radius:3px;max-width:320px;line-height:1.5;pointer-events:none;opacity:1;transition:opacity 0.4s;';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { t.style.opacity = '0'; }, 2100);
+      setTimeout(function () { t.remove(); }, 2500);
+    }
+
+    function makeOverlay(mode) {
+      var port  = window.portfolio || { points: parseInt(localStorage.getItem('exchange_total_pts') || '0', 10), holdings: {} };
+      var lp    = window.livePrices || {};
+      var price = lp[co.priceKey] || 0;
+      var isBuy = mode === 'buy';
+      var maxVal = isBuy
+        ? Math.floor(port.points / (price || 1))
+        : (port.holdings[co.holdingKey] || 0);
+      var sharesCount = maxVal > 0 ? 1 : 0;
+      var hasStock    = maxVal > 0;
+
+      var btnColor   = isBuy ? 'rgba(218,254,127,0.37)' : '#c45a5a';
+      var insufficientMsg = isBuy ? 'Insufficient points' : 'You have no shares to sell';
+
+      function pillHTML() {
+        return '<span style="display:inline-block;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.12em;padding:3px 8px;border:0.5px solid ' + co.color + ';color:' + co.color + ';background:' + co.pillBg + ';border-radius:2px;vertical-align:middle;margin-left:8px;">' + co.emotion + '</span>';
+      }
+
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+      var inner = document.createElement('div');
+      inner.style.cssText = 'background:#141414;border:1px solid rgba(218,254,127,0.4);border-radius:4px;padding:40px;max-width:520px;width:100%;box-sizing:border-box;';
+
+      inner.innerHTML =
+        '<p style="font-family:\'JetBrains Mono\',monospace;font-size:13px;font-variant:small-caps;letter-spacing:0.12em;color:#888888;margin:0 0 6px 0;">' +
+          co.name + pillHTML() +
+        '</p>' +
+        '<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:20px;color:#e0e0e0;margin:0 0 24px 0;">' +
+          (isBuy ? 'How many shares do you want to buy?' : 'How many shares do you want to sell?') +
+        '</p>' +
+        '<p style="font-family:\'JetBrains Mono\',monospace;font-size:14px;color:#dafe7f;margin:0 0 6px 0;">Price per share: ' + price + ' pts</p>' +
+        (isBuy
+          ? '<p style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:#888888;margin:0 0 24px 0;">Your balance: ' + port.points + ' pts</p>'
+          : '<p style="font-family:\'JetBrains Mono\',monospace;font-size:14px;color:#dafe7f;margin:0 0 24px 0;">You own: ' + (port.holdings[co.holdingKey] || 0) + ' shares</p>') +
+        (hasStock
+          ? '<div style="display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:20px;">' +
+              '<button id="tdecBtn" style="width:44px;height:44px;background:transparent;border:1px solid #444;color:#e0e0e0;font-size:22px;cursor:pointer;border-radius:2px;line-height:1;">−</button>' +
+              '<span id="tSharesNum" style="font-family:\'JetBrains Mono\',monospace;font-size:48px;color:#dafe7f;min-width:80px;text-align:center;line-height:1;">' + sharesCount + '</span>' +
+              '<button id="tincBtn" style="width:44px;height:44px;background:transparent;border:1px solid #444;color:#e0e0e0;font-size:22px;cursor:pointer;border-radius:2px;line-height:1;">+</button>' +
+            '</div>' +
+            '<p id="tTotalLine" style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#e0e0e0;text-align:center;margin:0 0 28px 0;">' +
+              (isBuy ? 'Total: ' + (sharesCount * price) + ' pts' : 'You will receive: ' + (sharesCount * price) + ' pts') +
+            '</p>'
+          : '<p style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#888888;text-align:center;margin:0 0 28px 0;">' + insufficientMsg + '</p>') +
+        '<div style="display:flex;gap:12px;">' +
+          '<button id="tCancelBtn" style="flex:1;padding:14px;background:transparent;border:1px solid #888888;color:#888888;font-family:\'JetBrains Mono\',monospace;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border-radius:2px;">CANCEL</button>' +
+          '<button id="tConfirmBtn" ' + (!hasStock ? 'disabled ' : '') + 'style="flex:1;padding:14px;background:' + (hasStock ? btnColor : '#333') + ';border:1px solid ' + (hasStock ? btnColor : '#333') + ';color:' + (hasStock ? '#fff' : '#555') + ';font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-weight:500;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;cursor:' + (hasStock ? 'pointer' : 'not-allowed') + ';border-radius:2px;">' + (isBuy ? 'CONFIRM BUY' : 'CONFIRM SELL') + '</button>' +
+        '</div>';
+
+      overlay.appendChild(inner);
+
+      if (hasStock) {
+        var numEl   = inner.querySelector('#tSharesNum');
+        var totalEl = inner.querySelector('#tTotalLine');
+        function updateTotal() {
+          var n = parseInt(numEl.textContent, 10);
+          totalEl.textContent = isBuy ? 'Total: ' + (n * price) + ' pts' : 'You will receive: ' + (n * price) + ' pts';
+        }
+        inner.querySelector('#tdecBtn').addEventListener('click', function () {
+          var n = parseInt(numEl.textContent, 10);
+          if (n > 1) { numEl.textContent = n - 1; updateTotal(); }
+        });
+        inner.querySelector('#tincBtn').addEventListener('click', function () {
+          var n = parseInt(numEl.textContent, 10);
+          if (n < maxVal) { numEl.textContent = n + 1; updateTotal(); }
+        });
+      }
+
+      inner.querySelector('#tCancelBtn').addEventListener('click', function () { overlay.remove(); });
+
+      if (hasStock) {
+        inner.querySelector('#tConfirmBtn').addEventListener('click', async function () {
+          var shares    = parseInt(inner.querySelector('#tSharesNum').textContent, 10);
+          var total     = shares * price;
+          var sessionId = await getSessionId();
+          var port2     = window.portfolio || { points: parseInt(localStorage.getItem('exchange_total_pts') || '0', 10), holdings: {} };
+
+          if (isBuy) {
+            port2.points -= total;
+            port2.holdings[co.holdingKey] = (port2.holdings[co.holdingKey] || 0) + shares;
+          } else {
+            port2.points += total;
+            port2.holdings[co.holdingKey] = (port2.holdings[co.holdingKey] || 0) - shares;
+          }
+          if (window.portfolio) { window.portfolio.points = port2.points; }
+          localStorage.setItem('exchange_total_pts', port2.points);
+          document.getElementById('ptsCount').textContent = port2.points;
+
+          try {
+            var db = window.supabaseClient;
+            await db.from('trades').insert({
+              session_id:      sessionId,
+              company:         co.name,
+              emotion:         co.emotion,
+              shares_bought:   isBuy  ? shares : 0,
+              shares_sold:     !isBuy ? shares : 0,
+              price_per_share: price,
+              total_spent:     isBuy  ? total  : 0,
+              total_earned:    !isBuy ? total  : 0
+            });
+          } catch (e) { console.warn('Trade insert failed:', e); }
+
+          overlay.remove();
+          updateTradeInfo();
+          showToast(
+            isBuy
+              ? shares + ' shares of ' + co.name + ' added to portfolio'
+              : shares + ' shares of ' + co.name + ' sold',
+            co.color
+          );
+        });
+      }
+
+      return overlay;
+    }
+
+    document.getElementById('buyBtn').addEventListener('click',  function () { document.body.appendChild(makeOverlay('buy')); });
+    document.getElementById('sellBtn').addEventListener('click', function () { document.body.appendChild(makeOverlay('sell')); });
+  </script>
+</body>
+</html>
