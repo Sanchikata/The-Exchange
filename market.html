@@ -1403,13 +1403,17 @@
   <script src="supabase.js"></script>
   <script src="js/main.js"></script>
   <script>
-    // ── Reset session state on every market page load ─────────────────────
-    localStorage.setItem('exchange_total_pts', '0');
-    localStorage.setItem('exchange_played_games', '[]');
-    localStorage.removeItem('exchange_trades');
+    // ── Reset session state once per browser session (not on every navigation back) ──
+    // sessionStorage is cleared when the tab closes, so this runs once per new tab/window.
+    if (!sessionStorage.getItem('market_session_started')) {
+      localStorage.setItem('exchange_total_pts', '0');
+      localStorage.setItem('exchange_played_games', '[]');
+      localStorage.removeItem('exchange_trades');
+      sessionStorage.setItem('market_session_started', '1');
+    }
 
-    // ── Sync pts counter (always 0 on fresh load) ──────────────────────────
-    var _pts = 0;
+    // ── Sync pts counter from persisted state ──────────────────────────────
+    var _pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
     document.getElementById('ptsCount').textContent = _pts;
     var _balEl = document.getElementById('balanceText');
     if (_balEl) _balEl.textContent = 'BALANCE: ' + _pts;
