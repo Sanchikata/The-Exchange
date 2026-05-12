@@ -1087,7 +1087,7 @@
       <section class="points-banner" id="pointsBanner">
         <div class="banner-full">
           <div class="points-inner">
-            <p class="points-copy">You need at least <span class="hl">800 points</span> to keep up in the trade. The way to earn them is simple - play!</p>
+            <p class="points-copy">You need at least <span class="hl">100 points</span> to keep up in the trade. The way to earn them is simple - play!</p>
             <div class="points-stats-row">
               <span>REQUIRED: 800</span>
               <span id="balanceText">BALANCE: 0</span>
@@ -1100,7 +1100,7 @@
           </div>
         </div>
         <div class="banner-mini">
-          <span class="banner-mini-text">You need 800 points to trade.</span>
+          <span class="banner-mini-text">You need 100 points to trade.</span>
           <div class="banner-mini-btns">
             <button class="banner-mini-btn" onclick="location.href='games2.html'">EARN POINTS</button>
             <button class="banner-mini-btn gen-portfolio-mini-btn" id="genPortfolioMiniBtn" style="display:none" onclick="goToPortfolio()">GENERATE PORTFOLIO</button>
@@ -1403,16 +1403,23 @@
   <script src="supabase.js"></script>
   <script src="js/main.js"></script>
   <script>
-    // ── Reset session state once per browser session (not on every navigation back) ──
-    // sessionStorage is cleared when the tab closes, so this runs once per new tab/window.
-    if (!sessionStorage.getItem('market_session_started')) {
+    // ── Session init ────────────────────────────────────────────────────────
+    // If arriving with ?pts=X the user just came back from games — use it.
+    // Any other entry (direct visit, F5, nav-bar click) counts as a fresh start.
+    var _incomingPts = parseInt(new URLSearchParams(window.location.search).get('pts'), 10) || 0;
+
+    if (_incomingPts > 0) {
+      // Returning from games: write pts into localStorage, then strip the URL
+      // so that a subsequent F5 is treated as a fresh visit.
+      localStorage.setItem('exchange_total_pts', String(_incomingPts));
+      history.replaceState(null, '', location.pathname);
+    } else {
+      // Fresh visit / F5 / nav-bar: reset everything.
       localStorage.setItem('exchange_total_pts', '0');
       localStorage.setItem('exchange_played_games', '[]');
       localStorage.removeItem('exchange_trades');
-      sessionStorage.setItem('market_session_started', '1');
     }
 
-    // ── Sync pts counter from persisted state ──────────────────────────────
     var _pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
     document.getElementById('ptsCount').textContent = _pts;
     var _balEl = document.getElementById('balanceText');
@@ -1438,7 +1445,7 @@
     (function () {
       var container = document.getElementById('progressDots');
       var totalDots = 130;
-      var filled = Math.min(Math.round((_pts / 800) * totalDots), totalDots);
+      var filled = Math.min(Math.round((_pts / 100) * totalDots), totalDots);
       for (var i = 0; i < totalDots; i++) {
         var d = document.createElement('div');
         d.className = 'pdot' + (i < filled ? ' on' : '');
@@ -1968,7 +1975,7 @@
 
       console.log('portfolio:', window.portfolio);
 
-      if (window.portfolio.points >= 800) {
+      if (window.portfolio.points >= 100) {
         showPortfolioPopup();
       }
     })();
