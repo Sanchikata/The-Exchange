@@ -463,7 +463,15 @@
         var ar = localStorage.getItem('exchange_ai_raw') || ai;
         var hr = localStorage.getItem('exchange_hi_raw') || hi;
         var xr = localStorage.getItem('exchange_xi_raw') || xi;
-        window.location.href = 'generative-receipt.html?ni=' + ni + '&ai=' + ai + '&hi=' + hi + '&xi=' + xi + '&nr=' + nr + '&ar=' + ar + '&hr=' + hr + '&xr=' + xr;
+        var allTrades  = JSON.parse(localStorage.getItem('exchange_trades') || '[]');
+        var buyTrades  = allTrades.filter(function(t) { return t.type === 'buy'; });
+        var sellTrades = allTrades.filter(function(t) { return t.type === 'sell'; });
+        var bc = buyTrades.length;
+        var sc = sellTrades.length;
+        var ps = buyTrades.length > 0
+          ? (buyTrades.reduce(function(sum, t) { return sum + (t.change || 0); }, 0) / buyTrades.length).toFixed(2)
+          : 0;
+        window.location.href = 'generative-receipt.html?ni=' + ni + '&ai=' + ai + '&hi=' + hi + '&xi=' + xi + '&nr=' + nr + '&ar=' + ar + '&hr=' + hr + '&xr=' + xr + '&bc=' + bc + '&sc=' + sc + '&ps=' + ps;
       });
 
       /* ── Dossier data helpers ── */

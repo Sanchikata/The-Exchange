@@ -58,6 +58,7 @@ function refreshPoints() {
       if (el) el.style.display = id === 'genPortfolioBtn' ? 'flex' : 'inline-block';
     });
     history.replaceState(null, '', location.pathname);
+    startTradeTimer();
   }
 })();
 
@@ -322,7 +323,7 @@ function closeDetail() {
 function saveTrade(type) {
   if (activeIdx === null) return;
   const co = COMPANIES[activeIdx];
-  const trade = { type, name: co.name, ticker: co.ticker, price: +co.price.toFixed(2), emotion: co.emotion, ts: Date.now() };
+  const trade = { type, name: co.name, ticker: co.ticker, price: +co.price.toFixed(2), emotion: co.emotion, change: co.change, ts: Date.now() };
   window.ExchangeSession.trades.push(trade);
   localStorage.setItem('exchange_trades', JSON.stringify(window.ExchangeSession.trades));
 }
@@ -493,6 +494,30 @@ function goToPortfolio() {
 
 function refreshPortfolioBtn() {
   // no-op: button visibility is set once on load when ?pts arrives from a game
+}
+
+function startTradeTimer() {
+  var timerEl  = document.getElementById('headerTimer');
+  var display  = document.getElementById('timerDisplay');
+  var overlay  = document.getElementById('timeoutOverlay');
+  if (!timerEl || !display || !overlay) return;
+
+  timerEl.style.display = 'flex';
+  var remaining = 180;
+
+  function tick() {
+    var m = Math.floor(remaining / 60);
+    var s = remaining % 60;
+    display.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if (remaining <= 30) display.classList.add('urgent');
+    if (remaining <= 0) {
+      overlay.classList.add('visible');
+      return;
+    }
+    remaining--;
+    setTimeout(tick, 1000);
+  }
+  tick();
 }
 
 // ════════════════════════════════════════

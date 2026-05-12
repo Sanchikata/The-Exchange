@@ -70,6 +70,11 @@
       totalPoints:     parseFloat(params.get('tp')) || 0,
     }
 
+    // Trade-driven scaffold inputs
+    const buyCount   = parseInt(params.get('bc'))   || 0
+    const sellCount  = parseInt(params.get('sc'))   || 0
+    const prosperity = parseFloat(params.get('ps')) || 0
+
     const emotionScores = {
       nostalgia: PLAYER.nostalgia,
       anger:     PLAYER.anger,
@@ -143,6 +148,19 @@
         .filter(e => PLAYER[e] > 0)
         .sort((a, b) => PLAYER[a] - PLAYER[b])
 
+      // ── Trade-driven scaffold constants (computed once, used in draw) ──
+      // Spoke count grows with buy trades: 8 at 0 buys → up to 64 at 14+ buys
+      const spokeCount      = Math.max(8,  Math.min(64, 8 + buyCount * 4))
+      const secSpokeCount   = spokeCount * 2
+      const denseSpokeCount = Math.min(80, spokeCount * 4)
+      // Prosperity scale: positive avg change expands elements, negative shrinks
+      const prosperityScale = Math.max(0.5, Math.min(1.6, 1 + prosperity / 10))
+      // Inner ring spacing tightens with more sell trades (more layers of rings)
+      const innerSpacing = Math.max(2, 10 - sellCount * 0.7)
+      const dynRings = []
+      for (let r = 24; r < 44; r += innerSpacing) dynRings.push(Math.round(r))
+      const allRingRadii = [...new Set([...dynRings, 44, 56, 72, 88, 104, 118])].sort((a, b) => a - b)
+
       // Returns the angular distance in [0, π] between two angles
       function angularDist(a, b) {
         let d = ((a - b) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2)
@@ -191,6 +209,21 @@
 
         p.background('#0a0a0a')
 
+        // ── No games played — plain grey circle only ──────────────────────
+        if (allZero) {
+          if (revealR > 0) {
+            p.noFill()
+            p.stroke('#444444')
+            p.strokeWeight(0.5)
+            const r = Math.min(revealR, 80)
+            p.circle(cx, cy, r * 2)
+            p.noStroke()
+            p.fill('#333333')
+            p.circle(cx, cy, Math.min(revealR, 26))
+          }
+          return
+        }
+
         // ── Zone background fills — each concentric zone gets its own colour ──
         // Drawn before everything else so all pattern elements sit on top.
         // Alpha 0.50–0.65: high enough to show real colour on #0a0a0a.
@@ -214,14 +247,12 @@
           p.drawingContext.restore()
         })
 
-        // ── M1: Radial spokes — threshold 5 ──────────────────────────────
-        // 20 hairline lines from just outside the centre to the outer ring.
-        // Drawn first so every other element sits on top.
+        // ── M1: Radial spokes — count scales with buy trades ─────────────
         if (revealR > 5) {
           p.stroke('#1e1e1e')
           p.strokeWeight(0.3)
-          for (let s = 0; s < 20; s++) {
-            const a = (s / 20) * Math.PI * 2
+          for (let s = 0; s < spokeCount; s++) {
+            const a = (s / spokeCount) * Math.PI * 2
             p.line(
               cx + Math.cos(a) * 13,  cy + Math.sin(a) * 13,
               cx + Math.cos(a) * 103, cy + Math.sin(a) * 103
@@ -230,36 +261,37 @@
         }
 
         // ── D1: Interstitial latticework — rings + cross-hatch ───────────────
-        ;[24, 28, 32, 36, 44, 56, 72, 88, 104, 118].forEach(r => {
+        // Ring count in inner zone scales with sell trades (tighter spacing = more rings)
+        allRingRadii.forEach(r => {
           if (revealR > r) {
             p.noFill(); p.stroke('#141414'); p.strokeWeight(0.25)
             p.circle(cx, cy, r * 2)
           }
         })
-        // 40-spoke secondary grid (halves sector width, full radius)
+        // Secondary spoke grid — density scales with buy trades
         if (revealR > 8) {
           p.stroke('#191919'); p.strokeWeight(0.2)
-          for (let s = 0; s < 40; s++) {
-            const a = (s / 40) * Math.PI * 2
+          for (let s = 0; s < secSpokeCount; s++) {
+            const a = (s / secSpokeCount) * Math.PI * 2
             p.line(cx + Math.cos(a) * 13, cy + Math.sin(a) * 13,
                    cx + Math.cos(a) * 103, cy + Math.sin(a) * 103)
           }
         }
-        // Dense inner cross-hatch r=13→46: 80 radials, density increases toward center
+        // Dense inner cross-hatch r=13→46 — density scales with buy trades
         if (revealR > 6) {
           p.stroke('#161616'); p.strokeWeight(0.15)
-          for (let s = 0; s < 80; s++) {
-            const a = (s / 80) * Math.PI * 2
+          for (let s = 0; s < denseSpokeCount; s++) {
+            const a = (s / denseSpokeCount) * Math.PI * 2
             p.line(cx + Math.cos(a) * 13, cy + Math.sin(a) * 13,
                    cx + Math.cos(a) * 46, cy + Math.sin(a) * 46)
           }
         }
         // Micro-dots at inner lattice intersections
         if (revealR > 24) {
-          ;[24, 28, 32].forEach(r => {
+          dynRings.filter(r => r <= 36).forEach(r => {
             if (revealR > r) {
-              for (let s = 0; s < 40; s++) {
-                const a = (s / 40) * Math.PI * 2
+              for (let s = 0; s < secSpokeCount; s++) {
+                const a = (s / secSpokeCount) * Math.PI * 2
                 if (PETALS.some(pt => angularDist(a, pt.angle) < 0.28)) continue
                 const dc = p.color('#242422'); dc.setAlpha(210)
                 p.noStroke(); p.fill(dc)
@@ -336,7 +368,7 @@
             bc.setAlpha(100)
             p.noStroke()
             p.fill(bc)
-            p.circle(cx + Math.cos(a) * 48, cy + Math.sin(a) * 48, 3)
+            p.circle(cx + Math.cos(a) * 48, cy + Math.sin(a) * 48, 3 * prosperityScale)
           }
         }
 
@@ -355,17 +387,17 @@
                 const type = (si * 3 + ri * 7) % 3
                 if (type === 0) {
                   const dc = p.color('#C9A84C'); dc.setAlpha(120)
-                  p.noStroke(); p.fill(dc); p.circle(fx, fy, 3)
+                  p.noStroke(); p.fill(dc); p.circle(fx, fy, 3 * prosperityScale)
                 } else if (type === 1) {
                   const rc = p.color('#222220'); rc.setAlpha(180)
                   p.noFill(); p.stroke(rc); p.strokeWeight(0.4)
-                  p.circle(fx, fy, 6); p.circle(fx, fy, 3)
+                  p.circle(fx, fy, 6 * prosperityScale); p.circle(fx, fy, 3 * prosperityScale)
                 } else {
                   const sc = p.color('#1e1e1c'); sc.setAlpha(190)
                   p.stroke(sc); p.strokeWeight(0.5); p.noFill()
                   for (let s = 0; s < 3; s++) {
                     const sa = a + (s / 3) * Math.PI * 2
-                    p.line(fx, fy, fx + Math.cos(sa) * 4, fy + Math.sin(sa) * 4)
+                    p.line(fx, fy, fx + Math.cos(sa) * 4 * prosperityScale, fy + Math.sin(sa) * 4 * prosperityScale)
                   }
                 }
               }
@@ -500,7 +532,7 @@
           PETALS.forEach(petal => {
             const score  = PLAYER[petal.emotion]
             const pts    = PLAYER[petal.emotion + 'Points']
-            const petalH = score > 0 ? p.map(score, 0, 100, 14, 34) : 14
+            const petalH = score > 0 ? p.map(score, 0, 100, 14, 34) * prosperityScale : 14
             const a = petalH / 2
             const b = 9
 
@@ -539,7 +571,7 @@
         if (revealR > 62) {
           PETALS.forEach(petal => {
             const score  = PLAYER[petal.emotion]
-            const petalH = score > 0 ? p.map(score, 0, 100, 14, 34) : 14
+            const petalH = score > 0 ? p.map(score, 0, 100, 14, 34) * prosperityScale : 14
             const tipR   = PETAL_RADIUS + petalH / 2
             const tc = p.color(EMOTION_COLORS[petal.emotion])
             tc.setAlpha(180)
