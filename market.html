@@ -1403,8 +1403,13 @@
   <script src="supabase.js"></script>
   <script src="js/main.js"></script>
   <script>
-    // ── Sync pts counter from persisted state ──────────────────────────────
-    var _pts = parseInt(localStorage.getItem('exchange_total_pts') || '0', 10);
+    // ── Reset session state on every market page load ─────────────────────
+    localStorage.setItem('exchange_total_pts', '0');
+    localStorage.setItem('exchange_played_games', '[]');
+    localStorage.removeItem('exchange_trades');
+
+    // ── Sync pts counter (always 0 on fresh load) ──────────────────────────
+    var _pts = 0;
     document.getElementById('ptsCount').textContent = _pts;
     var _balEl = document.getElementById('balanceText');
     if (_balEl) _balEl.textContent = 'BALANCE: ' + _pts;
